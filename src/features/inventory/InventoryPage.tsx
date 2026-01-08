@@ -2,6 +2,7 @@ import { Package, Plus } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import Filters from './components/Filters';
 import PhoneTable from './components/PhoneTable';
+import PhoneModal from './components/PhoneModal';
 import { useInventoryStore } from './stores/inventoryStore';
 import { useAuth } from '../../context';
 
@@ -51,6 +52,9 @@ export default function InventoryPage() {
           <PhoneTable />
         </div>
       </main>
+
+      {/* Phone Modal */}
+      <PhoneModal />
     </div>
   );
 }
