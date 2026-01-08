@@ -7,19 +7,21 @@ export interface User {
 
 export interface Phone {
   id: string;
-  imei: string;
-  marca: string;
-  modelo: string;
-  lote: string;
-  costo: number;
-  precioVenta: number;
-  estado: PhoneStatus;
-  clienteId?: string;
-  fechaIngreso: Date;
-  fechaVenta?: string;
-  photos?: string[];
-  reparaciones?: Repair[];
-  statusHistory?: StatusChange[];
+  imei: string; // Unique identifier
+  marca: string; // Brand (Apple, Samsung, etc.)
+  modelo: string; // Model (iPhone 15 Pro Max, etc.)
+  lote: string; // Lot/batch grouping
+  costo: number; // Cost in USD
+  precioVenta: number; // Selling price in USD
+  estado: PhoneStatus; // Current status
+  clienteId?: string; // Reference to clients/{id} if sold
+  fechaIngreso: Date; // Registration date
+  fechaVenta?: Date; // Sale date
+  reparaciones?: Repair[]; // Repair history
+  statusHistory?: StatusChange[]; // Status change audit trail
+  createdBy?: string; // UID of user who created
+  updatedAt?: Date; // Last update timestamp
+  photos?: string[]; // URLs in Storage (future)
 }
 
 export type PhoneStatus =
@@ -41,7 +43,7 @@ export type PhoneStatus =
   | 'De Baja';
 
 export interface Repair {
-  date: string;
+  date: Date;
   note: string;
   cost: number;
   paid: boolean;
