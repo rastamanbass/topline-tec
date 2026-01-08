@@ -1,0 +1,72 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && getUserData().role == 'admin';
+    }
+    
+    function isGerente() {
+      return isSignedIn() && getUserData().role == 'gerente';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    // Phones collection
+    match /phones/{phoneId} {
+      allow read: if isSignedIn();
+      allow create, update: if isAdmin() || isGerente();
+      allow delete: if isAdmin();
+    }
+    
+    // Clients collection
+    match /clients/{clientId} {
+      allow read: if isSignedIn();
+      allow create, update: if isAdmin() || isGerente();
+      allow delete: if isAdmin();
+      
+      // Sub-collections
+      match /purchases/{purchaseId} {
+        allow read: if isSignedIn();
+        allow create: if isAdmin() || isGerente();
+        allow update, delete: if isAdmin();
+      }
+      
+      match /creditAdjustments/{adjId} {
+        allow read: if isSignedIn();
+        allow create: if isAdmin();
+        allow update, delete: if false;
+      }
+      
+      match /debtAdjustments/{adjId} {
+        allow read: if isSignedIn();
+        allow create: if isAdmin() || isGerente();
+        allow update, delete: if false;
+      }
+    }
+    
+    // Accessories collection
+    match /accessories/{accessoryId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || isGerente();
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

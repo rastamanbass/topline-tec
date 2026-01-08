@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return request.auth != null && 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Phone images
+    match /phones/{phoneId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    // Invoices (PDFs)
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    // User uploads
+    match /uploads/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if request.auth.uid == userId || isAdmin();
+    }
+    
+    // Deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
