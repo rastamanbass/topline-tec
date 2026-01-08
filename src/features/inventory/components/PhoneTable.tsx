@@ -1,14 +1,20 @@
-import { Eye, Edit2, Trash2, Loader2 } from 'lucide-react';
+import { Eye, Edit2, Trash2, Loader2, RefreshCw } from 'lucide-react';
+import { useState } from 'react';
 import { usePhones } from '../hooks/usePhones';
 import { useInventoryStore } from '../stores/inventoryStore';
 import { useAuth } from '../../../context';
 import StatusBadge from './StatusBadge';
+import StatusChangeModal from './StatusChangeModal';
 import type { Phone } from '../../../types';
 
 export default function PhoneTable() {
   const { searchQuery, selectedLot, selectedStatus } = useInventoryStore();
   const { openModal } = useInventoryStore();
   const { userRole } = useAuth();
+
+  // Status change modal state
+  const [statusChangePhone, setStatusChangePhone] = useState<Phone | null>(null);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
   // Fetch phones with filters
   const {
@@ -141,13 +147,25 @@ export default function PhoneTable() {
                     <Eye className="w-4 h-4" />
                   </button>
                   {canEdit && (
-                    <button
-                      onClick={() => openModal('edit', phone)}
-                      className="text-blue-600 hover:text-blue-900"
-                      title="Editar"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => {
+                          setStatusChangePhone(phone);
+                          setIsStatusModalOpen(true);
+                        }}
+                        className="text-yellow-600 hover:text-yellow-900"
+                        title="Cambiar estado"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => openModal('edit', phone)}
+                        className="text-blue-600 hover:text-blue-900"
+                        title="Editar"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                    </>
                   )}
                   {canDelete && (
                     <button
@@ -177,6 +195,16 @@ export default function PhoneTable() {
           {phones.length !== 1 && 's'}
         </p>
       </div>
+
+      {/* Status Change Modal */}
+      <StatusChangeModal
+        phone={statusChangePhone}
+        isOpen={isStatusModalOpen}
+        onClose={() => {
+          setIsStatusModalOpen(false);
+          setStatusChangePhone(null);
+        }}
+      />
     </div>
   );
 }
