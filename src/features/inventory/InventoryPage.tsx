@@ -1,6 +1,16 @@
-import { Package } from 'lucide-react';
+import { Package, Plus } from 'lucide-react';
+import SearchBar from './components/SearchBar';
+import Filters from './components/Filters';
+import PhoneTable from './components/PhoneTable';
+import { useInventoryStore } from './stores/inventoryStore';
+import { useAuth } from '../../context';
 
 export default function InventoryPage() {
+  const { openModal } = useInventoryStore();
+  const { userRole } = useAuth();
+
+  const canCreate = ['admin', 'gerente'].includes(userRole || '');
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -14,18 +24,31 @@ export default function InventoryPage() {
                 <p className="text-sm text-gray-600">Gestión de Teléfonos</p>
               </div>
             </div>
+
+            {canCreate && (
+              <button
+                onClick={() => openModal('create')}
+                className="btn-primary flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Nuevo Teléfono
+              </button>
+            )}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="card">
-          <div className="text-center py-12">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Módulo de Inventario</h2>
-            <p className="text-gray-600">En desarrollo... 🚧</p>
-          </div>
+        {/* Search and Filters */}
+        <div className="mb-6 space-y-4">
+          <SearchBar />
+          <Filters />
+        </div>
+
+        {/* Table */}
+        <div className="card overflow-hidden">
+          <PhoneTable />
         </div>
       </main>
     </div>
