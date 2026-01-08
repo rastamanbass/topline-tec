@@ -88,7 +88,7 @@ export function useCreatePhone() {
         statusHistory: [
           {
             newStatus: phone.estado,
-            date: serverTimestamp(),
+            date: new Date(), // Use Date instead of serverTimestamp in arrays
             user: auth.currentUser?.email || 'unknown',
             details: 'Teléfono creado',
           },
@@ -173,7 +173,7 @@ export function useChangePhoneStatus() {
 
       const statusChange = {
         newStatus,
-        date: serverTimestamp(),
+        date: new Date(), // Use Date instead of serverTimestamp in arrays
         user: auth.currentUser?.email || 'unknown',
         details,
       };
