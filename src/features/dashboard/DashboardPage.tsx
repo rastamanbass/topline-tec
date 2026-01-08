@@ -1,4 +1,4 @@
-import { useAuth } from '../context';
+import { useAuth } from '../../context';
 import { LogOut, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 
