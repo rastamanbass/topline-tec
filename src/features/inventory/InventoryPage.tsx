@@ -3,6 +3,7 @@ import SearchBar from './components/SearchBar';
 import Filters from './components/Filters';
 import PhoneTable from './components/PhoneTable';
 import PhoneModal from './components/PhoneModal';
+import PhoneDetailsModal from './components/PhoneDetailsModal';
 import { useInventoryStore } from './stores/inventoryStore';
 import { useAuth } from '../../context';
 
@@ -55,6 +56,9 @@ export default function InventoryPage() {
 
       {/* Phone Modal */}
       <PhoneModal />
+
+      {/* Phone Details Modal */}
+      <PhoneDetailsModal />
     </div>
   );
 }
