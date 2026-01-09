@@ -1,5 +1,6 @@
 import { useAuth } from '../../context';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Smartphone, Users, PenTool } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
@@ -58,20 +59,40 @@ export default function DashboardPage() {
 
           {/* Placeholder for dashboard content */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-primary-50 rounded-lg p-6">
-              <h3 className="font-semibold text-primary-900 mb-2">Inventario</h3>
-              <p className="text-sm text-primary-700">Próximamente</p>
-            </div>
+            <Link to="/inventory" className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group">
+              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary-200 transition-colors">
+                <Smartphone className="w-6 h-6 text-primary-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">Inventario</h3>
+              <p className="text-sm text-gray-500">Gestionar teléfonos y stock</p>
+            </Link>
 
-            <div className="bg-green-50 rounded-lg p-6">
-              <h3 className="font-semibold text-green-900 mb-2">Clientes</h3>
-              <p className="text-sm text-green-700">Próximamente</p>
-            </div>
+            <Link to="/clients" className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-200 transition-colors">
+                <Users className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">Clientes</h3>
+              <p className="text-sm text-gray-500">Directorio y créditos</p>
+            </Link>
 
-            <div className="bg-orange-50 rounded-lg p-6">
-              <h3 className="font-semibold text-orange-900 mb-2">Ventas</h3>
-              <p className="text-sm text-orange-700">Próximamente</p>
-            </div>
+            <Link to="/taller" className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group">
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-orange-200 transition-colors">
+                <PenTool className="w-6 h-6 text-orange-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">Taller</h3>
+              <p className="text-sm text-gray-500">Reparaciones y servicios</p>
+            </Link>
+
+            {/* Usuarios - Solo Admin/Gerente */}
+            {['admin', 'gerente'].includes(userRole || '') && (
+              <Link to="/admin/usuarios" className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
+                  <User className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-1">Usuarios</h3>
+                <p className="text-sm text-gray-500">Gestión de compradores B2B</p>
+              </Link>
+            )}
           </div>
         </div>
       </main>

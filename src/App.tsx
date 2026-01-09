@@ -6,6 +6,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './features/auth/LoginPage';
 import DashboardPage from './features/dashboard/DashboardPage';
 import InventoryPage from './features/inventory/InventoryPage';
+import ClientsPage from './features/clients/ClientsPage';
+import WorkshopPage from './features/workshop/WorkshopPage';
+import PublicCatalogPage from './features/public/pages/PublicCatalogPage';
+import UsersManagementPage from './features/users/pages/UsersManagementPage';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -25,6 +29,7 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/catalogo" element={<PublicCatalogPage />} />
 
             {/* Protected Routes */}
             <Route
@@ -41,6 +46,33 @@ function App() {
               element={
                 <ProtectedRoute>
                   <InventoryPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/clients"
+              element={
+                <ProtectedRoute>
+                  <ClientsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/taller"
+              element={
+                <ProtectedRoute>
+                  <WorkshopPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/usuarios"
+              element={
+                <ProtectedRoute>
+                  <UsersManagementPage />
                 </ProtectedRoute>
               }
             />
