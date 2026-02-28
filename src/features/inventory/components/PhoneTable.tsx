@@ -1,35 +1,44 @@
-import { Eye, Edit2, Trash2, Loader2, RefreshCw } from 'lucide-react';
-import { useState } from 'react';
-import { usePhones } from '../hooks/usePhones';
+import { Edit2, Trash2, Eye, RefreshCw, Loader2, ShoppingCart } from 'lucide-react';
 import { useInventoryStore } from '../stores/inventoryStore';
+import { useSalesStore } from '../../sales/stores/salesStore';
 import { useAuth } from '../../../context';
-import StatusBadge from './StatusBadge';
+import StatusBadgePro from '../../../components/ui/StatusBadgePro';
 import StatusChangeModal from './StatusChangeModal';
+import { useState } from 'react';
 import type { Phone } from '../../../types';
 
-export default function PhoneTable() {
-  const { searchQuery, selectedLot, selectedStatus } = useInventoryStore();
-  const { openModal } = useInventoryStore();
+interface PhoneTableProps {
+  phones?: Phone[];
+  isLoading: boolean;
+  error: unknown;
+}
+
+export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps) {
+  const { openModal, selectedPhoneIds, toggleSelection, selectAll, clearSelection } =
+    useInventoryStore();
+  const { addToCart, openPaymentModal } = useSalesStore();
   const { userRole } = useAuth();
 
   // Status change modal state
   const [statusChangePhone, setStatusChangePhone] = useState<Phone | null>(null);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
-  // Fetch phones with filters
-  const {
-    data: phones,
-    isLoading,
-    error,
-  } = usePhones({
-    lot: selectedLot,
-    status: selectedStatus,
-    searchQuery,
-  });
-
   // Permissions
   const canEdit = ['admin', 'gerente'].includes(userRole || '');
   const canDelete = userRole === 'admin';
+
+  const handleSell = (phone: Phone) => {
+    addToCart({
+      id: phone.id,
+      phoneId: phone.id,
+      imei: phone.imei,
+      description: `${phone.marca} ${phone.modelo}`,
+      price: phone.precioVenta,
+      quantity: 1,
+      type: 'phone',
+    });
+    openPaymentModal();
+  };
 
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -37,15 +46,6 @@ export default function PhoneTable() {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
-  };
-
-  // Format date
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('es-SV', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
   };
 
   // Loading state
@@ -74,74 +74,98 @@ export default function PhoneTable() {
       <div className="text-center py-12">
         <p className="text-gray-600">No se encontraron teléfonos</p>
         <p className="text-sm text-gray-500 mt-1">
-          {searchQuery || selectedLot || selectedStatus
-            ? 'Intenta ajustar los filtros'
-            : 'Crea tu primer teléfono'}
+          Intenta ajustar los filtros o crea tu primer teléfono
         </p>
       </div>
     );
   }
 
+  // Selection Logic
+  const allSelected = phones.length > 0 && phones.every((p) => selectedPhoneIds.has(p.id));
+  const isIndeterminate = selectedPhoneIds.size > 0 && selectedPhoneIds.size < phones.length;
+
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-xl shadow-sm border border-gray-200 bg-white">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+        <thead className="bg-gray-50/80 backdrop-blur-sm sticky top-0 z-10">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              IMEI
+            <th className="px-6 py-4 text-left w-10">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 transition-colors cursor-pointer"
+                checked={allSelected}
+                ref={(input) => {
+                  if (input) input.indeterminate = isIndeterminate;
+                }}
+                onChange={() => {
+                  if (allSelected) clearSelection();
+                  else selectAll(phones.map((p) => p.id));
+                }}
+              />
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Marca
+            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              Item Details
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Modelo
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
               Lote
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
               Costo
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Precio Venta
+            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              Precio
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
               Estado
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Fecha Ingreso
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
               Acciones
             </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {phones.map((phone: Phone) => (
-            <tr key={phone.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {phone.imei}
+            <tr key={phone.id} className="hover:bg-gray-50 transition-colors group">
+              <td className="px-6 py-4 whitespace-nowrap">
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 transition-colors cursor-pointer"
+                  checked={selectedPhoneIds.has(phone.id)}
+                  onChange={() => toggleSelection(phone.id)}
+                />
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{phone.marca}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{phone.modelo}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{phone.lote}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-gray-900">{phone.modelo}</span>
+                  <span className="text-xs text-gray-500 font-mono">{phone.imei}</span>
+                  <span className="text-xs text-primary-600">{phone.marca}</span>
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                {phone.lote}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {formatCurrency(phone.costo)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
                 {formatCurrency(phone.precioVenta)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <StatusBadge status={phone.estado} size="sm" />
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {formatDate(phone.fechaIngreso)}
+                <StatusBadgePro status={phone.estado} size="sm" />
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => handleSell(phone)}
+                    className="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                    title="Vender"
+                    disabled={phone.estado !== 'En Stock (Disponible para Venta)'}
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                  </button>
                   <button
                     onClick={() => openModal('view', phone)}
-                    className="text-primary-600 hover:text-primary-900"
+                    className="p-1.5 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
                     title="Ver detalles"
                   >
                     <Eye className="w-4 h-4" />
@@ -153,14 +177,14 @@ export default function PhoneTable() {
                           setStatusChangePhone(phone);
                           setIsStatusModalOpen(true);
                         }}
-                        className="text-yellow-600 hover:text-yellow-900"
+                        className="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100 transition-colors"
                         title="Cambiar estado"
                       >
                         <RefreshCw className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => openModal('edit', phone)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                         title="Editar"
                       >
                         <Edit2 className="w-4 h-4" />
@@ -171,11 +195,11 @@ export default function PhoneTable() {
                     <button
                       onClick={() => {
                         if (confirm('¿Estás seguro de eliminar este teléfono?')) {
-                          // TODO: Implement delete
-                          console.log('Delete phone:', phone.id);
+                          // In real app execute delete
+                          console.log('Delete');
                         }
                       }}
-                      className="text-red-600 hover:text-red-900"
+                      className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                       title="Eliminar"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -189,11 +213,11 @@ export default function PhoneTable() {
       </table>
 
       {/* Results count */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-        <p className="text-sm text-gray-700">
-          Mostrando <span className="font-medium">{phones.length}</span> teléfono
-          {phones.length !== 1 && 's'}
-        </p>
+      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center text-xs text-gray-500">
+        <span>
+          Mostrando <span className="font-bold text-gray-900">{phones.length}</span> resultados
+        </span>
+        <span>Selección: {selectedPhoneIds.size}</span>
       </div>
 
       {/* Status Change Modal */}

@@ -33,3 +33,7 @@ dist-ssr
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+.npm-cache/
+.npm-cache/
+.npm-cache/
+.npm-cache/

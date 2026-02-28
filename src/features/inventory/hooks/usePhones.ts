@@ -9,12 +9,14 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  setDoc,
   serverTimestamp,
   type Timestamp,
 } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import type { Phone, PhoneStatus } from '../../../types';
 import toast from 'react-hot-toast';
+import { saveDeviceDefinition } from '../services/deviceService';
 
 // Filters interface
 export interface PhoneFilters {
@@ -80,6 +82,39 @@ export function useCreatePhone() {
 
   return useMutation({
     mutationFn: async (phone: Omit<Phone, 'id' | 'fechaIngreso' | 'statusHistory'>) => {
+      // --- LEARNING: Save TAC definition ---
+      if (phone.imei && phone.imei.length >= 8) {
+        const tac = phone.imei.substring(0, 8);
+        // Fire and forget (don't await to not block creation)
+        saveDeviceDefinition(tac, phone.marca, phone.modelo);
+      }
+      // --- LEARNING: Save Price to Catalog ---
+      if (phone.precioVenta > 0 && phone.modelo) {
+        const storageVal = phone.storage || 'Unknown';
+        // Composite Key: Apple-iPhone 13-128GB
+        // Sanitize to avoid slash issues in ID
+        const safeId = `${phone.marca}-${phone.modelo}-${storageVal}`
+          .replace(/\//g, '-')
+          .replace(/\s+/g, '-')
+          .toLowerCase();
+
+        const catalogRef = doc(db, 'price_catalog', safeId);
+        // Fire and forget upsert
+        setDoc(
+          catalogRef,
+          {
+            brand: phone.marca,
+            model: phone.modelo,
+            storage: storageVal,
+            averagePrice: phone.precioVenta,
+            lastUpdated: new Date(),
+            source: 'auto',
+          },
+          { merge: true }
+        ).catch((err) => console.error('Failed to learn price', err));
+      }
+      // -------------------------------------
+
       const docRef = await addDoc(collection(db, 'phones'), {
         ...phone,
         fechaIngreso: serverTimestamp(),

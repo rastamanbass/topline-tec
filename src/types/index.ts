@@ -3,7 +3,7 @@ export interface User {
   email: string | null;
   displayName: string | null;
   role?: 'admin' | 'gerente' | 'vendedor' | 'comprador' | 'taller';
-  clientId?: string;  // Link to Client for B2B buyers
+  clientId?: string; // Link to Client for B2B buyers
   isActive?: boolean; // Admin can deactivate accounts
 }
 
@@ -12,11 +12,12 @@ export interface Phone {
   imei: string; // Unique identifier
   marca: string; // Brand (Apple, Samsung, etc.)
   modelo: string; // Model (iPhone 15 Pro Max, etc.)
+  storage?: string; // Capacity (128GB, 256GB, etc.)
   lote: string; // Lot/batch grouping
   costo: number; // Cost in USD
   precioVenta: number; // Selling price in USD
   estado: PhoneStatus; // Current status
-  condition: 'New' | 'Open Box' | 'Grade A' | 'Grade B' | 'Grade C'; // Physical condition
+  condition?: 'New' | 'Open Box' | 'Grade A' | 'Grade B' | 'Grade C'; // Physical condition
   clienteId?: string; // Reference to clients/{id} if sold
   fechaIngreso: Date; // Registration date
   fechaVenta?: Date; // Sale date
@@ -27,9 +28,9 @@ export interface Phone {
   photos?: string[]; // URLs in Storage (future)
   reservation?: {
     reservedBy: string; // SessionID
-    orderId?: string;   // Link to PendingOrder
+    orderId?: string; // Link to PendingOrder
     reservedAt: number; // Timestamp (millis)
-    expiresAt: number;  // Timestamp (millis)
+    expiresAt: number; // Timestamp (millis)
     customerName?: string; // Optional Alias
   } | null;
 }
@@ -72,12 +73,12 @@ export interface Client {
   name: string;
   phone?: string;
   email?: string;
-  company?: string;        // Company name for B2B
+  company?: string; // Company name for B2B
   creditAmount: number;
   debtAmount: number;
   isWorkshopAccount: boolean;
-  userId?: string;         // Link to User for B2B buyers
-  isActive?: boolean;      // Admin can deactivate
+  userId?: string; // Link to User for B2B buyers
+  isActive?: boolean; // Admin can deactivate
 }
 
 export interface Purchase {
@@ -110,24 +111,25 @@ export interface PurchaseItem {
 }
 
 export type OrderStatus =
-  | 'reserved'           // Reserva temporal (30 min)
-  | 'pending_payment'    // Esperando pago
-  | 'paid'               // Pagado exitosamente
-  | 'payment_failed'     // Pago rechazado
-  | 'cancelled'          // Cancelado por timeout
-  | 'delivered';         // Entregado al cliente
+  | 'reserved' // Reserva temporal (30 min)
+  | 'pending_payment' // Esperando pago
+  | 'paid' // Pagado exitosamente
+  | 'payment_failed' // Pago rechazado
+  | 'cancelled' // Cancelado por timeout
+  | 'delivered'; // Entregado al cliente
 
 export interface PendingOrder {
   id: string;
-  sessionId: string;           // From reservation system
-  clientId?: string;           // Link to Client (optional initially)
-  clientAlias?: string;        // Temporary name if no account
+  sessionId: string; // From reservation system
+  clientId?: string; // Link to Client (optional initially)
+  clientAlias?: string; // Temporary name if no account
   clientEmail?: string;
   clientPhone?: string;
 
   // Items
-  phoneIds: string[];          // Reserved phones
-  phones: {                    // Snapshot of phones at time of order
+  phoneIds: string[]; // Reserved phones
+  phones: {
+    // Snapshot of phones at time of order
     id: string;
     marca: string;
     modelo: string;
@@ -142,7 +144,7 @@ export interface PendingOrder {
   total: number;
 
   // Payment
-  paymentMethod?: string;      // 'paypal', 'transfer', 'cash', etc.
+  paymentMethod?: string; // 'paypal', 'transfer', 'cash', etc.
   paymentDetails?: {
     paypalOrderId?: string;
     paypalPayerId?: string;
@@ -156,7 +158,7 @@ export interface PendingOrder {
 
   // Timestamps
   createdAt: Date;
-  reservedUntil: Date;         // Expiration of reservation
+  reservedUntil: Date; // Expiration of reservation
   paidAt?: Date;
   deliveredAt?: Date;
 
@@ -165,3 +167,14 @@ export interface PendingOrder {
   whatsappLink?: string;
 }
 
+// ... existing code ...
+
+export interface CatalogItem {
+  id: string; // brand-model-storage (normalized)
+  brand: string;
+  model: string;
+  storage: string;
+  averagePrice: number;
+  lastUpdated: Date;
+  source: 'manual' | 'auto';
+}

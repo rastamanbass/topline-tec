@@ -1,15 +1,25 @@
+import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from './context';
+import { AuthProvider, useAuth } from './context';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './features/auth/LoginPage';
-import DashboardPage from './features/dashboard/DashboardPage';
-import InventoryPage from './features/inventory/InventoryPage';
-import ClientsPage from './features/clients/ClientsPage';
-import WorkshopPage from './features/workshop/WorkshopPage';
-import PublicCatalogPage from './features/public/pages/PublicCatalogPage';
-import UsersManagementPage from './features/users/pages/UsersManagementPage';
+
+const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage'));
+const InventoryPage = lazy(() => import('./features/inventory/InventoryPage'));
+const ClientsPage = lazy(() => import('./features/clients/ClientsPage'));
+const WorkshopPage = lazy(() => import('./features/workshop/WorkshopPage'));
+const PublicCatalogPage = lazy(() => import('./features/public/pages/PublicCatalogPage'));
+const ClientStorePage = lazy(() => import('./features/public/pages/ClientStorePage'));
+const UsersManagementPage = lazy(() => import('./features/users/pages/UsersManagementPage'));
+const CatalogPage = lazy(() => import('./features/catalog/CatalogPage'));
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600" />
+  </div>
+);
 
 // Create a client
 const queryClient = new QueryClient({
@@ -26,63 +36,86 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/catalogo" element={<PublicCatalogPage />} />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Root Redirect Logic */}
+              <Route path="/" element={<RootRedirect />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
+              {/* Public Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/catalogo" element={<PublicCatalogPage />} />
 
-            <Route
-              path="/inventory"
-              element={
-                <ProtectedRoute>
-                  <InventoryPage />
-                </ProtectedRoute>
-              }
-            />
+              {/* Protected Routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/clients"
-              element={
-                <ProtectedRoute>
-                  <ClientsPage />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/inventory"
+                element={
+                  <ProtectedRoute>
+                    <InventoryPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/taller"
-              element={
-                <ProtectedRoute>
-                  <WorkshopPage />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/clients"
+                element={
+                  <ProtectedRoute>
+                    <ClientsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/admin/usuarios"
-              element={
-                <ProtectedRoute>
-                  <UsersManagementPage />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/catalog"
+                element={
+                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
+                    <CatalogPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route
+                path="/taller"
+                element={
+                  <ProtectedRoute>
+                    <WorkshopPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* 404 */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+              <Route
+                path="/admin/usuarios"
+                element={
+                  <ProtectedRoute>
+                    <UsersManagementPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/store"
+                element={
+                  <ProtectedRoute allowedRoles={['comprador', 'admin', 'gerente']}>
+                    <ClientStorePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Default redirect */}
+              {/* <Route path="/" element={<Navigate to="/dashboard" replace />} /> Replaced by RootRedirect */}
+
+              {/* 404 */}
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
 
         {/* Toast notifications */}
@@ -111,6 +144,19 @@ function App() {
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function RootRedirect() {
+  const { user, userRole, loading } = useAuth();
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (userRole === 'comprador') {
+    return <Navigate to="/store" replace />;
+  }
+
+  return <Navigate to="/dashboard" replace />;
 }
 
 export default App;

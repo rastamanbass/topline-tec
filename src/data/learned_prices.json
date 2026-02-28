@@ -1,0 +1,1002 @@
+[
+  {
+    "id": "apple-iphone-15-pro-256gb",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "storage": "256GB",
+    "averagePrice": 583,
+    "sampleSize": 2
+  },
+  {
+    "id": "apple-iphone-14-plus-128gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "storage": "128GB",
+    "averagePrice": 404,
+    "sampleSize": 59
+  },
+  {
+    "id": "apple-iphone-14-pro-max-128gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "storage": "128GB",
+    "averagePrice": 595,
+    "sampleSize": 103
+  },
+  {
+    "id": "apple-iphone-14-pro-128gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "storage": "128GB",
+    "averagePrice": 517,
+    "sampleSize": 21
+  },
+  {
+    "id": "apple-iphone-13-pro-max-128gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "storage": "128GB",
+    "averagePrice": 493,
+    "sampleSize": 139
+  },
+  {
+    "id": "apple-iphone-13-pro-max-256gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "storage": "256GB",
+    "averagePrice": 513,
+    "sampleSize": 18
+  },
+  {
+    "id": "apple-iphone-15-plus-256gb",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "storage": "256GB",
+    "averagePrice": 573,
+    "sampleSize": 3
+  },
+  {
+    "id": "apple-iphone-13-pro-max-1tb",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "storage": "1TB",
+    "averagePrice": 540,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-13-pro-256gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "storage": "256GB",
+    "averagePrice": 439,
+    "sampleSize": 45
+  },
+  {
+    "id": "apple-iphone-13-pro-128gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "storage": "128GB",
+    "averagePrice": 421,
+    "sampleSize": 69
+  },
+  {
+    "id": "apple-iphone-14-pro-max-256gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "storage": "256GB",
+    "averagePrice": 606,
+    "sampleSize": 31
+  },
+  {
+    "id": "apple-iphone-12-pro-512gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "storage": "512GB",
+    "averagePrice": 356,
+    "sampleSize": 4
+  },
+  {
+    "id": "apple-iphone-17-pro-max-512gb",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "storage": "512GB",
+    "averagePrice": 1630,
+    "sampleSize": 15
+  },
+  {
+    "id": "apple-iphone-17-pro-max-256gb",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "storage": "256GB",
+    "averagePrice": 1442,
+    "sampleSize": 228
+  },
+  {
+    "id": "apple-17-air-256gb-unknown",
+    "brand": "Apple",
+    "model": "17 AIR 256GB",
+    "storage": "Unknown",
+    "averagePrice": 1116,
+    "sampleSize": 8
+  },
+  {
+    "id": "samsung-galaxy-s23-ultra-512gb",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "storage": "512GB",
+    "averagePrice": 535,
+    "sampleSize": 13
+  },
+  {
+    "id": "apple-iphone-15-plus-128gb",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "storage": "128GB",
+    "averagePrice": 541,
+    "sampleSize": 49
+  },
+  {
+    "id": "apple-iphone-15-pro-128gb",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "storage": "128GB",
+    "averagePrice": 661,
+    "sampleSize": 12
+  },
+  {
+    "id": "apple-iphone-13-pro-max-512gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "storage": "512GB",
+    "averagePrice": 530,
+    "sampleSize": 13
+  },
+  {
+    "id": "apple-iphone-13-128gb",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "128GB",
+    "averagePrice": 331,
+    "sampleSize": 190
+  },
+  {
+    "id": "apple-iphone-11-pro-256gb",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro",
+    "storage": "256GB",
+    "averagePrice": 210,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-16-plus-128gb",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "storage": "128GB",
+    "averagePrice": 708,
+    "sampleSize": 23
+  },
+  {
+    "id": "samsung-galaxy-s23-plus-256gb",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "storage": "256GB",
+    "averagePrice": 346,
+    "sampleSize": 8
+  },
+  {
+    "id": "samsung-galaxy-s24-plus-256gb",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "storage": "256GB",
+    "averagePrice": 410,
+    "sampleSize": 2
+  },
+  {
+    "id": "samsung-galaxy-s22-ultra-128gb",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "storage": "128GB",
+    "averagePrice": 382,
+    "sampleSize": 76
+  },
+  {
+    "id": "samsung-galaxy-s22-plus-256gb",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "storage": "256GB",
+    "averagePrice": 240,
+    "sampleSize": 2
+  },
+  {
+    "id": "apple-iphone-13-pro-512gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "storage": "512GB",
+    "averagePrice": 462,
+    "sampleSize": 17
+  },
+  {
+    "id": "apple-iphone-12-pro-128gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "storage": "128GB",
+    "averagePrice": 324,
+    "sampleSize": 60
+  },
+  {
+    "id": "samsung-galaxy-s22-plus-128gb",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "storage": "128GB",
+    "averagePrice": 245,
+    "sampleSize": 28
+  },
+  {
+    "id": "samsung-galaxy-a56-128gb",
+    "brand": "Samsung",
+    "model": "Galaxy A56",
+    "storage": "128GB",
+    "averagePrice": 310,
+    "sampleSize": 5
+  },
+  {
+    "id": "apple-iphone-12-64gb",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "storage": "64GB",
+    "averagePrice": 245,
+    "sampleSize": 126
+  },
+  {
+    "id": "apple-iphone-12-128gb",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "storage": "128GB",
+    "averagePrice": 253,
+    "sampleSize": 42
+  },
+  {
+    "id": "apple-iphone-14-pro-256gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "storage": "256GB",
+    "averagePrice": 521,
+    "sampleSize": 4
+  },
+  {
+    "id": "samsung-s25-plus-256gb-unknown",
+    "brand": "Samsung",
+    "model": "S25 PLUS 256GB",
+    "storage": "Unknown",
+    "averagePrice": 667,
+    "sampleSize": 3
+  },
+  {
+    "id": "apple-iphone-16-pro-max-256gb",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "storage": "256GB",
+    "averagePrice": 984,
+    "sampleSize": 7
+  },
+  {
+    "id": "apple-iphone-14-plus-256gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "storage": "256GB",
+    "averagePrice": 384,
+    "sampleSize": 8
+  },
+  {
+    "id": "apple-iphone-12-unknown",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "storage": "Unknown",
+    "averagePrice": 285,
+    "sampleSize": 2
+  },
+  {
+    "id": "apple-iphone-12-pro-max-128gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "storage": "128GB",
+    "averagePrice": 381,
+    "sampleSize": 28
+  },
+  {
+    "id": "apple-iphone-13-256gb",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "256GB",
+    "averagePrice": 350,
+    "sampleSize": 35
+  },
+  {
+    "id": "samsung-galaxy-s22-ultra-512gb",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "storage": "512GB",
+    "averagePrice": 467,
+    "sampleSize": 5
+  },
+  {
+    "id": "samsung-galaxy-s23-ultra-256gb",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "storage": "256GB",
+    "averagePrice": 526,
+    "sampleSize": 23
+  },
+  {
+    "id": "apple-iphone-15-pro-max-256gb",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "storage": "256GB",
+    "averagePrice": 796,
+    "sampleSize": 18
+  },
+  {
+    "id": "apple-iphone-12-mini-256gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Mini",
+    "storage": "256GB",
+    "averagePrice": 185,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-12-mini-64gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Mini",
+    "storage": "64GB",
+    "averagePrice": 180,
+    "sampleSize": 2
+  },
+  {
+    "id": "apple-iphone-11-64gb",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "storage": "64GB",
+    "averagePrice": 193,
+    "sampleSize": 21
+  },
+  {
+    "id": "apple-iphone-13-mini-128gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "storage": "128GB",
+    "averagePrice": 280,
+    "sampleSize": 24
+  },
+  {
+    "id": "apple-17-pro-512gb-unknown",
+    "brand": "Apple",
+    "model": "17 PRO 512GB",
+    "storage": "Unknown",
+    "averagePrice": 1275,
+    "sampleSize": 2
+  },
+  {
+    "id": "apple-17-pro-256gb-unknown",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "storage": "Unknown",
+    "averagePrice": 1257,
+    "sampleSize": 44
+  },
+  {
+    "id": "apple-17-256gb-unknown",
+    "brand": "Apple",
+    "model": "17 256GB",
+    "storage": "Unknown",
+    "averagePrice": 833,
+    "sampleSize": 3
+  },
+  {
+    "id": "apple-iphone-15-pro-max-512gb",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "storage": "512GB",
+    "averagePrice": 827,
+    "sampleSize": 7
+  },
+  {
+    "id": "apple-iphone-13-1tb",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "1TB",
+    "averagePrice": 455,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-12-pro-256gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "storage": "256GB",
+    "averagePrice": 342,
+    "sampleSize": 21
+  },
+  {
+    "id": "apple-iphone-16-pro-256gb",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "storage": "256GB",
+    "averagePrice": 820,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-16e-unknown",
+    "brand": "Apple",
+    "model": "IPHONE 16E",
+    "storage": "Unknown",
+    "averagePrice": 380,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-17-pro-256gbopen-box-unknown",
+    "brand": "Apple",
+    "model": "17 PRO 256GBOPEN BOX",
+    "storage": "Unknown",
+    "averagePrice": 1140,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-apple-watch-ultra-2-unknown",
+    "brand": "Unknown",
+    "model": "APPLE WATCH ULTRA 2",
+    "storage": "Unknown",
+    "averagePrice": 733,
+    "sampleSize": 3
+  },
+  {
+    "id": "samsung-s25-ultra-256gb-unknown",
+    "brand": "Samsung",
+    "model": "S25 ULTRA 256GB",
+    "storage": "Unknown",
+    "averagePrice": 858,
+    "sampleSize": 5
+  },
+  {
+    "id": "apple-iphone-16-128gb",
+    "brand": "Apple",
+    "model": "iPhone 16",
+    "storage": "128GB",
+    "averagePrice": 680,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-11-unknown",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "storage": "Unknown",
+    "averagePrice": 210,
+    "sampleSize": 24
+  },
+  {
+    "id": "apple-iphone-17-pro-max-1tb",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "storage": "1TB",
+    "averagePrice": 1901,
+    "sampleSize": 8
+  },
+  {
+    "id": "apple-iphone-11-pro-unknown",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro",
+    "storage": "Unknown",
+    "averagePrice": 275,
+    "sampleSize": 2
+  },
+  {
+    "id": "unknown-prueba-prueba-unknown",
+    "brand": "Unknown",
+    "model": "PRUEBA PRUEBA",
+    "storage": "Unknown",
+    "averagePrice": 20,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-12-pro-max-256gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "storage": "256GB",
+    "averagePrice": 394,
+    "sampleSize": 33
+  },
+  {
+    "id": "apple-iphone-12-256gb",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "storage": "256GB",
+    "averagePrice": 270,
+    "sampleSize": 24
+  },
+  {
+    "id": "samsung-galaxy-s22-ultra-256gb",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "storage": "256GB",
+    "averagePrice": 380,
+    "sampleSize": 11
+  },
+  {
+    "id": "unknown-a36-5g-unknown",
+    "brand": "Unknown",
+    "model": "A36 5G",
+    "storage": "Unknown",
+    "averagePrice": 220,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-lz-s25-ultra-512gb-caja-nuevo-unknown",
+    "brand": "Samsung",
+    "model": "LZ S25 ULTRA 512GB CAJA NUEVO",
+    "storage": "Unknown",
+    "averagePrice": 850,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-12-pro-max-512gb",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "storage": "512GB",
+    "averagePrice": 420,
+    "sampleSize": 13
+  },
+  {
+    "id": "apple-prueba-iphone-apple-unknown",
+    "brand": "Apple",
+    "model": "PRUEBA IPHONE APPLE",
+    "storage": "Unknown",
+    "averagePrice": 300,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-rec-a53-128gb-duos-unknown",
+    "brand": "Unknown",
+    "model": "REC A53 128GB DUOS",
+    "storage": "Unknown",
+    "averagePrice": 120,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-galaxy-s24-plus-unknown",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "storage": "Unknown",
+    "averagePrice": 335,
+    "sampleSize": 6
+  },
+  {
+    "id": "apple-iphone-16-pro-max-512gb",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "storage": "512GB",
+    "averagePrice": 950,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-oh-note-20-ultra-unknown",
+    "brand": "Samsung",
+    "model": "OH NOTE 20 ULTRA",
+    "storage": "Unknown",
+    "averagePrice": 225,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-lz-s25-ultra-256gb-duos-unknown",
+    "brand": "Samsung",
+    "model": "LZ S25 ULTRA 256GB DUOS",
+    "storage": "Unknown",
+    "averagePrice": 900,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-galaxy-s23-plus-128gb",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "storage": "128GB",
+    "averagePrice": 314,
+    "sampleSize": 25
+  },
+  {
+    "id": "samsung-galaxy-s21-128gb",
+    "brand": "Samsung",
+    "model": "Galaxy S21",
+    "storage": "128GB",
+    "averagePrice": 165,
+    "sampleSize": 5
+  },
+  {
+    "id": "apple-iphone-13-pro-unknown",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "storage": "Unknown",
+    "averagePrice": 445,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-rec-a54-5g-128gb-unknown",
+    "brand": "Unknown",
+    "model": "REC A54 5G 128GB",
+    "storage": "Unknown",
+    "averagePrice": 170,
+    "sampleSize": 2
+  },
+  {
+    "id": "apple-iphone-rec-unknown",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "storage": "Unknown",
+    "averagePrice": 220,
+    "sampleSize": 8
+  },
+  {
+    "id": "apple-iphone-11-128gb",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "storage": "128GB",
+    "averagePrice": 257,
+    "sampleSize": 14
+  },
+  {
+    "id": "samsung-galaxy-s24-ultra-256gb",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "storage": "256GB",
+    "averagePrice": 744,
+    "sampleSize": 8
+  },
+  {
+    "id": "samsung-lz-s25-edge-256gb-unknown",
+    "brand": "Samsung",
+    "model": "LZ S25 EDGE 256GB",
+    "storage": "Unknown",
+    "averagePrice": 660,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-13-pro-max-unknown",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "storage": "Unknown",
+    "averagePrice": 493,
+    "sampleSize": 3
+  },
+  {
+    "id": "samsung-s25-edge-512gb-unknown",
+    "brand": "Samsung",
+    "model": "S25 EDGE 512GB",
+    "storage": "Unknown",
+    "averagePrice": 770,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-s25-ultra-512gb-unknown",
+    "brand": "Samsung",
+    "model": "S25 ULTRA 512GB",
+    "storage": "Unknown",
+    "averagePrice": 950,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-17-air-256gb-unknown",
+    "brand": "Apple",
+    "model": "IPHONE 17 AIR 256GB",
+    "storage": "Unknown",
+    "averagePrice": 1250,
+    "sampleSize": 3
+  },
+  {
+    "id": "apple-iphone-16-pro-128gb",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "storage": "128GB",
+    "averagePrice": 878,
+    "sampleSize": 12
+  },
+  {
+    "id": "samsung-s25-128gb-unknown",
+    "brand": "Samsung",
+    "model": "S25 128GB",
+    "storage": "Unknown",
+    "averagePrice": 500,
+    "sampleSize": 3
+  },
+  {
+    "id": "unknown-se-3-64gb-unknown",
+    "brand": "Unknown",
+    "model": "SE 3 64GB",
+    "storage": "Unknown",
+    "averagePrice": 159,
+    "sampleSize": 8
+  },
+  {
+    "id": "unknown-pixel-9-128gb-unknown",
+    "brand": "Unknown",
+    "model": "PIXEL 9 128GB",
+    "storage": "Unknown",
+    "averagePrice": 470,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-pixel-8-pro-128gb-unknown",
+    "brand": "Unknown",
+    "model": "PIXEL 8 PRO 128GB",
+    "storage": "Unknown",
+    "averagePrice": 380,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-galaxy-s24-plus-128gb",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "storage": "128GB",
+    "averagePrice": 358,
+    "sampleSize": 7
+  },
+  {
+    "id": "unknown-samsung-a54-unknown",
+    "brand": "Unknown",
+    "model": "SAMSUNG A54",
+    "storage": "Unknown",
+    "averagePrice": 170,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-14-plus-unknown",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "storage": "Unknown",
+    "averagePrice": 440,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-eb-s25-plus-256gb-unknown",
+    "brand": "Samsung",
+    "model": "EB S25 PLUS 256GB",
+    "storage": "Unknown",
+    "averagePrice": 700,
+    "sampleSize": 3
+  },
+  {
+    "id": "samsung-eb-s25-128gb-unknown",
+    "brand": "Samsung",
+    "model": "EB S25 128GB",
+    "storage": "Unknown",
+    "averagePrice": 500,
+    "sampleSize": 3
+  },
+  {
+    "id": "unknown-se-2-64gb-unknown",
+    "brand": "Unknown",
+    "model": "SE 2 64GB",
+    "storage": "Unknown",
+    "averagePrice": 140,
+    "sampleSize": 15
+  },
+  {
+    "id": "samsung-galaxy-s22-ultra-unknown",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "storage": "Unknown",
+    "averagePrice": 425,
+    "sampleSize": 2
+  },
+  {
+    "id": "samsung-galaxy-s21-ultra-128gb",
+    "brand": "Samsung",
+    "model": "Galaxy S21 Ultra",
+    "storage": "128GB",
+    "averagePrice": 345,
+    "sampleSize": 2
+  },
+  {
+    "id": "unknown-lz-a36-5g-unknown",
+    "brand": "Unknown",
+    "model": "LZ A36 5G",
+    "storage": "Unknown",
+    "averagePrice": 220,
+    "sampleSize": 3
+  },
+  {
+    "id": "unknown-lolo-guitarra-unknown",
+    "brand": "Unknown",
+    "model": "LOLO GUITARRA",
+    "storage": "Unknown",
+    "averagePrice": 200,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-11-pro-max-64gb",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "storage": "64GB",
+    "averagePrice": 265,
+    "sampleSize": 16
+  },
+  {
+    "id": "apple-iphone-11-pro-max-unknown",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "storage": "Unknown",
+    "averagePrice": 265,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-14-pro-max-512gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "storage": "512GB",
+    "averagePrice": 610,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-z-fold-7-512gb-unknown",
+    "brand": "Unknown",
+    "model": "Z FOLD 7 512GB",
+    "storage": "Unknown",
+    "averagePrice": 1370,
+    "sampleSize": 2
+  },
+  {
+    "id": "samsung-s20-ultra-128gb-unknown",
+    "brand": "Samsung",
+    "model": "S20 ULTRA 128GB",
+    "storage": "Unknown",
+    "averagePrice": 200,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-galaxy-s24-ultra-512gb",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "storage": "512GB",
+    "averagePrice": 760,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-lz-s25-128gb-open-box-unknown",
+    "brand": "Samsung",
+    "model": "LZ S25 128GB OPEN BOX",
+    "storage": "Unknown",
+    "averagePrice": 500,
+    "sampleSize": 1
+  },
+  {
+    "id": "samsung-lz-s25-ultra-256gb-open-box-unknown",
+    "brand": "Samsung",
+    "model": "LZ S25 ULTRA 256GB OPEN BOX",
+    "storage": "Unknown",
+    "averagePrice": 950,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-prueba-pruena5-unknown",
+    "brand": "Unknown",
+    "model": "PRUEBA PRUENA5",
+    "storage": "Unknown",
+    "averagePrice": 350,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-prueba5-pruena-6-unknown",
+    "brand": "Unknown",
+    "model": "PRUEBA5 PRUENA 6",
+    "storage": "Unknown",
+    "averagePrice": 450,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-pruena-4-prueba-5-unknown",
+    "brand": "Unknown",
+    "model": "PRUENA 4 PRUEBA 5",
+    "storage": "Unknown",
+    "averagePrice": 250,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-prueba-3-pruebva-unknown",
+    "brand": "Unknown",
+    "model": "PRUEBA 3 PRUEBVA",
+    "storage": "Unknown",
+    "averagePrice": 249,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-13-unknown",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "Unknown",
+    "averagePrice": 330,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-15-pro-max-1tb",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "storage": "1TB",
+    "averagePrice": 860,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-13-512gb",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "512GB",
+    "averagePrice": 370,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-13-mini-256gb",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "storage": "256GB",
+    "averagePrice": 271,
+    "sampleSize": 5
+  },
+  {
+    "id": "samsung-rec-s25-edge-256gb-unknown",
+    "brand": "Samsung",
+    "model": "REC S25 EDGE 256GB",
+    "storage": "Unknown",
+    "averagePrice": 850,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-wny-16e-128gb-unknown",
+    "brand": "Unknown",
+    "model": "WNY 16E 128GB",
+    "storage": "Unknown",
+    "averagePrice": 533,
+    "sampleSize": 7
+  },
+  {
+    "id": "apple-iphone-15-pro-512gb",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "storage": "512GB",
+    "averagePrice": 725,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-11-pro-max-256gb",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "storage": "256GB",
+    "averagePrice": 290,
+    "sampleSize": 1
+  },
+  {
+    "id": "apple-iphone-14-pro-512gb",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "storage": "512GB",
+    "averagePrice": 560,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-z-fold-7-256gb-unknown",
+    "brand": "Unknown",
+    "model": "Z FOLD 7 256GB",
+    "storage": "Unknown",
+    "averagePrice": 1300,
+    "sampleSize": 2
+  },
+  {
+    "id": "samsung-s25+-unknown",
+    "brand": "Samsung",
+    "model": "S25+",
+    "storage": "Unknown",
+    "averagePrice": 830,
+    "sampleSize": 1
+  },
+  {
+    "id": "unknown-fold-7-unknown",
+    "brand": "Unknown",
+    "model": "FOLD 7",
+    "storage": "Unknown",
+    "averagePrice": 1400,
+    "sampleSize": 1
+  }
+]
