@@ -1,5 +1,16 @@
 import { useAuth } from '../../context';
-import { LogOut, User, Smartphone, Users, PenTool, AlertCircle, Clock } from 'lucide-react';
+import {
+  LogOut,
+  User,
+  Smartphone,
+  Users,
+  PenTool,
+  AlertCircle,
+  Clock,
+  TrendingUp,
+  ShoppingBag,
+  Package,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useDashboardStats } from './hooks/useDashboardStats';
@@ -111,14 +122,54 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-500">Reparaciones y servicios</p>
             </Link>
 
+            {/* Accesorios */}
+            <Link
+              to="/accesorios"
+              className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group"
+            >
+              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
+                <Package className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">Accesorios</h3>
+              <p className="text-sm text-gray-500">Cables, cases, cargadores</p>
+            </Link>
+
+            {/* Finanzas - Solo Admin/Gerente */}
+            {['admin', 'gerente'].includes(userRole || '') && (
+              <Link
+                to="/finanzas"
+                className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group"
+              >
+                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-emerald-200 transition-colors">
+                  <TrendingUp className="w-6 h-6 text-emerald-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-1">Finanzas</h3>
+                <p className="text-sm text-gray-500">P&amp;L, márgenes, reportes</p>
+              </Link>
+            )}
+
+            {/* Historial de Ventas - Solo Admin/Gerente */}
+            {['admin', 'gerente'].includes(userRole || '') && (
+              <Link
+                to="/ventas"
+                className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group"
+              >
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
+                  <ShoppingBag className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-1">Ventas</h3>
+                <p className="text-sm text-gray-500">Historial de transacciones</p>
+              </Link>
+            )}
+
             {/* Usuarios - Solo Admin/Gerente */}
             {['admin', 'gerente'].includes(userRole || '') && (
               <Link
                 to="/admin/usuarios"
                 className="card hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-center justify-center p-6 text-center group"
               >
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
-                  <User className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
+                  <User className="w-6 h-6 text-gray-600" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1">Usuarios</h3>
                 <p className="text-sm text-gray-500">Gestión de compradores B2B</p>

@@ -142,7 +142,10 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
           const pid = pending.phoneId;
           if (!updatedPhoneRepairs.has(pid)) {
             const originalData = phoneDocsToRead.get(pid);
-            updatedPhoneRepairs.set(pid, [...(originalData.reparaciones || [])]);
+            const existingRepairs = Array.isArray(originalData?.reparaciones)
+              ? (originalData.reparaciones as Repair[])
+              : [];
+            updatedPhoneRepairs.set(pid, [...existingRepairs]);
           }
           const repairs = updatedPhoneRepairs.get(pid);
           if (repairs && repairs[pending.repairIndex]) {

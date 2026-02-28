@@ -109,7 +109,13 @@ export function useClientPurchases(clientId: string) {
         id: doc.id,
         ...doc.data(),
         // Convert timestamp
-        purchaseDate: doc.data().purchaseDate?.toDate() || new Date(),
+        purchaseDate: (() => {
+          const v = doc.data().purchaseDate;
+          if (!v) return new Date();
+          if (typeof v === 'string') return new Date(v);
+          if (typeof v.toDate === 'function') return v.toDate();
+          return new Date();
+        })(),
       }));
     },
     enabled: !!clientId,

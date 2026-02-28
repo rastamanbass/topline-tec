@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { collection, writeBatch, doc, serverTimestamp, getDocs } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import seedDataRaw from '../../../data/inventory_seed_v2.json';

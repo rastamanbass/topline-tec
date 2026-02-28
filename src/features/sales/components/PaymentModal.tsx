@@ -70,9 +70,10 @@ export default function PaymentModal() {
 
       await executeSale({
         items: cartItems,
-        clientId: selectedClient?.id || null,
+        clientId: selectedClient?.id || '',
         paymentMethod,
-        discount,
+        totalAmount: total,
+        discountAmount: discount,
         amountPaidWithCredit,
         amountPaidWithWorkshopDebt,
         debtIncurred,

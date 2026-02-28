@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import type { CatalogItem } from '../../types';

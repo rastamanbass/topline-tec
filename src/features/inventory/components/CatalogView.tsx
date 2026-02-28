@@ -34,7 +34,8 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
     'Ultra',
     'Max',
   ];
-  const isHighEnd = (model: string) => highEndKeywords.some((keyword) => model.includes(keyword));
+  const isHighEnd = (model: string | undefined) =>
+    model ? highEndKeywords.some((keyword) => model.includes(keyword)) : false;
 
   const INITIAL_VISIBLE = 12;
 
@@ -76,7 +77,11 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
     {} as Record<string, Phone[]>
   );
 
-  const sortedLots = Object.keys(phonesByLot).sort().reverse();
+  const sortedLots = Object.keys(phonesByLot).sort((a, b) => {
+    const latestA = Math.max(...phonesByLot[a].map((p) => new Date(p.fechaIngreso).getTime()));
+    const latestB = Math.max(...phonesByLot[b].map((p) => new Date(p.fechaIngreso).getTime()));
+    return latestB - latestA;
+  });
 
   return (
     <div className="space-y-8">
@@ -93,7 +98,7 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
           available: items.filter((p) => p.estado === 'En Stock (Disponible para Venta)').length,
           sold: items.filter((p) => p.estado === 'Vendido' || p.estado === 'Apartado').length,
           workshop: items.filter(
-            (p) => p.estado.includes('Taller') || p.estado.includes('Revisión')
+            (p) => (p.estado || '').includes('Taller') || (p.estado || '').includes('Revisión')
           ).length,
         };
 

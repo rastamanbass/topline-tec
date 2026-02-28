@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { executeSaleTransaction, type SaleData } from '../../../services/firebase/transactions';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import type { Phone } from '../../../types';
 

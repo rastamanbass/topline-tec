@@ -10,8 +10,8 @@ interface PhoneCardProps {
 }
 
 // Moved outside component to satisfy react-hooks/static-components rule
-function BrandIcon({ brand }: { brand: string }) {
-  const b = brand.toLowerCase();
+function BrandIcon({ brand }: { brand: string | undefined }) {
+  const b = (brand || '').toLowerCase();
   if (b.includes('apple') || b.includes('iphone'))
     return <span className="font-bold font-sans tracking-tight text-slate-900"> iPhone</span>;
   if (b.includes('samsung'))

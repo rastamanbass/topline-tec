@@ -63671,10 +63671,6 @@ export const TAC_DATABASE: Record<string, { brand: string; model: string }> = {
     brand: 'LG Electronics Inc',
     model: 'LG-G632',
   },
-  '35618816': {
-    brand: 'Apple',
-    model: 'iPhone 17 Pro Max',
-  },
   '35619000': {
     brand: 'LG Electronics Inc',
     model: 'LG-C1100',

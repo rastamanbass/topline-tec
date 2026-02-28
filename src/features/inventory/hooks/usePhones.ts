@@ -25,10 +25,14 @@ export interface PhoneFilters {
   searchQuery?: string;
 }
 
-// Convert Firestore Timestamp to Date
-const convertTimestamp = (timestamp: Timestamp | Date): Date => {
+// Convert Firestore Timestamp | Date | string to Date (handles legacy string dates from prod)
+const convertTimestamp = (timestamp: Timestamp | Date | string | unknown): Date => {
+  if (!timestamp) return new Date();
   if (timestamp instanceof Date) return timestamp;
-  return timestamp.toDate();
+  if (typeof timestamp === 'string') return new Date(timestamp);
+  if (typeof (timestamp as Timestamp).toDate === 'function')
+    return (timestamp as Timestamp).toDate();
+  return new Date();
 };
 
 // Fetch all phones with optional filters

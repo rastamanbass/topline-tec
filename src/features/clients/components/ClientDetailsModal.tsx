@@ -82,56 +82,52 @@ export default function ClientDetailsModal({ isOpen, onClose, client }: ClientDe
             <p className="text-gray-500">Cargando historial...</p>
           ) : purchases && purchases.length > 0 ? (
             <div className="space-y-4">
-              {purchases.map(
-                (
-                  purchase: Record<string, unknown> & {
-                    id: string;
-                    purchaseDate: Date;
-                    totalAmount: number;
-                    items: { description?: string; imei?: string; quantity: number }[];
-                    paymentMethod: string;
-                    amountPaidWithCredit?: number;
-                  }
-                ) => (
-                  <div
-                    key={purchase.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          Compra #{purchase.id.slice(0, 6)}
-                        </p>
-                        <p className="text-sm text-gray-500">{formatDate(purchase.purchaseDate)}</p>
-                      </div>
-                      <span className="font-bold text-gray-900">
-                        {formatCurrency(purchase.totalAmount)}
-                      </span>
+              {(
+                purchases as Array<{
+                  id: string;
+                  purchaseDate: Date;
+                  totalAmount: number;
+                  items: { description?: string; imei?: string; quantity: number }[];
+                  paymentMethod: string;
+                  amountPaidWithCredit?: number;
+                }>
+              ).map((purchase) => (
+                <div
+                  key={purchase.id}
+                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-medium text-gray-900">Compra #{purchase.id.slice(0, 6)}</p>
+                      <p className="text-sm text-gray-500">{formatDate(purchase.purchaseDate)}</p>
                     </div>
-
-                    <div className="text-sm text-gray-600 mt-2 space-y-1">
-                      {purchase.items.map((item, idx: number) => (
-                        <div key={idx} className="flex items-center gap-2">
-                          <Package className="w-3 h-3 text-gray-400" />
-                          <span>{item.description || item.imei}</span>
-                          <span className="text-gray-400">x{item.quantity}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-2 text-xs text-gray-500 flex gap-2">
-                      <span className="bg-gray-100 px-2 py-1 rounded">
-                        Método: {purchase.paymentMethod}
-                      </span>
-                      {purchase.amountPaidWithCredit > 0 && (
-                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-                          Crédito usado: {formatCurrency(purchase.amountPaidWithCredit)}
-                        </span>
-                      )}
-                    </div>
+                    <span className="font-bold text-gray-900">
+                      {formatCurrency(purchase.totalAmount)}
+                    </span>
                   </div>
-                )
-              )}
+
+                  <div className="text-sm text-gray-600 mt-2 space-y-1">
+                    {purchase.items.map((item, idx: number) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <Package className="w-3 h-3 text-gray-400" />
+                        <span>{item.description || item.imei}</span>
+                        <span className="text-gray-400">x{item.quantity}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-2 text-xs text-gray-500 flex gap-2">
+                    <span className="bg-gray-100 px-2 py-1 rounded">
+                      Método: {purchase.paymentMethod}
+                    </span>
+                    {(purchase.amountPaidWithCredit ?? 0) > 0 && (
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
+                        Crédito usado: {formatCurrency(purchase.amountPaidWithCredit ?? 0)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">

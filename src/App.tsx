@@ -14,6 +14,9 @@ const PublicCatalogPage = lazy(() => import('./features/public/pages/PublicCatal
 const ClientStorePage = lazy(() => import('./features/public/pages/ClientStorePage'));
 const UsersManagementPage = lazy(() => import('./features/users/pages/UsersManagementPage'));
 const CatalogPage = lazy(() => import('./features/catalog/CatalogPage'));
+const FinancePage = lazy(() => import('./features/finance/FinancePage'));
+const SalesHistoryPage = lazy(() => import('./features/sales/SalesHistoryPage'));
+const AccessoriesPage = lazy(() => import('./features/accessories/AccessoriesPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -105,6 +108,33 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['comprador', 'admin', 'gerente']}>
                     <ClientStorePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/finanzas"
+                element={
+                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                    <FinancePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/ventas"
+                element={
+                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                    <SalesHistoryPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/accesorios"
+                element={
+                  <ProtectedRoute>
+                    <AccessoriesPage />
                   </ProtectedRoute>
                 }
               />
