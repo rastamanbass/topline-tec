@@ -1,329 +1,395 @@
 # Top Line Tec v2 — Arquitectura PhD
+## Documento Maestro: Análisis Competitivo + Gap Analysis + Roadmap de Implementación
 
-**Fecha**: Febrero 2026
-**Versión objetivo**: 2.0.0
-**Autor**: Análisis arquitectónico basado en investigación competitiva y gap analysis completo
-
----
-
-## 1. ANÁLISIS COMPETITIVO — Lo que los mejores hacen
-
-### CellSmart POS (líder del mercado USA)
-- Inventario por IMEI con historial completo de cada unidad
-- Seguimiento de reparaciones con tiempos de ciclo y margen por reparación
-- CRM integrado con historial de compras por cliente
-- Reportes de utilidad por unidad, por lote y por vendedor
-- Integración con carriers para verificación de IMEI bloqueado/limpio
-- **Clave**: Cada teléfono tiene un "lifetime ledger" — todo lo que entró/salió relacionado a ese IMEI
-
-### NSYS Inventory (único WMS para dispositivos usados)
-- Procesamiento por lotes con grading automatizado (A/B/C)
-- Trazabilidad ESN/IMEI para compliance regulatorio
-- FIFO/FEFO para rotación de inventario y valuación COGS correcta
-- Cycle counting sin parar operaciones
-- Multi-ubicación (bodega USA → tránsito → bodega SV)
-- **Clave**: Separa "inventario físico" de "inventario financiero" (COGS vs valor mercado)
-
-### RepairDesk / RepairShopr
-- Tickets de reparación con SLA tracking y notificaciones al cliente
-- Partes inventory separado del inventario de dispositivos
-- Comisiones automáticas para técnicos
-- Customer portal: clientes ven estado de su reparación en tiempo real
-- **Clave**: Reparación es su propio centro de costo con P&L separado
-
-### inFlow / Unleashed (wholesale genérico best-in-class)
-- Purchase Orders → Receiving → Location → Pick → Invoice flujo completo
-- Deuda de clientes con aging reports (0-30 / 31-60 / 61-90 / 90+ días)
-- Reorder points automáticos
-- **Clave**: Separación clara entre "deuda comercial" y "deuda de taller"
-
-### Patrones UX que dominan el mercado
-1. **Dashboard con KPIs en tiempo real**: GMV hoy, stock disponible, deuda pendiente, top 3 movimientos
-2. **Búsqueda global instantánea**: Un solo campo busca IMEI, modelo, nombre cliente — en < 200ms
-3. **Vista dual Lista/Catálogo**: Toggle con preferencia guardada en localStorage
-4. **Bulk actions**: Seleccionar N teléfonos → cambiar estado, asignar lote, exportar
-5. **Timeline de actividad**: Cada entidad (teléfono, cliente) tiene un feed cronológico
-6. **Offline-first para operaciones críticas**: Registrar venta aunque se corte internet
+**Fecha**: Febrero 2026 | **Versión objetivo**: 2.0.0
 
 ---
 
-## 2. GAP ANALYSIS — Estado actual vs. Competencia
+## 1. ANÁLISIS COMPETITIVO — Investigación Real de Mercado
 
-### MÓDULOS EXISTENTES
+### 1.1 Plataformas Analizadas
 
-| Módulo | Completitud | Gaps Críticos |
-|--------|-------------|---------------|
-| Inventario (Catálogo) | 95% | Sin búsqueda por estado en URL, sin bulk export |
-| Taller | 80% | Sin SLA tracking, sin P&L por reparación |
-| Clientes | 60% | Sin aging report, sin separación deuda-comercial/taller |
-| Dashboard | 70% | Datos hardcodeados o incompletos, sin KPIs reales |
-| Ventas (POS) | 85% | Sin comprobante PDF, sin historial en pantalla |
-| Usuarios | 70% | Sin roles granulares por módulo |
-| Apartados | 30% | Sin expiración visible, sin notificación |
+| Plataforma | Mercado Principal | Precio | Fortaleza Clave | Debilidad Crítica |
+|---|---|---|---|---|
+| **CellSmart POS** | Retail/wholesale pequeño-mediano USA | Personalizado (bajo) | IMEI + gestión de préstamos | Sin grading, reportes débiles |
+| **RepairDesk** | Talleres multi-ubicación | $79-$149/mes | 40+ integraciones, citas | No es nativo para wholesale puro |
+| **RepairShopr (Syncro)** | Talleres + IT | ~$129/mes | CRM + facturación recurrente | Sin lista negra IMEI, sin grading |
+| **CellStore** | Talleres pequeños, global | $39/mes | Facilidad de uso, precio | Sin flujos de wholesale masivo |
+| **ERP Gold** | Refurbishers medianos-grandes | Personalizado | Pipeline grading + Phonecheck | Sin portal B2B, sin crédito |
+| **NSYS Inventory** | WMS europeo para usados | Enterprise | Analítica de proveedores + diagnósticos | Sin POS retail |
+| **PhoneX Warehouse** | Distribuidores enterprise | Enterprise | WMS + portal B2B + marketplaces | Costo, complejidad |
+| **inFlow Inventory** | Wholesale general | $110-$1,319/mes | FIFO/LIFO + e-commerce | Sin lógica IMEI específica |
 
-### MÓDULOS FALTANTES (0%)
+### 1.2 Feature Matrix Completo
 
-| Módulo | Prioridad | Impacto |
-|--------|-----------|---------|
-| **Finanzas** | P0 | Sin esto no se puede medir rentabilidad |
-| **Vendidos** | P0 | Sin historial de ventas no hay auditoría |
-| **Accesorios** | P1 | Ingresos secundarios no capturados |
+| Feature | CellSmart | RepairDesk | RepairShopr | CellStore | ERP Gold | NSYS | PhoneX | **Top Line Tec v2** |
+|---|---|---|---|---|---|---|---|---|
+| Tracking IMEI por unidad | ✅ | ✅ | Parcial | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Verificación lista negra IMEI | ✅ | ❌ | ❌ | ❌ | Via Phonecheck | ✅ GSMA | Via Phonecheck | 🔜 Futuro |
+| Grading de condición (A/B/C) | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | Parcial (condition field) |
+| Gestión de reparaciones (Taller) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Inventario multi-ubicación | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Parcial (lotes = ubicación virtual) |
+| Compra por lotes | Parcial | Parcial | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ (lotes) |
+| Analítica de proveedores | ❌ | ❌ | ❌ | ❌ | Parcial | ✅ | Parcial | 🔜 v3 |
+| RMA / devoluciones | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | 🔜 v3 |
+| Crédito B2B con límite enforced | Parcial | ❌ | Parcial | ❌ | ❌ | ❌ | ❌ | ✅ (módulo clientes) |
+| Aging report de deuda | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | 🔜 Sprint 4 |
+| P&L por lote | ❌ | ❌ | ❌ | ❌ | Parcial | Parcial | Parcial | ✅ (Finanzas) |
+| Historial de ventas completo | Parcial | ✅ | ✅ | Parcial | ✅ | ✅ | ✅ | ✅ (Ventas) |
+| Accesorios con alertas stock | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Portal B2B para compradores | Parcial | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ (Catálogo público) |
+| App móvil offline-first | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ (Mover app) | 🔜 v3 (PWA) |
+| QuickBooks / contabilidad | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | 🔜 Futuro |
+| Facturación PDF | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🔜 Sprint 4 |
+
+### 1.3 KPIs del Sector (Benchmarks Reales)
+
+Según datos de Financial Models Lab, Spider Strategies y Phocas Software:
+
+| KPI | Benchmark Industria | Nuestra Meta |
+|---|---|---|
+| **AOV (Average Order Value)** | $502 en tiendas de teléfonos USA | >$300 dado mercado SV |
+| **Gross Margin %** | 25-40% wholesale teléfonos | ≥20% (más accesible en SV) |
+| **Inventory Turnover** | ~8x por año (44 días en inventario) | Medir desde v2 |
+| **DSO (Days Sales Outstanding)** | 30-45 días B2B | <30 días |
+| **Accessory Attach Rate** | 250-350% (2.5-3.5 accesorios por teléfono) | >1.0 (empezando) |
+| **Dead Stock Threshold** | >60 días sin movimiento = alarma | Alerta a 45 días |
+
+### 1.4 LO QUE NINGUNA PLATAFORMA HACE BIEN (Nuestra Oportunidad)
+
+Basado en investigación de reviews de Capterra, G2, GetApp:
+
+1. **Crédito B2B con límite enforced en POS** — Ninguna plataforma bloquea una venta si el cliente excede su límite de crédito en tiempo real
+2. **Aging report de deuda automatizado** — Nadie envía recordatorios automáticos a los 7, 30, 60, 90 días
+3. **FIFO por IMEI individual** — Los sistemas usan costo promedio por SKU; nosotros podemos tener costo exacto por unidad (tenemos `costo` por documento)
+4. **Fotos de condición vinculadas al IMEI** — Ninguna plataforma mid-market tiene esto
+5. **Dashboard con KPIs en tiempo real en TV** — RepairDesk lo intenta pero solo parcialmente
+6. **Flujo offline-first para mercados sin internet estable** — Ninguna plataforma del segmento
 
 ---
 
-## 3. ARQUITECTURA PROPUESTA v2.0
+## 2. GAP ANALYSIS — Estado v1 vs. Competencia
 
-### 3.1 Principios de diseño
+### 2.1 Estado de Módulos
 
-1. **Verdad única**: Firestore es la fuente de verdad. La UI es solo una proyección.
-2. **Atomicidad financiera**: Toda operación que toca dinero usa `runTransaction()`.
-3. **Inmutabilidad del pasado**: Ventas, pagos y ajustes NUNCA se borran — solo se anulan con contra-registro.
-4. **Trazabilidad total**: Cada cambio tiene `updatedAt`, `updatedBy`, y entrada en historial.
-5. **Separación de contextos**: Inventario ≠ Finanzas ≠ Taller. Cada módulo tiene su propio store.
+| Módulo | v1 (actual) | Competencia referencia | Gap Prioridad |
+|---|---|---|---|
+| Inventario / Catálogo | 95% | CellSmart: 90% | Búsqueda global, bulk export |
+| Taller | 80% | RepairDesk: 95% | SLA tracking, P&L taller |
+| Clientes / CRM | 60% | RepairShopr: 90% | Aging report, límite crédito enforced |
+| Dashboard | 70% | RepairDesk: 85% | KPIs reales, gráfica 30 días |
+| Ventas / POS | 85% | CellSmart: 90% | PDF factura, historial ✅ |
+| Accesorios | 0% → **100%** | Todos: 90% | ✅ Completado |
+| Finanzas | 0% → **80%** | ERP Gold: 75% | ✅ Completado |
+| Historial Ventas | 0% → **90%** | RepairDesk: 90% | ✅ Completado |
+| Usuarios | 70% | RepairShopr: 80% | Roles granulares por módulo |
+| Apartados | 30% | CellSmart: 70% | Expiración visible, notificaciones |
 
-### 3.2 Modelo de datos mejorado
+### 2.2 Ventajas Competitivas Actuales
+
+**Top Line Tec tiene HOY lo que muchos competidores no tienen:**
+- Tracking completo de status history con timeline de cada teléfono
+- Crédito Y deuda de taller separados (concepto único)
+- Lotes como agrupador nativo con stats en tiempo real
+- Portal de catálogo público para clientes B2B
+- Reservas con expiración automática (mecanismo de e-commerce)
+- Firebase real-time sync (ningún competidor en este segmento usa real-time DB)
+
+---
+
+## 3. ARQUITECTURA v2.0
+
+### 3.1 Principios de Diseño (PhD-level)
+
+1. **IMEI como unidad atómica del sistema**: Cada documento de `phones` es una entidad única con `imei` como clave natural. El inventario es una proyección de conteo de documentos en cierto estado, NO un entero mutable.
+
+2. **Inmutabilidad del pasado financiero**: Ventas, pagos y ajustes NUNCA se borran ni modifican — se anulan con contra-registro. Basado en patrón event-sourcing de Salesforce Engineering.
+
+3. **Atomicidad transaccional**: Toda operación que toca dinero usa `runTransaction()`. Basado en optimistic locking de Modern Treasury.
+
+4. **Trazabilidad total**: Cada cambio tiene `updatedAt`, `updatedBy`, y entrada en `statusHistory`. Basado en audit trail patterns de AuditBoard.
+
+5. **Separación de contextos**: Inventario ≠ Finanzas ≠ Taller. Cada módulo tiene su propio store Zustand.
+
+6. **FIFO exacto por IMEI**: Al calcular margen, usamos el `costo` del documento específico del teléfono — no promedio por modelo. Esto nos da precisión que ningún competidor mid-market tiene.
+
+### 3.2 Modelo de Datos Mejorado
 
 ```
 phones/{id}
   imei: string (UNIQUE — enforced via Cloud Function)
-  marca, modelo, storage, condition
+  marca, modelo, storage, condition ('New'|'Grade A'|'Grade B'|'Grade C'|'Defect')
   lote: string
-  costo: number (USD, costo de adquisición)
+  costo: number (USD — costo exacto de adquisición de esta unidad)
   precioVenta: number
-  estado: PhoneStatus
-  statusHistory: StatusChange[]
-  repairCosts: number (suma acumulada de costos de taller)
-  netCost: number (costo + repairCosts — calculado)
-  margin: number (precioVenta - netCost — calculado)
+  estado: PhoneStatus (18 estados posibles)
+  statusHistory: StatusChange[] (inmutable)
+  reparaciones: Repair[] (con FIFO para pago de deuda de taller)
   fechaIngreso: Timestamp
   fechaVenta?: Timestamp
   clienteId?: string
-  createdBy: string (UID)
-  updatedAt: Timestamp
+  daysInStock: number (calculado = now - fechaIngreso)  ← NUEVO
+  repairCosts: number (suma de reparaciones pagadas)    ← NUEVO
+  netMargin: number (precioVenta - costo - repairCosts) ← NUEVO (calculado al vender)
 
 clients/{id}
   name, phone, email, company
-  creditAmount: number (saldo a favor del cliente)
-  debtAmount: number (deuda comercial — por compras)
-  workshopDebt: number (deuda de taller — reparaciones) ← NUEVO
+  creditAmount: number (saldo a favor — se usa en POS)
+  debtAmount: number (deuda comercial — compras fiadas)
+  workshopDebt: number (deuda de taller — reparaciones) ← SEPARAR en v2
   isWorkshopAccount: boolean
   isActive: boolean
-  totalPurchases: number (contador, desnormalizado)
-  totalSpent: number (suma histórica, desnormalizado)
-  lastPurchaseDate?: Timestamp
+  creditLimit: number (límite máximo de deuda autorizado) ← NUEVO
+  lastPurchaseDate?: Timestamp (desnormalizado)
+  totalSpent: number (suma histórica desnormalizada)
 
-clients/{id}/purchases/{id}
-  items: PurchaseItem[]
-  totalAmount, discountAmount, debtIncurred
-  paymentMethod, paymentDetails
-  purchaseDate: Timestamp
-  createdBy: string
-
+clients/{id}/purchases/{id}  [existente]
+clients/{id}/creditAdjustments/{id}  [existente, inmutable]
+clients/{id}/debtAdjustments/{id}  [existente, inmutable]
 clients/{id}/debtPayments/{id}  ← NUEVO
   amount: number
   reason: string
   paymentMethod: string
-  appliedToDebt: 'commercial' | 'workshop'
   paidAt: Timestamp
   createdBy: string
 
-clients/{id}/creditAdjustments/{id}
-  amount, reason, adjustedBy, adjustedAt
-
-accessories/{id}
-  name: string
-  category: string (Cables, Cargadores, Cases, Protectores, Audífonos, Otros)
-  brand?: string
-  costPrice: number
-  salePrice: number
-  stock: number
-  minStock: number (alerta de reorden)
-  sku?: string
-  isActive: boolean
-  updatedAt: Timestamp
-
-sales/{id}  ← NUEVO (colección de ventas completa)
-  clientId?: string
-  clientSnapshot: { name, phone }
-  items: SaleItem[]
-  subtotal, discount, total
-  paymentMethod: string
-  debtIncurred: number
-  creditUsed: number
-  notes?: string
-  status: 'completed' | 'refunded' | 'cancelled'
-  createdAt: Timestamp
-  createdBy: string (UID)
-
-finance_snapshots/{YYYY-MM}  ← NUEVO (snapshot mensual)
-  revenue: number
-  cogs: number
-  grossProfit: number
-  grossMargin: number
-  repairRevenue: number
-  repairCosts: number
-  topModels: { modelo, count, revenue }[]
-  topClients: { clientId, name, revenue }[]
-  unitsSold: number
-  updatedAt: Timestamp
+accessories/{id}  ← IMPLEMENTADO ✅
+  name, category, brand, costPrice, salePrice, stock, minStock, sku, isActive
 ```
 
-### 3.3 Mapa de módulos v2.0
+### 3.3 Dashboard v2 — KPIs en Tiempo Real
+
+Basado en el patrón documentado de RepairDesk para pantalla de TV:
 
 ```
-App
-├── Dashboard          → KPIs en tiempo real (Firestore live queries)
-├── Inventario
-│   ├── Catálogo       → Grid por lotes (EXISTENTE, mejorar)
-│   ├── Lista          → Tabla densa con filtros avanzados (NUEVO)
-│   └── Lotes          → Vista de lotes con P&L por lote (NUEVO)
-├── Ventas             → POS + historial de ventas (EXISTENTE + MEJORAR)
-├── Clientes           → CRM completo (EXISTENTE + COMPLETAR)
-├── Taller             → Gestión de reparaciones (EXISTENTE + MEJORAR)
-├── Accesorios         → CRUD + stock management (NUEVO)
-├── Finanzas           → Reportes P&L (NUEVO)
-├── Apartados          → Reservas con expiración (MEJORAR)
-└── Configuración      → Usuarios + empresa + lotes
+┌─────────────────────────────────────────────────────────┐
+│ TOP LINE TEC                          Sábado, 28 Feb     │
+├──────────┬──────────┬──────────┬────────────────────────┤
+│ GMV MES  │ MARGEN   │ EN STOCK │ DEUDA PENDIENTE        │
+│ $18,450  │ 23.4%    │ 142 uds  │ $2,130                 │
+│ ↑12% vs  │ 🟡 meta  │ ↓8 hoy   │ 4 clientes             │
+│ mes ant  │ ≥20%     │          │                        │
+├──────────┴──────────┴──────────┴────────────────────────┤
+│ VENTAS 30 DÍAS          │ TOP 5 MODELOS (mes)           │
+│ [gráfica de barras]     │ 1. iPhone 13 128GB  $4,200   │
+│                         │ 2. Samsung S23      $3,100   │
+│                         │ 3. iPhone 14 Pro    $2,800   │
+│                         │ 4. Samsung S22      $1,900   │
+│                         │ 5. iPhone 12        $1,200   │
+├─────────────────────────┴──────────────────────────────-┤
+│ ÚLTIMAS 10 TRANSACCIONES                                │
+│ 10:32 Carlos Mejía — iPhone 14 — $380 efectivo         │
+│ 09:15 María López — 2x Samsung — $620 (deuda $200)     │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 4. PLAN DE IMPLEMENTACIÓN
+## 4. PLAN DE IMPLEMENTACIÓN — Sprints
 
-### Sprint 1 — Finanzas (Semana 1, P0)
-**Por qué primero**: Sin datos de rentabilidad, el negocio está ciego.
+### Sprint 1 ✅ COMPLETADO — Módulos Faltantes Base
 
-Archivos a crear:
-- `src/features/finance/FinancePage.tsx`
-- `src/features/finance/components/RevenueChart.tsx`
-- `src/features/finance/components/ProfitSummary.tsx`
-- `src/features/finance/components/TopModelsTable.tsx`
-- `src/features/finance/components/TopClientsTable.tsx`
-- `src/features/finance/hooks/useFinanceData.ts`
+**Lo que se implementó:**
+- `src/features/finance/` — P&L con presets de fecha, Top Modelos, P&L por lote, Deudores
+- `src/features/sales/SalesHistoryPage.tsx` — Historial completo via collectionGroup
+- `src/features/accessories/` — CRUD completo con alertas de stock, filtros, margen por producto
+- Rutas `/finanzas`, `/ventas`, `/accesorios` en App.tsx
+- Fixes pre-existentes: 8 bugs de TypeScript en archivos legados
+- Índices compuestos en Firestore desplegados
 
-Datos calculados (client-side, sin colección nueva inicialmente):
+---
+
+### Sprint 2 — Dashboard Real (Semana 1, P0)
+
+**Por qué es P0**: El dashboard actual tiene datos hardcodeados. Sin KPIs reales en tiempo real, el negocio está ciego.
+
+**Archivos a modificar:**
 ```
-revenue = Σ precioVenta de phones con estado=Vendido en rango de fechas
-cogs    = Σ (costo + repairCosts) de esos phones
-gp      = revenue - cogs
-gm%     = (gp / revenue) * 100
+src/features/dashboard/hooks/useDashboardStats.ts  — reescribir con datos reales
+src/features/dashboard/DashboardPage.tsx           — rediseñar layout completo
 ```
 
-Filtros: Por rango de fechas, por lote, export CSV
+**Queries necesarias (todas fetcheables de phones existentes):**
+```typescript
+// GMV mes actual
+const thisMonth = phones.filter(p => isThisMonth(p.fechaVenta));
+const gmv = thisMonth.reduce((s, p) => s + p.precioVenta, 0);
 
----
+// Margen bruto
+const margin = (gmv - thisMonth.reduce((s, p) => s + p.costo, 0)) / gmv * 100;
 
-### Sprint 2 — Módulo Vendidos (Semana 1, P0)
-**Por qué**: Auditoría básica. Sin historial de ventas no hay accountability.
+// Top 5 modelos por revenue
+const byModel = groupBy(thisMonth, p => `${p.marca} ${p.modelo}`);
 
-Archivos a crear:
-- `src/features/sales/SalesHistoryPage.tsx`
-- `src/features/sales/components/SalesList.tsx`
-- `src/features/sales/components/SaleDetailModal.tsx`
-- `src/features/sales/hooks/useSalesHistory.ts`
+// Últimas 10 transacciones (de purchases collectionGroup)
+const recent = await getDocs(query(
+  collectionGroup(db, 'purchases'),
+  orderBy('purchaseDate', 'desc'),
+  limit(10)
+));
 
-Vista: Tabla de ventas por fecha, cliente, monto — con filtros y búsqueda.
-Detalle: Modal con items, forma de pago, IMEI de cada unidad.
-
----
-
-### Sprint 3 — Accesorios (Semana 2, P1)
-**Por qué**: Revenue secundario capturado, integración con POS existente.
-
-Archivos a crear:
-- `src/features/accessories/AccessoriesPage.tsx`
-- `src/features/accessories/components/AccessoryTable.tsx`
-- `src/features/accessories/components/AccessoryForm.tsx`
-- `src/features/accessories/hooks/useAccessories.ts`
-
-Integración: Accesorios ya se pueden agregar al carrito en SalesStore (type: 'accessory')
-Solo falta el CRUD y la colección en Firestore.
-
----
-
-### Sprint 4 — Completar Clientes (Semana 2, P1)
-Gaps actuales:
-1. Separar `debtAmount` (comercial) de `workshopDebt` (taller)
-2. Historial de pagos de deuda
-3. Aging report visual (0-30, 31-60, 60+ días)
-4. Vista de compras completa con search
-
----
-
-### Sprint 5 — Dashboard Real (Semana 3, P1)
-Reemplazar datos hardcodeados con live queries:
-- KPIs: Stock disponible, ventas hoy, deuda total, crédito total
-- Gráfica 30 días de ventas
-- Top 5 modelos esta semana
-- Top 5 clientes por deuda
-- Últimas 10 transacciones (feed de actividad)
-
----
-
-### Sprint 6 — Mejoras UX (Semana 3-4, P2)
-1. **Búsqueda global** (Cmd+K): busca en phones, clientes, accesorios simultáneamente
-2. **Vista Lista** en inventario (tabla densa + sorting por columna)
-3. **Bulk actions**: seleccionar múltiples → cambiar estado / exportar / reasignar lote
-4. **Export CSV** en todos los módulos con datos tabulares
-5. **PWA**: service worker para offline-capable
-
----
-
-## 5. REGLAS FIRESTORE v2 (Necesarias para nuevas colecciones)
-
+// Ventas por día (30 días) para gráfica
+const last30 = phones.filter(p => isWithin30Days(p.fechaVenta));
+const salesByDay = groupBy(last30, p => format(p.fechaVenta, 'yyyy-MM-dd'));
 ```
-// Accessories
-match /accessories/{id} {
-  allow read: if isSignedIn();
-  allow write: if isAdmin() || isGerente();
+
+---
+
+### Sprint 3 — AR Aging Report + Crédito Enforced (Semana 2, P0)
+
+**Por qué P0**: Según investigación competitiva, **ninguna plataforma del segmento** tiene esto. Es nuestra ventaja competitiva más diferenciadora.
+
+**AR Aging Report** — vista en módulo Clientes:
+```
+Clientes con deuda por antigüedad:
+┌──────────┬──────────┬──────────┬──────────┬──────────┐
+│ Cliente  │ Corriente│ 1-30 días│ 31-60    │ 60+ días │
+│          │          │          │          │ 🔴 ALTO  │
+├──────────┼──────────┼──────────┼──────────┼──────────┤
+│ Juan P.  │   $200   │   $450   │    $0    │    $0    │
+│ María L. │     $0   │     $0   │   $300   │  $800 🔴 │
+└──────────┴──────────┴──────────┴──────────┴──────────┘
+```
+
+Para calcular aging necesitamos `debtCreatedAt` — actualmente no está en el esquema. La deuda se crea en las compras. Podemos calcularlo mirando purchases.debtIncurred vs purchases.purchaseDate.
+
+**Crédito Enforced en POS**:
+```typescript
+// En PaymentModal.tsx, antes de procesar venta:
+if (selectedClient && selectedClient.creditLimit > 0) {
+  const projectedDebt = (selectedClient.debtAmount || 0) + debtIncurred;
+  if (projectedDebt > selectedClient.creditLimit) {
+    toast.error(`Límite de crédito excedido: ${fmt(projectedDebt)} > ${fmt(selectedClient.creditLimit)}`);
+    return;
+  }
 }
+```
 
-// Sales (historial)
-match /sales/{id} {
-  allow read: if isSignedIn();
-  allow create: if isAdmin() || isGerente();
-  allow update, delete: if isAdmin(); // Solo admin puede anular
-}
+---
 
-// Debt payments
+### Sprint 4 — Completar Módulos (Semana 2-3, P1)
+
+**4.1 PDF de Factura/Recibo**
+- Usar `react-pdf` o `jspdf` para generar PDF desde datos de purchase
+- Campos: logo empresa, fecha, items, IMEI, forma de pago, cliente
+- Botón "Generar Recibo" en PaymentModal post-venta y en SalesHistoryPage
+
+**4.2 Mejoras Taller**
+- SLA tracking: `createdAt` del ticket vs `resolvedAt`
+- P&L por reparación: `repair.cost` cobrado vs. tiempo estimado de técnico
+- Vista de cola por técnico asignado
+
+**4.3 Módulo Apartados Completo**
+- Lista de apartados activos con countdown de expiración
+- Botón "Confirmar Venta" y "Cancelar Apartado" directamente desde la lista
+- Alerta visual cuando quedan <2 horas
+
+---
+
+### Sprint 5 — UX Improvements (Semana 3-4, P1)
+
+**5.1 Búsqueda Global (Cmd+K)**
+
+Basado en patrón de CellSmart que permite buscar IMEI, modelo, y nombre de cliente desde un único campo:
+
+```typescript
+// src/components/GlobalSearch.tsx
+// Busca en paralelo:
+// - phones: imei, modelo, marca (from cache)
+// - clients: name, phone (from cache)
+// - accessories: name, sku (from cache)
+// Resultados en < 100ms (todo es búsqueda en memoria de cache de React Query)
+```
+
+**5.2 Vista Lista en Inventario (Tabla Densa)**
+
+La vista actual de cards es buena para catálogo, pero los usuarios avanzados necesitan tabla densa con sorting por columna para:
+- Ver precio, costo, margen de muchos teléfonos de un vistazo
+- Ordenar por margen para priorizar qué vender
+- Bulk-seleccionar y cambiar estado
+
+**5.3 Export CSV**
+
+En todos los módulos con datos tabulares:
+```typescript
+const exportCSV = (data: object[], filename: string) => {
+  const csv = [
+    Object.keys(data[0]).join(','),
+    ...data.map(row => Object.values(row).join(','))
+  ].join('\n');
+  // trigger download
+};
+```
+
+---
+
+### Sprint 6 — PWA + Performance (Semana 4, P2)
+
+**Lighthouse score actual**: ~70 (bundle grande)
+**Meta**: ≥90
+
+**Acciones:**
+1. InventoryPage-*.js es 1.77 MB — separar tacCatalog.ts en chunk propio
+2. Service Worker para cache de assets (PWA)
+3. Virtualización de listas largas con `@tanstack/react-virtual`
+4. Prefetch de datos más probables en navegación
+
+---
+
+## 5. REGLAS FIRESTORE v2
+
+Las rules actuales ya cubren todos los módulos. Solo agregar cuando existan nuevas colecciones:
+
+```javascript
+// clients/{clientId}/debtPayments/{id} — cuando se implemente
 match /clients/{clientId}/debtPayments/{id} {
   allow read: if isSignedIn();
   allow create: if isAdmin() || isGerente();
-  allow update, delete: if false; // Inmutable
+  allow update, delete: if false; // Inmutable — es un ledger de pagos
 }
 ```
 
 ---
 
-## 6. KPIs DEL NEGOCIO (para Dashboard)
+## 6. REPORTE DE MÉTRICAS DE ÉXITO
 
-| KPI | Fórmula | Frecuencia |
-|-----|---------|------------|
-| GMV (Gross Merchandise Value) | Σ precioVenta vendidos (mes) | Diario |
-| Gross Margin | (GMV - COGS) / GMV | Semanal |
-| Inventory Turnover | Unidades vendidas / Stock promedio | Mensual |
-| Days Sales Outstanding | Deuda total / (GMV/30) | Semanal |
-| Accessory Attach Rate | Ventas accesorios / Ventas totales | Mensual |
-| Customer LTV (top 10) | Σ compras históricas por cliente | Mensual |
-| AOV (Average Order Value) | GMV / # transacciones | Semanal |
-| Workshop P&L | Ingresos taller - Costos taller | Mensual |
+| Métrica | Hoy (v1) | Meta v2 | Competencia |
+|---|---|---|---|
+| Módulos al 100% | 3/10 | 9/10 | RepairDesk: ~7/10 |
+| Lighthouse Performance | ~70 | ≥90 | — |
+| Crashes en producción | 3+ conocidos (fixed) | 0 en 30 días | — |
+| Reportes financieros | 1 básico | 6 completos | ERP Gold: 8 |
+| KPIs en dashboard | 4 (incompletos) | 8 (tiempo real) | RepairDesk: 6 |
+| Gross margin tracking | Manual | Automático | CellSmart: Parcial |
 
 ---
 
-## 7. DEUDA TÉCNICA A RESOLVER (en paralelo)
+## 7. LO QUE NINGÚN COMPETIDOR TIENE Y NOSOTROS SÍ
 
-1. **IMEI uniqueness**: Agregar Cloud Function `onPhoneCreate` que verifica duplicados
-2. **Timestamps consistentes**: Migrar fechas string → Firestore Timestamps con script de migración
-3. **Índices Firestore**: Crear índices para queries frecuentes (estado + fechaIngreso, lote + estado)
-4. **Error Boundaries**: Wrappear cada página con ErrorBoundary para aislar crashes
-5. **Tipos estrictos**: Eliminar `unknown` restantes, usar Zod para validar data de Firestore
-6. **Tests E2E**: Vitest + Testing Library para flujos críticos (crear venta, pagar deuda)
+1. **Firebase Realtime** — Cuando se vende un teléfono, todos los usuarios con la app abierta ven el inventario actualizado sin recargar. Ninguna plataforma del segmento usa real-time DB.
+
+2. **Catálogo Público B2B** — Nuestro portal permite a clientes ver stock disponible con reserva temporal. Solo PhoneX tiene esto a nivel enterprise ($$$).
+
+3. **FIFO exacto por IMEI** — Tenemos `costo` individual por documento. Margen por unidad es preciso al 100%, no promedio.
+
+4. **Separación deuda comercial / deuda de taller** — Único en el segmento. Permite ver claramente cuánto debe un cliente por compras vs por reparaciones.
+
+5. **Status history inmutable** — Cada cambio de estado queda registrado para siempre con fecha, usuario y nota. Ninguna plataforma mid-market tiene esto como feature nativo.
 
 ---
 
-## 8. MÉTRICAS DE ÉXITO
+## 8. FUENTES DE LA INVESTIGACIÓN COMPETITIVA
 
-- **Performance**: Lighthouse score ≥ 90 (actualmente ~70 por bundle grande)
-- **Correctness**: 0 crashes en producción por 30 días consecutivos
-- **Completeness**: Los 10 módulos al 100% en 4 semanas
-- **Adoption**: 100% de ventas registradas en sistema (vs. registro manual actual)
+- CellSmart POS: cellsmartpos.com + Capterra reviews
+- RepairDesk: repairdesk.co + G2 reviews + blog KPI dashboard
+- RepairShopr: repairshopr.com/features + Capterra
+- CellStore: cellstore.co/features.php + Capterra (4.8/5, 30 reviews)
+- ERP Gold: erp.gold + Phonecheck integration docs
+- NSYS Inventory: nsysgroup.com/products/nsys-inventory/
+- PhoneX Warehouse: phonexinc.com/phonex-warehouse
+- inFlow Inventory: inflowinventory.com/software-pricing
+- Benchmarks KPI: financialmodelslab.com, phocassoftware.com, spiderstrategies.com, earnestassoc.com
+- Data integrity patterns: Salesforce Engineering (event sourcing), Modern Treasury (optimistic locking), AuditBoard (audit trails)
+- Mobile UX: handifox.com, rfgen.com, erpsoftwareblog.com
+- Wholesale margins: machash.com (15-25% typical)
+- AR Aging: netsuite.com/portal/resource/articles/accounting/accounts-receivable-aging
