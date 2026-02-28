@@ -1,0 +1,4064 @@
+[
+  {
+    "tac": "35000226",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35001904",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35002871",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35006048",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35010509",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35010884",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35011042",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 8
+  },
+  {
+    "tac": "35012191",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35014178",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35014316",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35016964",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35018398",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 6
+  },
+  {
+    "tac": "35019704",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35020803",
+    "brand": "Apple",
+    "model": "17 PRO 512GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35022564",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35024715",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 14
+  },
+  {
+    "tac": "35025757",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 4
+  },
+  {
+    "tac": "35029342",
+    "brand": "Samsung",
+    "model": "REC S25 EDGE 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35029495",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35031559",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 7
+  },
+  {
+    "tac": "35032034",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35032153",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35034075",
+    "brand": "Unknown",
+    "model": "Z FOLD 7 256GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35034202",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 6
+  },
+  {
+    "tac": "35036030",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35036063",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35036727",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35038775",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35039027",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35040848",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35041953",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35044783",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35045024",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35045577",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35049630",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35052207",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35055504",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35055989",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35056610",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35058597",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35063659",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35066964",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 8
+  },
+  {
+    "tac": "35067378",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35068638",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 3
+  },
+  {
+    "tac": "35071311",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 3
+  },
+  {
+    "tac": "35072591",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35073023",
+    "brand": "Samsung",
+    "model": "S25 ULTRA 256GB",
+    "confidence": 3
+  },
+  {
+    "tac": "35073814",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35075324",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35076587",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35077343",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35077773",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35081322",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 6
+  },
+  {
+    "tac": "35081429",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35082257",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35083922",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35084944",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35087990",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 9
+  },
+  {
+    "tac": "35088986",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 8
+  },
+  {
+    "tac": "35090582",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 5
+  },
+  {
+    "tac": "35091484",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35092205",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35093255",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35098029",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35099154",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35100168",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35101039",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35101609",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35101686",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35104697",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 25
+  },
+  {
+    "tac": "35104891",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35105580",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 5
+  },
+  {
+    "tac": "35105981",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35107152",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35108069",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35110337",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35110979",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35112362",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35112396",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35113261",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 3
+  },
+  {
+    "tac": "35113544",
+    "brand": "Samsung",
+    "model": "S25 PLUS 256GB",
+    "confidence": 4
+  },
+  {
+    "tac": "35113810",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35113921",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35113986",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35114564",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 4
+  },
+  {
+    "tac": "35115678",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 6
+  },
+  {
+    "tac": "35116689",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 7
+  },
+  {
+    "tac": "35117656",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35118332",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35118406",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35119496",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35120349",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35122467",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 6
+  },
+  {
+    "tac": "35122876",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35124332",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 9
+  },
+  {
+    "tac": "35127068",
+    "brand": "Samsung",
+    "model": "S25 ULTRA 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35128408",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35133088",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35133433",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "confidence": 7
+  },
+  {
+    "tac": "35133541",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35136439",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 8
+  },
+  {
+    "tac": "35137943",
+    "brand": "Unknown",
+    "model": "WNY 16E 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35141440",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35141563",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35141849",
+    "brand": "Unknown",
+    "model": "WNY 16E 128GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35142179",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35144082",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 5
+  },
+  {
+    "tac": "35144698",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35144934",
+    "brand": "Samsung",
+    "model": "S25 128GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35146564",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35147553",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35148631",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35150340",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35154445",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35155942",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35157036",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 8
+  },
+  {
+    "tac": "35157259",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35158237",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35158882",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35159495",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35160572",
+    "brand": "Apple",
+    "model": "IPHONE 17 AIR 256GB",
+    "confidence": 4
+  },
+  {
+    "tac": "35167027",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35167139",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 4
+  },
+  {
+    "tac": "35167891",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35168774",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 16
+  },
+  {
+    "tac": "35173227",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35175072",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35178315",
+    "brand": "Unknown",
+    "model": "REC A54 5G 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35179339",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35181169",
+    "brand": "Unknown",
+    "model": "WNY 16E 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35182968",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35183649",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35184442",
+    "brand": "Samsung",
+    "model": "Galaxy S21",
+    "confidence": 5
+  },
+  {
+    "tac": "35185518",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35189092",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35190651",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 4
+  },
+  {
+    "tac": "35192929",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35195993",
+    "brand": "Samsung",
+    "model": "Galaxy A56",
+    "confidence": 5
+  },
+  {
+    "tac": "35203277",
+    "brand": "Unknown",
+    "model": "SAMSUNG Z FLIP 4",
+    "confidence": 1
+  },
+  {
+    "tac": "35204888",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35205137",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35205168",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35206851",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35207350",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35211353",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 3
+  },
+  {
+    "tac": "35211495",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35212938",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 8
+  },
+  {
+    "tac": "35216133",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 3
+  },
+  {
+    "tac": "35216423",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 5
+  },
+  {
+    "tac": "35218044",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35218499",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35219032",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 4
+  },
+  {
+    "tac": "35219560",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 2
+  },
+  {
+    "tac": "35220377",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 5
+  },
+  {
+    "tac": "35220620",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 6
+  },
+  {
+    "tac": "35224361",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 3
+  },
+  {
+    "tac": "35225448",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35226873",
+    "brand": "Samsung",
+    "model": "Galaxy S21 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35228179",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35229444",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35232862",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35234874",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35237042",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35237763",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 2
+  },
+  {
+    "tac": "35238224",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 7
+  },
+  {
+    "tac": "35239647",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35240823",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 8
+  },
+  {
+    "tac": "35244063",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 4
+  },
+  {
+    "tac": "35247259",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35251214",
+    "brand": "Samsung",
+    "model": "S25 ULTRA 256GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35251342",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 5
+  },
+  {
+    "tac": "35256948",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 8
+  },
+  {
+    "tac": "35257470",
+    "brand": "Unknown",
+    "model": "REC A53 128GB DUOS",
+    "confidence": 1
+  },
+  {
+    "tac": "35259037",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 3
+  },
+  {
+    "tac": "35259161",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 4
+  },
+  {
+    "tac": "35261545",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35262812",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35265344",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35266891",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 5
+  },
+  {
+    "tac": "35267652",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35267843",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35268679",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35272535",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35276639",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35277225",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35278472",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35279139",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35279427",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35280684",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 6
+  },
+  {
+    "tac": "35282054",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35282448",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35283461",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 3
+  },
+  {
+    "tac": "35283811",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35284011",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35284111",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35284211",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35284311",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35284811",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35285111",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35285828",
+    "brand": "Apple",
+    "model": "iPhone 12 Mini",
+    "confidence": 1
+  },
+  {
+    "tac": "35286567",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35287147",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35289277",
+    "brand": "Samsung",
+    "model": "S25 PLUS 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35289311",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35289511",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35289611",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "confidence": 1
+  },
+  {
+    "tac": "35289711",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35290111",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35290211",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "confidence": 1
+  },
+  {
+    "tac": "35290311",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35290411",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35290511",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35290611",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35291011",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35291211",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "confidence": 1
+  },
+  {
+    "tac": "35294188",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35296674",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35299048",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35299173",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35299643",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35300511",
+    "brand": "Apple",
+    "model": "iPhone 12 Mini",
+    "confidence": 1
+  },
+  {
+    "tac": "35300811",
+    "brand": "Apple",
+    "model": "iPhone 12 Mini",
+    "confidence": 1
+  },
+  {
+    "tac": "35303096",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35303811",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35304011",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35304111",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 5
+  },
+  {
+    "tac": "35304211",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35304411",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35307311",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35307411",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35307511",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35308396",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35310055",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35311582",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35313860",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35314747",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35316580",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 7
+  },
+  {
+    "tac": "35316766",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35318544",
+    "brand": "Unknown",
+    "model": "SAMSUNG Z FLIP 4",
+    "confidence": 1
+  },
+  {
+    "tac": "35318643",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 8
+  },
+  {
+    "tac": "35319484",
+    "brand": "Samsung",
+    "model": "S25 128GB",
+    "confidence": 5
+  },
+  {
+    "tac": "35320733",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35321048",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35322314",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35324710",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35324743",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35325318",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35325739",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35326342",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 11
+  },
+  {
+    "tac": "35328262",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35329462",
+    "brand": "Unknown",
+    "model": "A36 5G",
+    "confidence": 1
+  },
+  {
+    "tac": "35333593",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35334183",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35334288",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 3
+  },
+  {
+    "tac": "35336094",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35339381",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35343165",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35347638",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35350149",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35350180",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35350375",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35350987",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35351060",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 6
+  },
+  {
+    "tac": "35351951",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35352067",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35354132",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35354779",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35355177",
+    "brand": "Samsung",
+    "model": "LZ S25 ULTRA 256GB DUOS",
+    "confidence": 1
+  },
+  {
+    "tac": "35355956",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35356856",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 2
+  },
+  {
+    "tac": "35362930",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35366457",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35366975",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35368583",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35369062",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35369674",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35371957",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35372651",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35373039",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35374233",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35374253",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35374853",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 3
+  },
+  {
+    "tac": "35375468",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35376246",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35377639",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35377933",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35378118",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35378846",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35379198",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35381790",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35383492",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35385166",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 6
+  },
+  {
+    "tac": "35386922",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35386967",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35388710",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35388719",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35388810",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35389210",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35389310",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35389410",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35389710",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35389810",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35390210",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35390410",
+    "brand": "Apple",
+    "model": "iPhone 11 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35390959",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35393559",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35394130",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35396710",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "confidence": 2
+  },
+  {
+    "tac": "35396781",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35396810",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35397410",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35397510",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 3
+  },
+  {
+    "tac": "35398510",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35399099",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35399231",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35400127",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35400984",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35403824",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35406678",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 5
+  },
+  {
+    "tac": "35406858",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35407096",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35407355",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 7
+  },
+  {
+    "tac": "35408211",
+    "brand": "Samsung",
+    "model": "S20 ULTRA 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35409023",
+    "brand": "Samsung",
+    "model": "LZ S25 EDGE 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35410435",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35410677",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35413665",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35413678",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35415525",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35418313",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35421498",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 17
+  },
+  {
+    "tac": "35424533",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35427344",
+    "brand": "Unknown",
+    "model": "Z FOLD 7 512GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35430058",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35434529",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35434718",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35435015",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35438735",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35439868",
+    "brand": "Unknown",
+    "model": "SE 3 64GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35445540",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 10
+  },
+  {
+    "tac": "35449141",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35450971",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 7
+  },
+  {
+    "tac": "35452333",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 6
+  },
+  {
+    "tac": "35455150",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35457035",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35462790",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35466665",
+    "brand": "Apple",
+    "model": "17 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35468982",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35469640",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35470028",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35470375",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35473048",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35473918",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35478099",
+    "brand": "Apple",
+    "model": "17 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35480737",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35482029",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35483595",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35486089",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35487650",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35490362",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 5
+  },
+  {
+    "tac": "35493327",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35494173",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35495697",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 3
+  },
+  {
+    "tac": "35495773",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 7
+  },
+  {
+    "tac": "35499626",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 5
+  },
+  {
+    "tac": "35504456",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35506058",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35506326",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35506366",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 8
+  },
+  {
+    "tac": "35510331",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35512236",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35512354",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35513034",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 5
+  },
+  {
+    "tac": "35514949",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 13
+  },
+  {
+    "tac": "35515122",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35516356",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 6
+  },
+  {
+    "tac": "35516894",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35517019",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35518095",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35518549",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35519020",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 13
+  },
+  {
+    "tac": "35521192",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35522425",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35523786",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 5
+  },
+  {
+    "tac": "35524138",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35526296",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35534889",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35536566",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35538025",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35538749",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35539659",
+    "brand": "Samsung",
+    "model": "S25+",
+    "confidence": 1
+  },
+  {
+    "tac": "35540293",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35540736",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35543097",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35543597",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35544131",
+    "brand": "Unknown",
+    "model": "WNY 16E 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35545021",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 23
+  },
+  {
+    "tac": "35547887",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35547950",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35550035",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35552257",
+    "brand": "Unknown",
+    "model": "PIXEL 8 PRO 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35554991",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35555251",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 5
+  },
+  {
+    "tac": "35559119",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35560072",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35560330",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35561695",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35562419",
+    "brand": "Unknown",
+    "model": "PIXEL 9 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35565650",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35565823",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35566052",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35567781",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 6
+  },
+  {
+    "tac": "35568866",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35569040",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35570190",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35572733",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35574660",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35577791",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35578382",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35579646",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 11
+  },
+  {
+    "tac": "35580295",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 4
+  },
+  {
+    "tac": "35582226",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35584380",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 1
+  },
+  {
+    "tac": "35588140",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35590194",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35590999",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 6
+  },
+  {
+    "tac": "35593949",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 7
+  },
+  {
+    "tac": "35596893",
+    "brand": "Unknown",
+    "model": "REC A54 5G 128GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35601126",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35603784",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 6
+  },
+  {
+    "tac": "35604140",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35604338",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35604429",
+    "brand": "Unknown",
+    "model": "SAMSUNG A54",
+    "confidence": 1
+  },
+  {
+    "tac": "35609778",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35612217",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35613331",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 5
+  },
+  {
+    "tac": "35616357",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35616544",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35618816",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 6
+  },
+  {
+    "tac": "35619967",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35620054",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35625054",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35629537",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35631263",
+    "brand": "Unknown",
+    "model": "WNY 16E 128GB",
+    "confidence": 2
+  },
+  {
+    "tac": "35632920",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "confidence": 17
+  },
+  {
+    "tac": "35636424",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35637016",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35640387",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35642216",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35646252",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35647884",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35648567",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 4
+  },
+  {
+    "tac": "35648714",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35651121",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35651441",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35652818",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35654088",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 3
+  },
+  {
+    "tac": "35654810",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35654910",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35655110",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35655410",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35655510",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35655677",
+    "brand": "Samsung",
+    "model": "OH NOTE 20 ULTRA",
+    "confidence": 1
+  },
+  {
+    "tac": "35655910",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35659914",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35660522",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 6
+  },
+  {
+    "tac": "35660664",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35662212",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35666139",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35666140",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35667337",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35668011",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35668111",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35668211",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35668311",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35668416",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35669119",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35669672",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35670357",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35671311",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35671411",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35671511",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35671711",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 6
+  },
+  {
+    "tac": "35671811",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35674091",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35674460",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35675298",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35679648",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 10
+  },
+  {
+    "tac": "35679811",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "confidence": 1
+  },
+  {
+    "tac": "35679911",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35680211",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35680411",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35680511",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35680635",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35681560",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 6
+  },
+  {
+    "tac": "35682582",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35683282",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 3
+  },
+  {
+    "tac": "35685511",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35685711",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35685911",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "confidence": 1
+  },
+  {
+    "tac": "35686011",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35686111",
+    "brand": "Apple",
+    "model": "IPHONE REC",
+    "confidence": 2
+  },
+  {
+    "tac": "35686511",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35686526",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35686711",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35686811",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35686911",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35687011",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35687111",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35687211",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 2
+  },
+  {
+    "tac": "35687311",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35687411",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35689925",
+    "brand": "Samsung",
+    "model": "LZ S25 ULTRA 512GB CAJA NUEVO",
+    "confidence": 1
+  },
+  {
+    "tac": "35694221",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35695570",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35696113",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 7
+  },
+  {
+    "tac": "35698074",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 3
+  },
+  {
+    "tac": "35698572",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35699653",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35701474",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35703276",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35706122",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35708434",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35710491",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35711120",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35713073",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 2
+  },
+  {
+    "tac": "35713239",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Plus",
+    "confidence": 6
+  },
+  {
+    "tac": "35714095",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35714997",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35715467",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35716782",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35718396",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 9
+  },
+  {
+    "tac": "35718998",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35721036",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35733236",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35734892",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35739770",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35741419",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35741587",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35741957",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35743126",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 10
+  },
+  {
+    "tac": "35744266",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35744788",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35744897",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 3
+  },
+  {
+    "tac": "35746344",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35746352",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35746382",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 2
+  },
+  {
+    "tac": "35750096",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35757349",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35758634",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35759049",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 2
+  },
+  {
+    "tac": "35764177",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35764412",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 4
+  },
+  {
+    "tac": "35765061",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35768088",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35771276",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35771658",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 1
+  },
+  {
+    "tac": "35771928",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35777175",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35777324",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35777433",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 7
+  },
+  {
+    "tac": "35781443",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 5
+  },
+  {
+    "tac": "35782699",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35782828",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35787712",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Plus",
+    "confidence": 3
+  },
+  {
+    "tac": "35787943",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35791787",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35793843",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35798136",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35799425",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35799960",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 25
+  },
+  {
+    "tac": "35800168",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35801260",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35805132",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35807124",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35807346",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35809165",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35809897",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "confidence": 1
+  },
+  {
+    "tac": "35810543",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 32
+  },
+  {
+    "tac": "35811034",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35813292",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 8
+  },
+  {
+    "tac": "35815861",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35816326",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35817837",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35822636",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35825942",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 6
+  },
+  {
+    "tac": "35826027",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35826558",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35827195",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35839341",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35840887",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35841994",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 5
+  },
+  {
+    "tac": "35846952",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35848249",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 7
+  },
+  {
+    "tac": "35849789",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35852214",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35853313",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 7
+  },
+  {
+    "tac": "35854030",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35858832",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 3
+  },
+  {
+    "tac": "35859436",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35861472",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35865449",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35866828",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35867723",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35868641",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35869173",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35871282",
+    "brand": "Unknown",
+    "model": "APPLE WATCH ULTRA 2",
+    "confidence": 1
+  },
+  {
+    "tac": "35874286",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35875048",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35879073",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35879848",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 3
+  },
+  {
+    "tac": "35880035",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 9
+  },
+  {
+    "tac": "35882334",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35882478",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35883259",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35883596",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35883894",
+    "brand": "Apple",
+    "model": "IPHONE 17 AIR 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35884956",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35889150",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 4
+  },
+  {
+    "tac": "35889250",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35891548",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "confidence": 2
+  },
+  {
+    "tac": "35891582",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35893323",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35899691",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35901453",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35901563",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35904337",
+    "brand": "Samsung",
+    "model": "Galaxy S21",
+    "confidence": 1
+  },
+  {
+    "tac": "35904997",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35905237",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 9
+  },
+  {
+    "tac": "35906933",
+    "brand": "Apple",
+    "model": "iPhone 14 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35907241",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 4
+  },
+  {
+    "tac": "35908151",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35912812",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35917592",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35918544",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35920696",
+    "brand": "Unknown",
+    "model": "LZ A36 5G",
+    "confidence": 3
+  },
+  {
+    "tac": "35920965",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 1
+  },
+  {
+    "tac": "35922090",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35923763",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35926552",
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "confidence": 1
+  },
+  {
+    "tac": "35927253",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35929014",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35931791",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35933018",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 2
+  },
+  {
+    "tac": "35934667",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 3
+  },
+  {
+    "tac": "35934973",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 5
+  },
+  {
+    "tac": "35941930",
+    "brand": "Samsung",
+    "model": "Galaxy S21",
+    "confidence": 1
+  },
+  {
+    "tac": "35942626",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 11
+  },
+  {
+    "tac": "35942879",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35943358",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Ultra",
+    "confidence": 23
+  },
+  {
+    "tac": "35944796",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35949373",
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35950862",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35957276",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35961454",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35964265",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35966960",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 11
+  },
+  {
+    "tac": "35967054",
+    "brand": "Samsung",
+    "model": "Galaxy S22 Plus",
+    "confidence": 2
+  },
+  {
+    "tac": "35967335",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35970237",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35971228",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35972485",
+    "brand": "Apple",
+    "model": "17 PRO 256GB",
+    "confidence": 6
+  },
+  {
+    "tac": "35976054",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35980289",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35981126",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35981743",
+    "brand": "Apple",
+    "model": "iPhone 15 Plus",
+    "confidence": 1
+  },
+  {
+    "tac": "35982365",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 2
+  },
+  {
+    "tac": "35982413",
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "confidence": 4
+  },
+  {
+    "tac": "35983651",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35987197",
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "confidence": 4
+  },
+  {
+    "tac": "35988643",
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "confidence": 2
+  },
+  {
+    "tac": "35988817",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "confidence": 2
+  },
+  {
+    "tac": "35989692",
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "confidence": 1
+  },
+  {
+    "tac": "35989765",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "confidence": 1
+  },
+  {
+    "tac": "35991258",
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "confidence": 3
+  },
+  {
+    "tac": "35996912",
+    "brand": "Apple",
+    "model": "17 256GB",
+    "confidence": 1
+  },
+  {
+    "tac": "35998498",
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "confidence": 6
+  }
+]

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from './context';
+import { AuthProvider, useAuth } from './context';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './features/auth/LoginPage';
 import DashboardPage from './features/dashboard/DashboardPage';
@@ -9,7 +9,9 @@ import InventoryPage from './features/inventory/InventoryPage';
 import ClientsPage from './features/clients/ClientsPage';
 import WorkshopPage from './features/workshop/WorkshopPage';
 import PublicCatalogPage from './features/public/pages/PublicCatalogPage';
+import ClientStorePage from './features/public/pages/ClientStorePage';
 import UsersManagementPage from './features/users/pages/UsersManagementPage';
+import CatalogPage from './features/catalog/CatalogPage';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -27,6 +29,9 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            {/* Root Redirect Logic */}
+            <Route path="/" element={<RootRedirect />} />
+
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/catalogo" element={<PublicCatalogPage />} />
@@ -60,6 +65,15 @@ function App() {
             />
 
             <Route
+              path="/catalog"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
+                  <CatalogPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="/taller"
               element={
                 <ProtectedRoute>
@@ -77,8 +91,17 @@ function App() {
               }
             />
 
+            <Route
+              path="/store"
+              element={
+                <ProtectedRoute allowedRoles={['comprador', 'admin', 'gerente']}>
+                  <ClientStorePage />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* <Route path="/" element={<Navigate to="/dashboard" replace />} /> Replaced by RootRedirect */}
 
             {/* 404 */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -111,6 +134,19 @@ function App() {
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function RootRedirect() {
+  const { user, userRole, loading } = useAuth();
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (userRole === 'comprador') {
+    return <Navigate to="/store" replace />;
+  }
+
+  return <Navigate to="/dashboard" replace />;
 }
 
 export default App;

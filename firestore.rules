@@ -18,6 +18,13 @@ service cloud.firestore {
     function isGerente() {
       return isSignedIn() && getUserData().role == 'gerente';
     }
+
+    // Validation for Public Reservation
+    function isValidReservationUpdate() {
+        let currentStatus = resource.data.estado;
+        let isAvailable = currentStatus == 'En Stock (Disponible para Venta)' || currentStatus == 'Apartado';
+        return isAvailable;
+    }
     
     // Users collection
     match /users/{userId} {
@@ -27,9 +34,23 @@ service cloud.firestore {
     
     // Phones collection
     match /phones/{phoneId} {
-      allow read: if isSignedIn();
-      allow create, update: if isAdmin() || isGerente();
+      // Allow public read of Stock/Apartado (so they can see what is reserved)
+      allow read: if isSignedIn() || 
+                  resource.data.estado == 'En Stock (Disponible para Venta)' || 
+                  resource.data.estado == 'Apartado';
+      
+      // Allow public update for Reservation Logic (unauthenticated can only update reservation + updatedAt)
+      allow update: if (isAdmin() || isGerente()) ||
+                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt']) && isValidReservationUpdate());
+                    
+      allow create: if isAdmin() || isGerente();
       allow delete: if isAdmin();
+    }
+    
+    // Batches collection
+    match /batches/{batchId} {
+        allow read: if isSignedIn();
+        allow write: if isAdmin();
     }
     
     // Clients collection
@@ -63,7 +84,27 @@ service cloud.firestore {
       allow read: if isSignedIn();
       allow write: if isAdmin() || isGerente();
     }
+
+    // Device Definitions (Smart Learner)
+    match /device_definitions/{tac} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || isGerente();
+    }
     
+    // Price Catalog (Brain 2.0)
+    match /price_catalog/{id} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn(); // Allow all staff to contribute to the brain
+    }
+    
+    // Pending Orders collection
+    match /pendingOrders/{orderId} {
+      allow create: if isSignedIn();
+      allow read: if isSignedIn() && (isAdmin() || isGerente() || resource.data.sessionId == request.auth.uid);
+      allow update: if isAdmin() || isGerente();
+      allow delete: if false;
+    }
+
     // Deny all other access
     match /{document=**} {
       allow read, write: if false;
