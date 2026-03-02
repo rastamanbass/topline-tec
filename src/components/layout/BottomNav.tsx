@@ -36,6 +36,7 @@ const MAIN_TABS: NavItem[] = [
     to: '/inventory',
     icon: <Smartphone className="w-5 h-5" />,
     label: 'Inventario',
+    roles: ['admin', 'gerente', 'vendedor', 'comprador'],
   },
   {
     to: '/clients',
@@ -86,6 +87,7 @@ const MORE_ITEMS: NavItem[] = [
     to: '/accesorios',
     icon: <Package className="w-5 h-5 text-purple-600" />,
     label: 'Accesorios',
+    roles: ['admin', 'gerente', 'vendedor'],
   },
   {
     to: '/admin/usuarios',

@@ -93,7 +93,7 @@ function App() {
               <Route
                 path="/inventory"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor', 'comprador']}>
                     <InventoryPage />
                   </ProtectedRoute>
                 }
@@ -102,7 +102,7 @@ function App() {
               <Route
                 path="/clients"
                 element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor', 'taller']}>
+                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
                     <ClientsPage />
                   </ProtectedRoute>
                 }
@@ -165,7 +165,7 @@ function App() {
               <Route
                 path="/accesorios"
                 element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor', 'taller']}>
+                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
                     <AccessoriesPage />
                   </ProtectedRoute>
                 }
@@ -292,6 +292,10 @@ function RootRedirect() {
 
   if (userRole === 'comprador') {
     return <Navigate to="/store" replace />;
+  }
+
+  if (userRole === 'taller') {
+    return <Navigate to="/taller" replace />;
   }
 
   return <Navigate to="/dashboard" replace />;

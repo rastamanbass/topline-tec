@@ -80,7 +80,7 @@ export default function FloatingCart({ reservedPhones, sessionId, timeLeft }: Fl
         // 2. Create the pendingOrder document with status 'reserved'
         transaction.set(orderRef, {
           sessionId,
-          clientId: user?.clientId || data.clientId || null,
+          clientId: user?.uid || data.clientId || null,
           clientAlias: user?.displayName || data.clientAlias || null,
           clientEmail: user?.email || data.clientEmail || null,
           clientPhone: data.clientPhone || null,

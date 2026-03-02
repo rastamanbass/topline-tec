@@ -23,11 +23,18 @@ service cloud.firestore {
       return isSignedIn() && getUserData().role in ['admin', 'gerente'];
     }
 
+    function isTaller() {
+      return isSignedIn() && getUserData().role == 'taller';
+    }
+
     // Validation for Public Reservation
+    // Checks that BOTH the current and new estado are within the allowed states
+    // to prevent using the reservation path to set phones to Sold/Workshop/etc.
     function isValidReservationUpdate() {
         let currentStatus = resource.data.estado;
-        let isAvailable = currentStatus == 'En Stock (Disponible para Venta)' || currentStatus == 'Apartado';
-        return isAvailable;
+        let newStatus = request.resource.data.estado;
+        let validStatuses = ['En Stock (Disponible para Venta)', 'Apartado'];
+        return currentStatus in validStatuses && newStatus in validStatuses;
     }
 
     // ── Users collection ──────────────────────────────────────────────────────
@@ -44,8 +51,10 @@ service cloud.firestore {
                   resource.data.estado == 'Apartado';
 
       // Allow public update only for reservation fields (unauthenticated)
+      // Allow taller role to update workshop-specific fields (estado, statusHistory, reparaciones)
       allow update: if (isAdmin() || isGerente()) ||
-                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt']) && isValidReservationUpdate());
+                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt', 'estado']) && isValidReservationUpdate()) ||
+                    (isTaller() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'statusHistory', 'reparaciones', 'updatedAt']));
 
       allow create: if isAdmin() || isGerente();
       allow delete: if isAdmin();

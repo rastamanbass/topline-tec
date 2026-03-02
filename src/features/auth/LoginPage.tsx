@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context';
 import toast from 'react-hot-toast';
@@ -10,8 +10,16 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, user, userRole } = useAuth();
   const navigate = useNavigate();
+
+  // Navigate once auth state is confirmed (after onAuthStateChanged resolves)
+  useEffect(() => {
+    if (user) {
+      if (userRole === 'comprador') navigate('/store', { replace: true });
+      else navigate('/dashboard', { replace: true });
+    }
+  }, [user, userRole, navigate]);
 
   const handleForgotPassword = async () => {
     if (!email) {
@@ -38,7 +46,7 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
       toast.success('¡Bienvenido!');
-      navigate('/dashboard');
+      // Navigation is handled by useEffect once onAuthStateChanged resolves
     } catch (error) {
       console.error('Login error:', error);
 
