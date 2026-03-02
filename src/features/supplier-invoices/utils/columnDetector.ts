@@ -28,7 +28,7 @@ const HEADER_PATTERNS: Array<{ field: StandardField; pattern: RegExp }> = [
   { field: 'carrier', pattern: /carrier|network|operador|operator/i },
   {
     field: 'fullModel',
-    pattern: /full.?model|descripci[oó]n|description|product.?name|nombre|item/i,
+    pattern: /full.?model|descripci[oó]n|description|product.?name|nombre|item\s*(desc|name)/i,
   },
   { field: 'unitPrice', pattern: /unit.?price|precio|costo|cost|price/i },
   { field: 'qty', pattern: /^qty$|^quantity$|^cantidad$|^piezas$|^pieces$|^units$/i },
