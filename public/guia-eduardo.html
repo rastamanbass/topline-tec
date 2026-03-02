@@ -1633,50 +1633,321 @@
         <span class="pill pill-admin">Admin</span>
         <span class="pill pill-gerente">Gerente</span>
       </div>
-      <div style="display:grid;gap:10px;margin-top:12px;">
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#f8fafc;border-radius:12px;">
-          <span style="font-size:24px;">📈</span>
-          <div>
-            <div style="font-weight:700;font-size:14px;">Ventas (Más → Ventas)</div>
-            <div style="font-size:13px;color:#475569;margin-top:3px;">Historial completo de todas las ventas. Podés filtrar por fecha, cliente, modelo. Exportar reportes.</div>
-          </div>
+
+      <!-- ── MÓDULO 1: VENTAS ── -->
+      <details style="margin-top:12px;">
+        <summary>📈 Ventas (Más → Ventas)</summary>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">ℹ️</span>
+          <span>Historial completo de todas las ventas completadas. Sirve para verificar cualquier transaccion pasada: quien compro, que modelo, a que precio y con que metodo de pago.</span>
         </div>
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#f8fafc;border-radius:12px;">
-          <span style="font-size:24px;">💰</span>
-          <div>
-            <div style="font-weight:700;font-size:14px;">Finanzas (Más → Finanzas)</div>
-            <div style="font-size:13px;color:#475569;margin-top:3px;">Resumen financiero: ingresos, márgenes, teléfonos vendidos por período. Gráficas de tendencia.</div>
-          </div>
+        <ol class="steps" style="margin-top:10px;">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Ir a Mas → Ventas desde el menu inferior</div>
+              <div class="step-desc">El modulo Ventas no aparece en los iconos principales — esta dentro del menu "Mas" (tres puntos o icono de opciones en la barra inferior).</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Filtrar por rango de fechas</div>
+              <div class="step-desc">Usa los selectores de fecha para ver ventas de hoy, de la semana, del mes, o cualquier rango personalizado. Por defecto muestra las ventas mas recientes primero.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Filtrar por nombre de cliente o modelo de telefono</div>
+              <div class="step-desc">Escribe en el campo de busqueda el nombre del cliente o el modelo (por ejemplo "iPhone 13 Pro") para encontrar ventas especificas sin tener que revisar todo el historial.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Click en cualquier venta para ver el detalle completo</div>
+              <div class="step-desc">Se abre el panel de detalle con: IMEI del telefono, nombre del cliente, precio de venta, metodo de pago utilizado y fecha exacta. Util para resolver dudas o disputas.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Verificar transacciones pasadas cuando hay dudas</div>
+              <div class="step-desc">Si un cliente dice "yo compre ese telefono" o hay confusion sobre un pago, buscas por IMEI o nombre del cliente aqui y ves el registro exacto guardado en el sistema.</div>
+            </div>
+          </li>
+        </ol>
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>El historial de ventas es permanente. Nunca se borra aunque el telefono haya pasado por varios estados. Admin y Gerente pueden verlo; los vendedores no tienen acceso a este modulo.</span>
         </div>
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#f8fafc;border-radius:12px;">
-          <span style="font-size:24px;">🔍</span>
-          <div>
-            <div style="font-weight:700;font-size:14px;">Insights (Más → <em>no visible en nav, usar /insights</em>)</div>
-            <div style="font-size:13px;color:#475569;margin-top:3px;">Análisis de cuellos de botella: modelos que no se venden, tiempo promedio en stock, etc.</div>
-          </div>
+      </details>
+
+      <div class="divider"></div>
+
+      <!-- ── MÓDULO 2: FINANZAS ── -->
+      <details>
+        <summary>💰 Finanzas (Más → Finanzas)</summary>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">ℹ️</span>
+          <span>Resumen financiero del negocio: ingresos, precio promedio de venta, cantidad de telefonos vendidos y valor total del inventario en costo. Tiene graficas de tendencia para ver como va el negocio semana a semana o mes a mes.</span>
         </div>
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#f8fafc;border-radius:12px;">
-          <span style="font-size:24px;">📋</span>
-          <div>
-            <div style="font-weight:700;font-size:14px;">Acta de Recepción Digital</div>
-            <div style="font-size:13px;color:#475569;margin-top:3px;">Al cerrar una recepción, se genera automáticamente un acta con la firma digital. Queda guardada en el sistema para cualquier disputa o auditoría.</div>
-          </div>
+        <ol class="steps" style="margin-top:10px;">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Ir a Mas → Finanzas</div>
+              <div class="step-desc">Igual que Ventas, este modulo esta dentro del menu "Mas" en la barra inferior. Solo Admin y Gerente tienen acceso.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Seleccionar el periodo a revisar</div>
+              <div class="step-desc">Usa el filtro de fecha para ver el rendimiento semanal, mensual, o un rango especifico. Las graficas se actualizan automaticamente segun el periodo seleccionado.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Revisar los indicadores principales</div>
+              <div class="step-desc">Las tarjetas en la parte superior muestran: <strong>ingresos totales del periodo</strong>, <strong>precio promedio de venta</strong>, y <strong>numero de telefonos vendidos</strong>. Son los tres numeros mas importantes para saber como esta el negocio.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Ver el valor del inventario en costo</div>
+              <div class="step-desc">Abajo de los indicadores aparece el valor total del inventario actual calculado al costo de adquisicion. Sirve para saber cuanto capital esta "congelado" en stock sin vender.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Analizar las graficas de tendencia</div>
+              <div class="step-desc">Las graficas muestran si las ventas van subiendo o bajando comparadas con periodos anteriores. Si ves una caida, es momento de revisar Insights para entender que modelos no estan rotando.</div>
+            </div>
+          </li>
+        </ol>
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>Usa Finanzas los lunes para revisar el rendimiento de la semana anterior. Compara el precio promedio de venta — si baja, puede ser que estan vendiendo modelos de menor valor o dando muchos descuentos.</span>
         </div>
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#f8fafc;border-radius:12px;">
-          <span style="font-size:24px;">🎧</span>
-          <div>
-            <div style="font-weight:700;font-size:14px;">Accesorios (Más → Accesorios)</div>
-            <div style="font-size:13px;color:#475569;margin-top:3px;">Inventario de accesorios (cables, cargadores, etc.). Podés agregar, editar y vender accesorios.</div>
-          </div>
+      </details>
+
+      <div class="divider"></div>
+
+      <!-- ── MÓDULO 3: INSIGHTS ── -->
+      <details>
+        <summary>🔍 Insights (URL directa: /insights)</summary>
+        <div class="warning" style="margin-top:8px;">
+          <span class="warning-icon">⚠️</span>
+          <span><strong>Este modulo no aparece en el menu de navegacion inferior.</strong> Para acceder, escribi directamente en el navegador: <strong>inventario-a6aa3.web.app/insights</strong> — o pedile al Admin que te pase el enlace directo.</span>
         </div>
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#f8fafc;border-radius:12px;">
-          <span style="font-size:24px;">🛍️</span>
-          <div>
-            <div style="font-weight:700;font-size:14px;">Órdenes B2B (Más → Órdenes)</div>
-            <div style="font-size:13px;color:#475569;margin-top:3px;">Gestionar los pedidos que llegan de compradores mayoristas. Confirmar pagos, marcar como enviado.</div>
-          </div>
+        <ol class="steps" style="margin-top:10px;">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Entrar a inventario-a6aa3.web.app/insights</div>
+              <div class="step-desc">Abre el navegador y escribe la URL completa con "/insights" al final. Tenes que estar logueado como Admin o Gerente. Si te redirige al login, ingresa primero y luego vuelve a esa URL.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Revisar los modelos con mas dias en stock (cuello de botella)</div>
+              <div class="step-desc">La tabla principal muestra que modelos llevan mas tiempo sin venderse. Los que estan arriba son el problema — capital congelado que no esta generando retorno.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Ver el promedio de dias en stock por modelo</div>
+              <div class="step-desc">Cada modelo tiene su "dias promedio en stock" calculado. Un modelo con 60+ dias sin mover necesita accion: bajar precio, ofrecer en paquete, o priorizar en ventas activas.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Revisar el sell-through rate por modelo</div>
+              <div class="step-desc">El sell-through rate indica que porcentaje del stock de cada modelo ya se vendio. Un modelo con sell-through bajo (menos del 30%) no esta rotando bien — hay que tomar decision sobre ese stock.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Decidir accion: descuento o empuje en ventas</div>
+              <div class="step-desc">Con esta informacion, el Admin puede: (a) bajar el precio en el Catalogo para ese modelo especifico, (b) decirle a los vendedores que empujen ese modelo, o (c) incluirlo en una oferta de paquete con accesorio.</div>
+            </div>
+          </li>
+        </ol>
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>Revisar Insights cada dos semanas es suficiente. No necesitas entrar todos los dias — es una herramienta de analisis estrategico, no operativo.</span>
         </div>
-      </div>
+      </details>
+
+      <div class="divider"></div>
+
+      <!-- ── MÓDULO 4: ACTA DE RECEPCIÓN ── -->
+      <details>
+        <summary>📋 Acta de Recepción Digital</summary>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">ℹ️</span>
+          <span>El acta NO es un modulo separado al que entrás directamente. Se genera automaticamente al momento de cerrar una sesion de recepcion de envio. No tenes que hacer nada especial — el sistema la crea sola.</span>
+        </div>
+        <ol class="steps" style="margin-top:10px;">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Completar el escaneo del envio normalmente</div>
+              <div class="step-desc">Primero completas el proceso normal de recepcion: escaneas los IMEI uno a uno con la pistola o manualmente, hasta haber revisado todos los telefonos del envio.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Click en "Cerrar Recepcion" al terminar</div>
+              <div class="step-desc">Cuando ya revisaste todos los telefonos (o los que pudiste), presionas el boton "Cerrar Recepcion". El sistema calcula automaticamente cuantos se esperaban, cuantos llegaron y cuantos faltan.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">El sistema genera el acta automaticamente</div>
+              <div class="step-desc">El acta incluye: nombre del envio, fecha de recepcion, cantidad esperada segun la factura, cantidad recibida y confirmada, y lista de IMEI faltantes si los hay.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Firmar con el dedo en pantalla</div>
+              <div class="step-desc">Aparece un campo de firma digital. La persona que recibio el envio (Marta u otra persona) dibuja su firma con el dedo directamente en la pantalla del telefono o tablet.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">El acta queda guardada permanentemente en el registro del envio</div>
+              <div class="step-desc">Una vez firmada, el acta se guarda bajo el registro de ese envio especifico. Para verla despues: ir a cualquier telefono de ese envio → ver detalle → historial del envio. Sirve como evidencia si hay disputa con el proveedor sobre telefonos faltantes.</div>
+            </div>
+          </li>
+        </ol>
+        <div class="warning">
+          <span class="warning-icon">⚠️</span>
+          <span>Una vez firmada el acta no se puede editar ni borrar. Si hubo un error en el conteo, documentalo por separado (nota interna o WhatsApp) y notificaselo al Admin antes de firmar.</span>
+        </div>
+      </details>
+
+      <div class="divider"></div>
+
+      <!-- ── MÓDULO 5: ACCESORIOS ── -->
+      <details>
+        <summary>🎧 Accesorios (Más → Accesorios)</summary>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">ℹ️</span>
+          <span>Inventario separado para cables, cargadores, cases, protectores y cualquier accesorio que no sea un telefono. Admin y Gerente pueden gestionar todo; el Vendedor solo puede ver el inventario, no agregar ni editar.</span>
+        </div>
+        <ol class="steps" style="margin-top:10px;">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Ir a Mas → Accesorios</div>
+              <div class="step-desc">Entra al menu "Mas" en la barra inferior y selecciona Accesorios. Ves la lista de todos los accesorios actuales con su stock disponible y precio de venta.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Agregar un accesorio nuevo (solo Admin / Gerente)</div>
+              <div class="step-desc">Click en el boton "Agregar accesorio" o el icono "+" . Llena los campos: nombre del accesorio, costo de adquisicion, precio de venta sugerido, y cantidad inicial en stock. Guarda.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Editar un accesorio existente</div>
+              <div class="step-desc">Click en el accesorio que queres modificar y selecciona "Editar". Podes actualizar el precio de venta, ajustar el stock (por ejemplo si llegaron mas unidades), o corregir el nombre.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Registrar una venta de accesorio</div>
+              <div class="step-desc">Desde el detalle del accesorio, click en "Vender". Selecciona la cantidad vendida y el cliente (opcional). El stock se reduce automaticamente y la venta queda registrada.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Monitorear el stock bajo</div>
+              <div class="step-desc">El sistema marca en rojo o naranja los accesorios con stock bajo. Revisalos periodicamente para hacer pedidos al proveedor antes de quedarte sin stock de los mas vendidos (cargadores, cables USB-C).</div>
+            </div>
+          </li>
+        </ol>
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>Los accesorios se pueden vender junto con un telefono en la misma transaccion de venta directa. Menciónaselo al vendedor para que ofrezca el combo al cliente.</span>
+        </div>
+      </details>
+
+      <div class="divider"></div>
+
+      <!-- ── MÓDULO 6: ÓRDENES B2B ── -->
+      <details>
+        <summary>🛍️ Órdenes B2B (Más → Órdenes)</summary>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">ℹ️</span>
+          <span>Este es el panel de control del Canal 2 (mayoristas). Cuando un Comprador hace un pedido desde la tienda B2B, aparece aqui. El Admin o Gerente lo gestiona: confirma el pago, marca el envio, o cancela.</span>
+        </div>
+        <ol class="steps" style="margin-top:10px;">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Ir a Mas → Ordenes</div>
+              <div class="step-desc">En el menu "Mas" de la barra inferior, selecciona Ordenes. Ves la lista de todos los pedidos entrantes con su estado actual: Pendiente, Pagado, Enviado, o Cancelado.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Revisar el detalle de cada orden</div>
+              <div class="step-desc">Click en una orden para ver: nombre del comprador mayorista, lista de telefonos solicitados (modelos y cantidades), metodo de pago elegido, y estado actual del pago.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Confirmar el pago cuando lo recibas</div>
+              <div class="step-desc">Una vez que verificas que el pago llego (transferencia, Zelle, etc.), click en "Confirmar Pago". El sistema automaticamente marca los telefonos de esa orden como <strong>Vendido</strong> y los saca del inventario disponible.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Marcar como enviado cuando despaches el pedido</div>
+              <div class="step-desc">Cuando ya preparaste y enviaste el paquete al comprador, click en "Marcar como Enviado". El comprador puede ver este estado desde su cuenta. Guarda el numero de tracking si aplica.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Cancelar una orden si es necesario</div>
+              <div class="step-desc">Si el comprador no pago en el tiempo acordado o hay un problema con el pedido, click en "Cancelar Orden". Los telefonos regresan a estado Disponible en el inventario automaticamente.</div>
+            </div>
+          </li>
+        </ol>
+        <div class="warning">
+          <span class="warning-icon">⚠️</span>
+          <span>No confirmes el pago sin verificar primero que el dinero llego a la cuenta. Una vez confirmado, los telefonos quedan como Vendidos y desaparecen del inventario disponible para otros compradores.</span>
+        </div>
+        <div class="tip" style="margin-top:8px;">
+          <span class="tip-icon">💡</span>
+          <span>Si un comprador mayorista reporta un problema con su pedido, buscas la orden aqui por nombre del comprador y ves exactamente que telefonos se le asignaron (con IMEI) y cuando se proceso el pago.</span>
+        </div>
+      </details>
+
     </div>
   </div>
 
