@@ -357,11 +357,18 @@
     </div>
     <div class="section-body">
       <div style="display:grid;gap:8px;">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#dbeafe;border-radius:12px;border-left:3px solid #1d4ed8;">
+          <span style="font-size:22px;">🛡️</span>
+          <div style="flex:1;">
+            <div style="font-weight:800;font-size:13px;color:#1e3a8a;">Admin — Eduardo (Admin)</div>
+            <div style="font-size:12px;color:#1d4ed8;margin-top:1px;">Comprás los teléfonos en USA → subís el Excel al sistema (Inventario → Importar) → creás el envío (Más → Envíos). Acceso total.</div>
+          </div>
+        </div>
         <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#eff6ff;border-radius:12px;border-left:3px solid #3b82f6;">
           <span style="font-size:22px;">👔</span>
           <div style="flex:1;">
             <div style="font-weight:800;font-size:13px;color:#1e40af;">Gerente (Marta)</div>
-            <div style="font-size:12px;color:#3b82f6;margin-top:1px;">Entrás al Dashboard → todo disponible. Tu tarea más común: Inventario → Importar Excel.</div>
+            <div style="font-size:12px;color:#3b82f6;margin-top:1px;">Entrás al Dashboard → todo disponible. Tu tarea más común: recibir los envíos con la pistola escáner (Más → Envíos). Eduardo importa las facturas desde USA.</div>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fef3c7;border-radius:12px;border-left:3px solid #f59e0b;">
@@ -455,30 +462,86 @@
       </div>
     </div>
     <div class="section-body">
-      <div class="flow">
-        <div class="flow-step">📋 Se importa factura (Excel)</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step" style="background:#e0e7ff;border-color:#a5b4fc;color:#3730a3;">📦 En Bodega (USA)</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step" style="background:#dbeafe;border-color:#93c5fd;color:#1e40af;">🚚 En Tránsito</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step success">✅ En Stock (disponible)</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">🏷️ Apartado</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step" style="background:#f3f4f6;border-color:#d1d5db;color:#374151;">💰 Vendido</div>
+
+      <!-- Paso a paso con actores -->
+      <div style="display:grid;gap:0;">
+
+        <!-- Paso 1 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:white;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;color:#0f172a;">🛒 Eduardo (Admin) compra teléfonos en USA</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;">Negocia y adquiere los equipos con proveedores en Estados Unidos.</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#1d4ed8;background:#dbeafe;padding:3px 8px;border-radius:999px;white-space:nowrap;">Admin</div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:white;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;color:#0f172a;">📄 Eduardo sube el Excel del proveedor al sistema</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;">Inventario → Importar Excel. Los teléfonos quedan registrados con estado <span class="status status-bodega">En Bodega (USA)</span>. Aquí también se le asigna el precio de venta a cada modelo.</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#1d4ed8;background:#dbeafe;padding:3px 8px;border-radius:999px;white-space:nowrap;">Admin</div>
+        </div>
+
+        <!-- Paso 3 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:white;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;color:#0f172a;">🚚 Eduardo crea el envío con la empresa de carga</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;">Más → Envíos → Crear envío. Selecciona los teléfonos del lote y la empresa (Transnexpress, King Express, etc.). Los teléfonos pasan a <span class="status status-transito">En Tránsito</span>.</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#1d4ed8;background:#dbeafe;padding:3px 8px;border-radius:999px;white-space:nowrap;">Admin</div>
+        </div>
+
+        <!-- Paso 4 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#4f46e5;color:white;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;color:#0f172a;">📦 Teléfonos llegan a El Salvador</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;">Marta (Gerente) recibe el paquete físico de la empresa de carga.</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#4338ca;background:#e0e7ff;padding:3px 8px;border-radius:999px;white-space:nowrap;">Gerente</div>
+        </div>
+
+        <!-- Paso 5 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#4f46e5;color:white;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;color:#0f172a;">🔫 Marta escanea cada IMEI con la pistola Bluetooth</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;">Más → Envíos → Recibir. Escanea el código de barras de cada teléfono para confirmar que llegó el mismo que se mandó. También puede ingresar el IMEI manualmente. Al cerrar, los confirmados pasan a <span class="status status-stock">En Stock (Disponible)</span>.</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#4338ca;background:#e0e7ff;padding:3px 8px;border-radius:999px;white-space:nowrap;">Gerente</div>
+        </div>
+
+        <!-- Paso 6 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#16a34a;color:white;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">6</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;color:#0f172a;">💰 Listos para vender</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;"><strong>Canal 1 (principal):</strong> Admin o Gerente vende directo desde Inventario usando la pistola o búsqueda manual.<br><strong>Canal 2:</strong> Comprador mayorista lo reserva en la tienda B2B online.</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:#166534;background:#dcfce7;padding:3px 8px;border-radius:999px;white-space:nowrap;">Admin / Gerente</div>
+        </div>
+
       </div>
-      <div class="flow" style="margin-top:6px;">
+
+      <div class="divider"></div>
+
+      <!-- Sub-flujo taller -->
+      <p style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Flujo de reparación (taller)</p>
+      <div class="flow">
         <div class="flow-step" style="background:#fff7ed;border-color:#fdba74;color:#9a3412;">🔧 Enviado a Taller</div>
         <div class="flow-arrow">→</div>
         <div class="flow-step" style="background:#fff7ed;border-color:#fdba74;color:#9a3412;">⚙️ En Taller (Recibido)</div>
         <div class="flow-arrow">→</div>
+        <div class="flow-step" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6;">Enviado a Gerencia</div>
+        <div class="flow-arrow">→</div>
         <div class="flow-step success">✅ Vuelve a Stock</div>
       </div>
-      <div class="divider"></div>
-      <p style="font-size:13px;color:#64748b;">
-        <strong>Responsables:</strong> Eduardo importa facturas y crea envíos. Marta recibe con el escáner. El equipo de taller mueve teléfonos por el flujo de reparación.
-      </p>
+
     </div>
   </div>
 
@@ -649,7 +712,7 @@
         <summary>📄 1. Importar Factura del Proveedor (Excel)</summary>
         <div class="info" style="margin-top:8px;">
           <span class="info-icon">ℹ️</span>
-          <span>Hacés esto cuando llegó un Excel de Eduardo (USA) con los teléfonos comprados. Los teléfonos quedan en estado <strong>"En Bodega (USA)"</strong>.</span>
+          <span>Eduardo (Admin) hace esto desde USA luego de comprar teléfonos. Sube el Excel del proveedor al sistema. Los teléfonos quedan registrados en estado <strong>"En Bodega (USA)"</strong> hasta que se cree el envío y lleguen a El Salvador.</span>
         </div>
         <ol class="steps" style="margin-top:10px;">
           <li class="step">
