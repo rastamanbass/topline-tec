@@ -93,8 +93,7 @@ export interface ImportInvoiceInput {
   loteName: string;
   costPerUnit: number; // applied when item.unitPrice is absent
   initialStatus: PhoneStatus;
-  markup?: number; // default 1.4
-  priceOverrides?: Record<string, number>; // key: "marca|modelo|storage" → overrides markup calc
+  priceOverrides?: Record<string, number>; // key: "marca|modelo|storage" → price per model
 
   totalAmount?: number;
 
@@ -131,7 +130,6 @@ export function useImportSupplierInvoice() {
         loteName,
         costPerUnit,
         initialStatus,
-        markup = 1.4,
         priceOverrides,
         totalAmount,
         importTemplate,
@@ -154,7 +152,7 @@ export function useImportSupplierInvoice() {
         const qty = item.qty || 1;
         const unitCost = item.unitPrice ?? costPerUnit;
         const priceKey = `${item.resolvedMarca || item.make || ''}|${item.resolvedModelo || item.model || ''}|${item.storage || ''}`;
-        const precioVenta = priceOverrides?.[priceKey] ?? Math.ceil(unitCost * markup);
+        const precioVenta = priceOverrides?.[priceKey] ?? 0;
         const imei = item.imei || `PENDING-${Date.now()}-${i}`;
 
         // For items with IMEIs (Format A), create one doc per phone

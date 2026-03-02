@@ -431,7 +431,6 @@ export default function ImportInvoiceModal({ onClose }: Props) {
         if (existing) {
           existing.units += item.imei ? 1 : (item.qty || 1);
         } else {
-          const suggested = Math.ceil(unitCost * 1.4);
           groupMap.set(key, {
             key,
             marca: item.resolvedMarca || item.make || 'Desconocida',
@@ -439,9 +438,9 @@ export default function ImportInvoiceModal({ onClose }: Props) {
             storage: item.storage || '',
             units: item.imei ? 1 : (item.qty || 1),
             unitCost,
-            suggestedPrice: suggested,
+            suggestedPrice: 0,
             source: 'auto',
-            finalPrice: suggested,
+            finalPrice: 0,
           });
         }
       }
@@ -514,7 +513,6 @@ export default function ImportInvoiceModal({ onClose }: Props) {
         loteName,
         costPerUnit,
         initialStatus,
-        markup: 1.4,
         priceOverrides,
         totalAmount: totalAmount || undefined,
         importTemplate: template,
@@ -960,8 +958,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
 
                 {costPerUnit > 0 && (
                   <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-3 text-xs text-indigo-700">
-                    Precio de venta sugerido (markup 40%):{' '}
-                    <span className="font-bold">${Math.ceil(costPerUnit * 1.4)}</span> por equipo
+                    En el siguiente paso podrás revisar y escribir el precio de venta de cada modelo.
                   </div>
                 )}
               </div>
@@ -976,8 +973,14 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                 <p className="text-sm text-gray-500 mt-1">
                   {priceGroups.reduce((s, g) => s + g.units, 0)} teléfonos ·{' '}
                   {priceGroups.length} modelo{priceGroups.length !== 1 ? 's' : ''} distinto{priceGroups.length !== 1 ? 's' : ''}.
-                  Ajustá el precio de venta de cada uno.
+                  Escribí el precio de venta de cada modelo.
                 </p>
+                {priceGroups.some(g => g.finalPrice <= 0) && (
+                  <div className="mt-2 flex items-center gap-2 text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs font-medium">
+                    <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                    Hay modelos sin precio. Completá todos antes de importar.
+                  </div>
+                )}
               </div>
 
               {loadingPrices ? (
@@ -1037,7 +1040,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold">
-                                Auto 40%
+                                Ingresá precio
                               </span>
                             )}
                           </td>
@@ -1161,7 +1164,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
             {step === 'pricing' && (
               <button
                 onClick={handleConfirmPricing}
-                disabled={importInvoice.isPending || priceGroups.length === 0}
+                disabled={importInvoice.isPending || priceGroups.length === 0 || priceGroups.some(g => g.finalPrice <= 0)}
                 className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {importInvoice.isPending ? (
