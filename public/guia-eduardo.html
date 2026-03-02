@@ -326,7 +326,7 @@
 
   <!-- ═══════════════════════════════════════════════════════════════ HERO -->
   <div class="hero">
-    <div class="hero-badge">📱 Top Line Tec · Manual v3.0</div>
+    <div class="hero-badge">📱 Top Line Tec · Manual v4.0</div>
     <h1>Guía de Uso del Sistema</h1>
     <p>Todo lo que necesitás saber para operar el inventario, envíos y ventas.</p>
     <div class="hero-url">
@@ -338,7 +338,7 @@
   <div class="toc">
     <div class="toc-title">Ir directo a mi rol</div>
     <div class="toc-grid">
-      <a href="#rol-admin"    class="toc-link"><span class="toc-emoji">🛡️</span> Admin (Daniel / Eduardo)</a>
+      <a href="#rol-admin"    class="toc-link"><span class="toc-emoji">🛡️</span> Admin (Eduardo)</a>
       <a href="#rol-gerente"  class="toc-link"><span class="toc-emoji">👔</span> Gerente (Marta)</a>
       <a href="#rol-vendedor" class="toc-link"><span class="toc-emoji">🛒</span> Vendedor</a>
       <a href="#rol-taller"   class="toc-link"><span class="toc-emoji">🔧</span> Taller</a>
@@ -386,6 +386,62 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ CANALES DE VENTA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f0fdf4;">💰</div>
+      <div>
+        <div class="section-title">Canales de Venta</div>
+        <div class="section-subtitle">Cómo se venden los teléfonos en Top Line Tec</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- CANAL 1 -->
+      <div style="display:flex;gap:14px;padding:14px;background:#f0fdf4;border-radius:14px;border:2px solid #86efac;margin-bottom:12px;">
+        <div style="background:#16a34a;color:white;border-radius:10px;padding:6px 10px;font-weight:900;font-size:13px;white-space:nowrap;align-self:flex-start;">CANAL 1 ★ PRIMARIO</div>
+        <div>
+          <div style="font-weight:800;font-size:15px;color:#166534;margin-bottom:4px;">Venta Directa — pistola o búsqueda manual</div>
+          <div style="font-size:13px;color:#166534;line-height:1.6;">
+            <strong>Fuente de ingresos principal.</strong> Eduardo (Admin) o Marta (Gerente) encuentra el teléfono en el inventario
+            — con la pistola Bluetooth (escanear IMEI) o buscando manualmente por modelo — y lo vende
+            directamente en el sistema. Sin carrito, sin pagos online. El teléfono pasa a <strong>Vendido</strong> al instante.
+          </div>
+          <div class="flow" style="margin-top:10px;">
+            <div class="flow-step" style="background:#dcfce7;border-color:#86efac;color:#166534;">🔫 Escanear IMEI <em>o</em> buscar modelo</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step" style="background:#dcfce7;border-color:#86efac;color:#166534;">🖱️ Click "Vender"</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step" style="background:#dcfce7;border-color:#86efac;color:#166534;">👤 Seleccionar cliente</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step success">✅ Vendido</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CANAL 2 -->
+      <div style="display:flex;gap:14px;padding:14px;background:#f5f3ff;border-radius:14px;border:2px solid #c4b5fd;">
+        <div style="background:#7c3aed;color:white;border-radius:10px;padding:6px 10px;font-weight:900;font-size:13px;white-space:nowrap;align-self:flex-start;">CANAL 2 SECUNDARIO</div>
+        <div>
+          <div style="font-weight:800;font-size:15px;color:#5b21b6;margin-bottom:4px;">Tienda B2B Online — compradores mayoristas</div>
+          <div style="font-size:13px;color:#5b21b6;line-height:1.6;">
+            Clientes mayoristas con rol <strong>Comprador</strong> navegan la tienda online, agregan teléfonos al carrito y pagan con tarjeta (Stripe), PayPal o transferencia bancaria. El Admin confirma el pedido desde <strong>Más → Órdenes</strong>.
+          </div>
+          <div class="flow" style="margin-top:10px;">
+            <div class="flow-step" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6;">🛍️ Comprador navega tienda</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6;">💳 Pago online</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6;">📋 Admin confirma en /ordenes</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step success">✅ Vendido</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -520,7 +576,7 @@
     <div class="section-header" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);">
       <div class="section-icon" style="background:#1d4ed8;color:white;font-size:18px;">🛡️</div>
       <div>
-        <div class="section-title">Admin — Daniel &amp; Eduardo</div>
+        <div class="section-title">Admin — Eduardo (Admin)</div>
         <div class="section-subtitle">Acceso total al sistema · Gestión de usuarios</div>
       </div>
     </div>
@@ -531,11 +587,10 @@
       <div class="info">
         <span class="info-icon">ℹ️</span>
         <div>
-          El admin tiene acceso a <strong>TODO</strong>. Puede hacer todo lo que hace el gerente, más: crear/editar usuarios, eliminar datos, y gestionar la configuración del sistema.
+          El Admin tiene acceso a <strong>TODO</strong>. Puede hacer todo lo que hace el Gerente, más: crear/editar usuarios, eliminar datos, y gestionar la configuración del sistema.
           <br><br>
-          <strong>Cuentas admin:</strong><br>
-          • Eduardo: <span class="mono">administration@toplinetecinc.com</span><br>
-          • Daniel: <span class="mono">danielabrego95@gmail.com</span>
+          <strong>Cuenta Admin:</strong><br>
+          • Eduardo (Admin): <span class="mono">administration@toplinetecinc.com</span>
         </div>
       </div>
       <div class="divider"></div>
@@ -635,8 +690,8 @@
           <li class="step">
             <div class="step-num">6</div>
             <div class="step-content">
-              <div class="step-title">Revisar y ajustar precios de venta</div>
-              <div class="step-desc">El sistema agrupa los teléfonos por modelo y storage. Podés ver el precio sugerido (basado en historial de ventas o +40% del costo). Ajustá lo que necesités antes de importar.</div>
+              <div class="step-title">Revisar y escribir precios de venta</div>
+              <div class="step-desc">El sistema agrupa los teléfonos por modelo y storage. Si el modelo tiene historial de ventas, el precio aparece pre-cargado (badge verde "✓ Historial"). Si es modelo nuevo, el precio empieza en $0 — debés escribirlo vos. El botón "Confirmar" se habilita solo cuando todos los precios están completos.</div>
             </div>
           </li>
           <li class="step">
@@ -799,54 +854,58 @@
 
       <!-- ── WORKFLOW 4: VENDER ── -->
       <details>
-        <summary>💰 4. Vender un Teléfono</summary>
+        <summary>💰 4. Vender un Teléfono (Canal 1 — Venta Directa)</summary>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">ℹ️</span>
+          <span>Esta es la venta principal del negocio. Admin o Gerente registra la venta desde el inventario — con pistola Bluetooth o búsqueda manual por IMEI/modelo. Sin carrito público, sin pago online.</span>
+        </div>
         <ol class="steps" style="margin-top:10px;">
           <li class="step">
             <div class="step-num">1</div>
             <div class="step-content">
-              <div class="step-title">Ir a Inventario</div>
-              <div class="step-desc">Toca 📱 en el menú inferior.</div>
+              <div class="step-title">Encontrar el teléfono — pistola Bluetooth (más rápido)</div>
+              <div class="step-desc">
+                Ir a Inventario (ícono 📱) y enfocar la barra de búsqueda. Escanear el código de barras del IMEI con la pistola. El teléfono aparece al instante en pantalla.
+                <br><strong>Sin pistola:</strong> escribir el IMEI completo o el modelo en la barra de búsqueda.
+              </div>
             </div>
           </li>
           <li class="step">
             <div class="step-num">2</div>
             <div class="step-content">
-              <div class="step-title">Buscar el teléfono a vender</div>
-              <div class="step-desc">Usá la barra de búsqueda (por IMEI, modelo, marca) o los filtros (estado, lote).</div>
+              <div class="step-title">Click en el teléfono → botón "Vender"</div>
+              <div class="step-desc">Se abre el panel de venta. Verificá el precio de venta — podés ajustarlo antes de confirmar.</div>
             </div>
           </li>
           <li class="step">
             <div class="step-num">3</div>
             <div class="step-content">
-              <div class="step-title">Seleccionar el teléfono y agregar al carrito</div>
-              <div class="step-desc">Hacé click en el teléfono para ver sus detalles. Usá la opción para marcarlo como vendido o agregarlo al carrito de venta.</div>
+              <div class="step-title">Seleccionar cliente (o crear uno nuevo)</div>
+              <div class="step-desc">Buscá al cliente por nombre o teléfono. Si es la primera vez que compra, click en "Crear cliente" para registrarlo en el momento.</div>
             </div>
           </li>
           <li class="step">
             <div class="step-num">4</div>
             <div class="step-content">
-              <div class="step-title">Seleccionar cliente (o crear uno nuevo)</div>
-              <div class="step-desc">Buscá al cliente por nombre o teléfono. Si es cliente nuevo, tenés la opción de crearlo en el momento.</div>
+              <div class="step-title">Elegir forma de pago</div>
+              <div class="step-desc">Opciones: <strong>Efectivo</strong>, <strong>Transferencia</strong>, <strong>Crédito</strong> (si el cliente tiene saldo disponible), o <strong>Mixto</strong> (combinación de métodos).</div>
             </div>
           </li>
           <li class="step">
             <div class="step-num">5</div>
             <div class="step-content">
-              <div class="step-title">Elegir forma de pago</div>
-              <div class="step-desc">Opciones: Efectivo, Transferencia, Crédito (si el cliente tiene saldo), o Mixto (combinación).</div>
-            </div>
-          </li>
-          <li class="step">
-            <div class="step-num">6</div>
-            <div class="step-content">
-              <div class="step-title">Confirmar y generar factura</div>
-              <div class="step-desc">Click "Confirmar venta". El teléfono pasa a <span class="status status-vendido">Vendido</span> y se genera la factura automáticamente.</div>
+              <div class="step-title">Click "Confirmar Venta"</div>
+              <div class="step-desc">El teléfono pasa a <span class="status status-vendido">Vendido</span>. La venta queda registrada en el historial del cliente y en el módulo de Ventas.</div>
             </div>
           </li>
         </ol>
         <div class="tip">
           <span class="tip-icon">💡</span>
-          <span>Podés vender múltiples teléfonos en la misma transacción (carrito con varios ítems).</span>
+          <span>Podés vender varios teléfonos en la misma transacción: buscalos uno a uno y van al carrito de venta. Al confirmar, todos quedan como Vendidos.</span>
+        </div>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">📦</span>
+          <span><strong>Canal 2 (mayoristas online):</strong> Los clientes con rol Comprador hacen sus pedidos desde la tienda B2B. El Admin los ve en <strong>Más → Órdenes</strong> para confirmar.</span>
         </div>
       </details>
 
@@ -1045,7 +1104,7 @@
         </ol>
         <div class="info">
           <span class="info-icon">ℹ️</span>
-          <span>El vendedor <strong>no puede</strong> crear clientes nuevos ni registrar pagos. Para eso, avisale a Eduardo o Marta.</span>
+          <span>El vendedor <strong>no puede</strong> crear clientes nuevos ni registrar pagos. Para eso, avisale al Admin o Gerente.</span>
         </div>
       </details>
 
@@ -1076,7 +1135,7 @@
           <strong>Acceso restringido al módulo de Taller.</strong>
           <br>El técnico <strong>no puede ver</strong> el inventario general, la lista de clientes ni los accesorios.
           Al iniciar sesión, el sistema lo lleva directamente a la pantalla de Taller.
-          Si necesitás acceso a otros módulos, pedile a Daniel (admin) que cambie tu rol.
+          Si necesitás acceso a otros módulos, pedile al Admin que cambie tu rol.
         </div>
       </div>
 
@@ -1236,30 +1295,27 @@
       </details>
       <div class="divider"></div>
       <details>
-        <summary>📦 Recibir un Paquete</summary>
+        <summary>📱 Ver Inventario Completo</summary>
         <ol class="steps" style="margin-top:10px;">
           <li class="step">
             <div class="step-num">1</div>
             <div class="step-content">
-              <div class="step-title">Más → Recepción</div>
-              <div class="step-desc">El comprador también puede usar la pantalla de recepción con escáner para verificar los teléfonos que recibe.</div>
+              <div class="step-title">Ir a Inventario (ícono 📱)</div>
+              <div class="step-desc">El comprador puede ver el inventario completo con modelos, estados y precios. Esto permite verificar disponibilidad antes de hacer un pedido.</div>
             </div>
           </li>
           <li class="step">
             <div class="step-num">2</div>
             <div class="step-content">
-              <div class="step-title">Seleccionar el lote recibido</div>
-              <div class="step-desc">Aparecen solo los lotes que están en tránsito.</div>
-            </div>
-          </li>
-          <li class="step">
-            <div class="step-num">3</div>
-            <div class="step-content">
-              <div class="step-title">Escanear y confirmar</div>
-              <div class="step-desc">Igual que el proceso de recepción del gerente: escanear cada teléfono y cerrar la recepción.</div>
+              <div class="step-title">Buscar por modelo o estado</div>
+              <div class="step-desc">Usá los filtros o la barra de búsqueda. El comprador puede ver pero <strong>no puede modificar</strong> teléfonos ni registrar ventas.</div>
             </div>
           </li>
         </ol>
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>Si un teléfono está en <span class="status status-stock">En Stock</span>, se puede agregar al carrito desde la tienda B2B.</span>
+        </div>
       </details>
     </div>
   </div>
@@ -1374,7 +1430,7 @@
         <summary>❌ "Error de permisos" al hacer algo</summary>
         <div class="danger" style="margin-top:8px;">
           <span class="danger-icon">🚫</span>
-          <span>Si ves un error de "permiso denegado" o "PERMISSION_DENIED", significa que tu rol no puede hacer esa acción. Contactá a Daniel (admin) para revisar.</span>
+          <span>Si ves un error de "permiso denegado" o "PERMISSION_DENIED", significa que tu rol no puede hacer esa acción. Contactá al Admin (Eduardo) para revisar.</span>
         </div>
         <div class="info" style="margin-top:8px;">
           <span class="info-icon">ℹ️</span>
@@ -1501,10 +1557,10 @@
   <!-- FOOTER -->
   <footer>
     <p style="font-size:11px;color:#94a3b8;margin-bottom:4px;">
-      Versión del manual: <strong>3.0</strong> · Generado automáticamente para Top Line Tec
+      Versión del manual: <strong>4.0</strong> · Generado automáticamente para Top Line Tec
     </p>
     <p style="font-size:11px;color:#cbd5e1;">
-      🌐 <strong>inventario-a6aa3.web.app</strong> · Soporte: Daniel (admin)
+      🌐 <strong>inventario-a6aa3.web.app</strong> · Soporte: Eduardo (Admin) · administration@toplinetecinc.com
     </p>
   </footer>
 
