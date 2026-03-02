@@ -1,7 +1,8 @@
 import type { Phone } from '../../../types';
 import PhoneCard from './PhoneCard';
-import { Leaf, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { Leaf, ChevronDown, ExternalLink } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import { CannabisIcon } from '../../../components/icons/CannabisIcon';
 
@@ -13,8 +14,49 @@ interface CatalogViewProps {
 
 import { useInventoryStore } from '../stores/inventoryStore';
 
+const humanizeLote = (lote: string): string => {
+  if (!lote) return 'Sin lote';
+  return lote
+    .replace(/_/g, ' ')
+    .replace(/\b(\w)/g, (c) => c.toUpperCase())
+    .replace(/Amerijet/i, '· Amerijet')
+    .replace(/Legacy Import/i, 'Importación Legacy')
+    .trim();
+};
+
+// Component for the per-lote select-all checkbox (handles indeterminate state via ref)
+function LotCheckbox({
+  allSelected,
+  someSelected,
+  onChange,
+}: {
+  allSelected: boolean;
+  someSelected: boolean;
+  onChange: () => void;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.indeterminate = someSelected;
+    }
+  }, [someSelected]);
+
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      checked={allSelected}
+      onChange={onChange}
+      onClick={(e) => e.stopPropagation()}
+      className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 shadow-sm cursor-pointer flex-shrink-0"
+    />
+  );
+}
+
 export default function CatalogView({ phones, isLoading, error }: CatalogViewProps) {
-  const { openModal, clientViewMode } = useInventoryStore();
+  const { openModal, clientViewMode, selectedPhoneIds, selectAll, deselectMany } =
+    useInventoryStore();
 
   // State for collapsing and pagination per lot
   const [collapsedLots, setCollapsedLots] = useState<Record<string, boolean>>({});
@@ -102,6 +144,22 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
           ).length,
         };
 
+        // Lot-level selection state
+        const lotIds = items.map((p) => p.id);
+        const selectedInLot = lotIds.filter((id) => selectedPhoneIds.has(id));
+        const allSelected = selectedInLot.length === lotIds.length;
+        const someSelected = selectedInLot.length > 0 && !allSelected;
+
+        const handleLotCheckbox = () => {
+          if (allSelected) {
+            deselectMany(lotIds);
+          } else {
+            // Build new set: keep existing selections + add all in this lot
+            const merged = new Set([...selectedPhoneIds, ...lotIds]);
+            selectAll(Array.from(merged));
+          }
+        };
+
         return (
           <div
             key={lot}
@@ -112,6 +170,25 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
               className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-white border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
               onClick={() => toggleCollapse(lot)}
             >
+              {/* Select-all-lote checkbox — hidden in client view */}
+              {!clientViewMode && (
+                <div
+                  className="flex items-center gap-2 flex-shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <LotCheckbox
+                    allSelected={allSelected}
+                    someSelected={someSelected}
+                    onChange={handleLotCheckbox}
+                  />
+                  {selectedInLot.length > 0 && (
+                    <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded-md tabular-nums">
+                      {selectedInLot.length}/{lotIds.length}
+                    </span>
+                  )}
+                </div>
+              )}
+
               <div className="flex items-center gap-3">
                 <div
                   className={`p-2 rounded-lg transition-colors ${isCollapsed ? 'bg-gray-200 text-gray-500' : 'bg-emerald-50 text-emerald-600'}`}
@@ -122,7 +199,7 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
                     <CannabisIcon className="w-5 h-5" />
                   )}
                 </div>
-                <h2 className="text-lg font-bold text-gray-800">{lot}</h2>
+                <h2 className="text-lg font-bold text-gray-800">{humanizeLote(lot)}</h2>
               </div>
 
               {/* Stats Bar */}
@@ -143,15 +220,27 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
 
               <div className="ml-auto flex items-center gap-3 pl-4 border-l border-gray-100">
                 {!clientViewMode && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openModal('create', undefined, lot);
-                    }}
-                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-bold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
-                  >
-                    + Agregar
-                  </button>
+                  <>
+                    <Link
+                      to={`/lote/${encodeURIComponent(lot)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 font-medium bg-gray-100 px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      Vista cliente
+                    </Link>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModal('create', undefined, lot);
+                      }}
+                      className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-bold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      + Agregar
+                    </button>
+                  </>
                 )}
                 <div
                   className={`transform transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}

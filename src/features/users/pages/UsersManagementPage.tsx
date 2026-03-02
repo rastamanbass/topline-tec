@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Plus, Edit2, Lock, Unlock } from 'lucide-react';
+import { Users, Plus, Edit2, Lock, Unlock, Loader2 } from 'lucide-react';
 import { useAuth } from '../../../context';
 import { Navigate } from 'react-router-dom';
 import { useBuyerUsers } from '../hooks/useUsers';
@@ -7,17 +7,37 @@ import CreateUserModal from '../components/CreateUserModal';
 import { createBuyerUser } from '../services/userService';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../lib/firebase';
+import type { User } from '../../../types';
 
 export default function UsersManagementPage() {
   const { userRole } = useAuth();
   const { data: users, isLoading } = useBuyerUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [togglingUid, setTogglingUid] = useState<string | null>(null);
+  const [createdUser, setCreatedUser] = useState<{ email: string; password: string } | null>(null);
   const queryClient = useQueryClient();
 
   // Solo admin/gerente
   if (!['admin', 'gerente'].includes(userRole || '')) {
     return <Navigate to="/dashboard" replace />;
   }
+
+  const handleToggleStatus = async (user: User) => {
+    setTogglingUid(user.uid);
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        isActive: user.isActive === false ? true : false,
+      });
+      queryClient.invalidateQueries({ queryKey: ['buyerUsers'] });
+      toast.success(user.isActive === false ? 'Usuario activado' : 'Usuario desactivado');
+    } catch {
+      toast.error('Error al actualizar usuario');
+    } finally {
+      setTogglingUid(null);
+    }
+  };
 
   const handleCreateUser = async (data: {
     email: string;
@@ -30,10 +50,7 @@ export default function UsersManagementPage() {
     // Refrescar lista de usuarios
     queryClient.invalidateQueries({ queryKey: ['buyerUsers'] });
 
-    toast.success(
-      `✅ Usuario creado exitosamente!\n\n📧 Email: ${data.email}\n🔑 Contraseña temporal: ${result.temporaryPassword}\n\n⚠️ Comparte estas credenciales con el cliente`,
-      { duration: 10000 }
-    );
+    setCreatedUser({ email: data.email, password: result.temporaryPassword });
   };
 
   return (
@@ -50,13 +67,15 @@ export default function UsersManagementPage() {
               </div>
             </div>
 
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Nuevo Usuario
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="btn-primary flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Nuevo Usuario
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -113,10 +132,14 @@ export default function UsersManagementPage() {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
-                          className="text-gray-600 hover:text-gray-900"
+                          onClick={() => handleToggleStatus(user)}
+                          disabled={togglingUid === user.uid}
+                          className="text-gray-600 hover:text-gray-900 disabled:opacity-50"
                           title={user.isActive !== false ? 'Desactivar' : 'Activar'}
                         >
-                          {user.isActive !== false ? (
+                          {togglingUid === user.uid ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : user.isActive !== false ? (
                             <Lock className="w-4 h-4" />
                           ) : (
                             <Unlock className="w-4 h-4" />
@@ -147,6 +170,42 @@ export default function UsersManagementPage() {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateUser}
       />
+
+      {/* Modal de credenciales creadas (CALIDAD-7 incluido aquí) */}
+      {createdUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-1">Usuario creado</h2>
+            <p className="text-sm text-gray-500 mb-4">Comparte estas credenciales de forma segura</p>
+            {[
+              { label: 'Email', value: createdUser.email },
+              { label: 'Contraseña temporal', value: createdUser.password },
+            ].map(({ label, value }) => (
+              <div key={label} className="mb-3">
+                <p className="text-xs text-gray-500 mb-1">{label}</p>
+                <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                  <code className="flex-1 text-sm font-mono text-gray-900 break-all">{value}</code>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(value);
+                      toast.success('Copiado');
+                    }}
+                    className="text-primary-600 hover:text-primary-800 text-xs font-medium shrink-0"
+                  >
+                    Copiar
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={() => setCreatedUser(null)}
+              className="w-full mt-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

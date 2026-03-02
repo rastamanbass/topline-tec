@@ -2,21 +2,25 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
+    // ── Helper functions ──────────────────────────────────────────────────────
     function isSignedIn() {
       return request.auth != null;
     }
-    
+
     function getUserData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
-    
+
     function isAdmin() {
       return isSignedIn() && getUserData().role == 'admin';
     }
-    
+
     function isGerente() {
       return isSignedIn() && getUserData().role == 'gerente';
+    }
+
+    function isAdminOrGerente() {
+      return isSignedIn() && getUserData().role in ['admin', 'gerente'];
     }
 
     // Validation for Public Reservation
@@ -25,87 +29,171 @@ service cloud.firestore {
         let isAvailable = currentStatus == 'En Stock (Disponible para Venta)' || currentStatus == 'Apartado';
         return isAvailable;
     }
-    
-    // Users collection
+
+    // ── Users collection ──────────────────────────────────────────────────────
     match /users/{userId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
     }
-    
-    // Phones collection
+
+    // ── Phones collection ─────────────────────────────────────────────────────
     match /phones/{phoneId} {
-      // Allow public read of Stock/Apartado (so they can see what is reserved)
-      allow read: if isSignedIn() || 
-                  resource.data.estado == 'En Stock (Disponible para Venta)' || 
+      // Allow public read of Stock/Apartado phones
+      allow read: if isSignedIn() ||
+                  resource.data.estado == 'En Stock (Disponible para Venta)' ||
                   resource.data.estado == 'Apartado';
-      
-      // Allow public update for Reservation Logic (unauthenticated can only update reservation + updatedAt)
+
+      // Allow public update only for reservation fields (unauthenticated)
       allow update: if (isAdmin() || isGerente()) ||
                     (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt']) && isValidReservationUpdate());
-                    
+
       allow create: if isAdmin() || isGerente();
       allow delete: if isAdmin();
     }
-    
-    // Batches collection
+
+    // ── Batches collection ────────────────────────────────────────────────────
     match /batches/{batchId} {
         allow read: if isSignedIn();
         allow write: if isAdmin();
     }
-    
-    // Clients collection
+
+    // ── Clients collection ────────────────────────────────────────────────────
     match /clients/{clientId} {
       allow read: if isSignedIn();
       allow create, update: if isAdmin() || isGerente();
       allow delete: if isAdmin();
-      
-      // Sub-collections
+
       match /purchases/{purchaseId} {
         allow read: if isSignedIn();
         allow create: if isAdmin() || isGerente();
         allow update, delete: if isAdmin();
       }
-      
+
       match /creditAdjustments/{adjId} {
         allow read: if isSignedIn();
         allow create: if isAdmin();
         allow update, delete: if false;
       }
-      
+
       match /debtAdjustments/{adjId} {
         allow read: if isSignedIn();
         allow create: if isAdmin() || isGerente();
         allow update, delete: if false;
       }
+
+      match /debtPayments/{payId} {
+        allow read: if isSignedIn();
+        allow create: if isAdmin() || isGerente();
+        allow update, delete: if false;
+      }
     }
-    
-    // Accessories collection
+
+    // ── Accessories collection ────────────────────────────────────────────────
     match /accessories/{accessoryId} {
       allow read: if isSignedIn();
       allow write: if isAdmin() || isGerente();
     }
 
-    // Device Definitions (Smart Learner)
+    // ── Device Definitions (Smart Learner) ────────────────────────────────────
     match /device_definitions/{tac} {
       allow read: if isSignedIn();
       allow write: if isAdmin() || isGerente();
     }
-    
-    // Price Catalog (Brain 2.0)
+
+    // ── Price Catalog (Brain 2.0) ─────────────────────────────────────────────
+    // Read is open to all signed-in users (vendedor, comprador need price reference)
+    // Write is restricted to admin/gerente to prevent data corruption
     match /price_catalog/{id} {
       allow read: if isSignedIn();
-      allow write: if isSignedIn(); // Allow all staff to contribute to the brain
+      allow write: if isAdminOrGerente();
     }
-    
-    // Pending Orders collection
+
+    // ── Pending Orders ────────────────────────────────────────────────────────
+    // - Buyers can read their own orders (by clientId)
+    // - Admin / Gerente can read all orders
+    // - Any authenticated user can create (for B2B flow where order is created client-side)
+    // - Clients can update their own order to mark payment method / pending_transfer
+    // - Admin / Gerente can update any order (e.g. confirm transfer)
+    // - Cloud Functions use admin SDK and bypass these rules entirely
     match /pendingOrders/{orderId} {
+      allow read: if isSignedIn() && (
+        resource.data.clientId == request.auth.uid ||
+        isAdminOrGerente()
+      );
+
+      // Allow create if authenticated (B2B buyer creating order from catalog)
       allow create: if isSignedIn();
-      allow read: if isSignedIn() && (isAdmin() || isGerente() || resource.data.sessionId == request.auth.uid);
-      allow update: if isAdmin() || isGerente();
+
+      // Buyer can update their own order (e.g., set status to pending_transfer)
+      // Admin/Gerente can update any order
+      allow update: if isSignedIn() && (
+        resource.data.clientId == request.auth.uid ||
+        isAdminOrGerente()
+      );
+
       allow delete: if false;
     }
 
-    // Deny all other access
+    // ── Shipments ─────────────────────────────────────────────────────────────
+    match /shipments/{shipmentId} {
+      // Buyers can read shipments where their uid matches clientId; admin/gerente can read all
+      allow read: if isAdminOrGerente() ||
+                  (isSignedIn() && resource.data.clientId == request.auth.uid);
+      // Only admin/gerente can create or update shipments
+      allow create, update: if isAdminOrGerente();
+      allow delete: if false;
+    }
+
+    // ── Invoices (Sistema 4 — facturas de ventas) ─────────────────────────────
+    match /invoices/{invoiceId} {
+      allow read: if isAdminOrGerente();
+      allow create: if isAdminOrGerente();
+      allow update, delete: if isAdmin();
+    }
+
+    // ── Settings (invoice counter, etc.) ──────────────────────────────────────
+    match /settings/{docId} {
+      allow read: if isAdminOrGerente();
+      allow write: if isAdminOrGerente();
+    }
+
+    // ── Reception Acts (Actas con firma digital) ───────────────────────────────
+    match /receptionActs/{actId} {
+      allow read: if isSignedIn();
+      allow create: if isAdminOrGerente();
+      allow update, delete: if isAdmin();
+    }
+
+    // ── Receiving Reports ─────────────────────────────────────────────────────
+    match /receivingReports/{reportId} {
+      allow read: if isSignedIn();
+      allow create, update: if isAdminOrGerente();
+      allow delete: if isAdmin();
+    }
+
+    // ── Suppliers (proveedores mayoristas) ────────────────────────────────────
+    match /suppliers/{supplierId} {
+      allow read: if isAdminOrGerente();
+      allow create, update: if isAdminOrGerente();
+      allow delete: if isAdmin();
+    }
+
+    // ── Supplier Invoices (facturas importadas de proveedores) ─────────────────
+    match /supplierInvoices/{invoiceId} {
+      allow read: if isAdminOrGerente();
+      allow create: if isAdminOrGerente();
+      allow update: if isAdminOrGerente();
+      allow delete: if isAdmin();
+    }
+
+    // ── Import Shipments (envíos USA → El Salvador) ───────────────────────────
+    match /importShipments/{shipmentId} {
+      allow read: if isAdminOrGerente();
+      allow create, update: if isAdminOrGerente();
+      allow delete: if isAdmin();
+    }
+
+    // ── Deny all other access ─────────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }

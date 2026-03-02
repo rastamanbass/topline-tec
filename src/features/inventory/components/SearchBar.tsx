@@ -6,15 +6,18 @@ export default function SearchBar() {
 
   return (
     <div className="relative">
+      <label htmlFor="phone-search" className="sr-only">Buscar teléfonos</label>
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <Search className="h-5 w-5 text-gray-400" />
       </div>
       <input
+        id="phone-search"
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         className="input-field pl-10 pr-10"
         placeholder="Buscar por IMEI, marca o modelo..."
+        aria-label="Buscar teléfonos por IMEI, marca o modelo"
       />
       {searchQuery && (
         <button

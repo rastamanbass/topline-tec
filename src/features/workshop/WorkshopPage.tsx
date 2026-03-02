@@ -6,12 +6,14 @@ import RepairTicket from './components/RepairTicket';
 import StatusBadge from '../inventory/components/StatusBadge';
 import { useAuth } from '../../context';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function WorkshopPage() {
   const { data: workshopPhones, isLoading, error } = useWorkshopPhones();
   const { mutate: updateStatus } = useUpdateWorkshopStatus();
   const { userRole } = useAuth();
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [deliverTarget, setDeliverTarget] = useState<string | null>(null);
 
   const handleAction = (id: string, action: string) => {
     let newStatus = '';
@@ -31,11 +33,8 @@ export default function WorkshopPage() {
         details = 'Recepción confirmada por gerencia';
         break;
       case 'deliver_client':
-        // TODO: check if client exists logic (simple version for now)
-        if (!confirm('¿Confirmar entrega al cliente?')) return;
-        newStatus = 'Entregado al Cliente';
-        details = 'Entregado al cliente final';
-        break;
+        setDeliverTarget(id);
+        return;
       default:
         return;
     }
@@ -46,6 +45,17 @@ export default function WorkshopPage() {
         onSuccess: () => toast.success('Estado actualizado correctamente'),
       }
     );
+  };
+
+  const handleConfirmDeliver = () => {
+    if (!deliverTarget) return;
+    updateStatus(
+      { id: deliverTarget, newStatus: 'Entregado al Cliente', details: 'Entregado al cliente final' },
+      {
+        onSuccess: () => toast.success('Estado actualizado correctamente'),
+      }
+    );
+    setDeliverTarget(null);
   };
 
   return (
@@ -74,7 +84,9 @@ export default function WorkshopPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
-          <div className="flex justify-center p-12">Loading...</div>
+          <div className="flex justify-center p-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+          </div>
         ) : error ? (
           <div className="text-red-600 p-12">Error loading workshop data</div>
         ) : (
@@ -116,7 +128,7 @@ export default function WorkshopPage() {
                         >
                           <span className="font-medium">{rep.note}</span> - ${rep.cost}
                           {!rep.paid && (
-                            <span className="ml-2 text-red-500 text-xs font-bold">Unpaid</span>
+                            <span className="ml-2 text-red-500 text-xs font-semibold">Pendiente</span>
                           )}
                         </div>
                       ))}
@@ -178,6 +190,15 @@ export default function WorkshopPage() {
       </main>
 
       {isTicketModalOpen && <RepairTicket onClose={() => setIsTicketModalOpen(false)} />}
+
+      <ConfirmModal
+        isOpen={!!deliverTarget}
+        title="Confirmar entrega"
+        message="¿Confirmar entrega al cliente?"
+        confirmLabel="Entregar"
+        onConfirm={handleConfirmDeliver}
+        onCancel={() => setDeliverTarget(null)}
+      />
     </div>
   );
 }

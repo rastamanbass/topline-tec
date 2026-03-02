@@ -10,6 +10,9 @@ import { useBatches } from '../hooks/useBatches';
 import type { PhoneStatus } from '../../../types';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../../context';
+import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel, splitMarcaAndSupplier } from '../../../lib/phoneUtils';
 
 const PHONE_STATUSES: PhoneStatus[] = [
   'En Bodega (USA)',
@@ -39,6 +42,7 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
   const { modalMode, selectedPhone } = useInventoryStore();
   const createPhone = useCreatePhone();
   const updatePhone = useUpdatePhone();
+  const { userRole } = useAuth();
 
   const {
     register,
@@ -57,7 +61,7 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
       storage: '',
       costo: 0,
       precioVenta: 0,
-      estado: 'En Stock (Disponible para Venta)',
+      estado: userRole === 'admin' ? 'En Bodega (USA)' : 'En Stock (Disponible para Venta)',
     },
   });
 
@@ -96,8 +100,12 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
   useEffect(() => {
     const fetchSuggestedPrice = async () => {
       if (modalMode === 'create' && wBrand && wModel) {
-        const storageVal = wStorage || 'Unknown';
-        const safeId = `${wBrand}-${wModel}-${storageVal}`
+        const displayBrand = normalizeDisplayBrand(wBrand);
+        const storageVal = normalizeStorage(wStorage);
+        const normalizedModel = displayBrand === 'Apple'
+          ? normalizeIPhoneModel(wModel || '')
+          : (wModel || 'Unknown');
+        const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
           .replace(/\//g, '-')
           .replace(/\s+/g, '-')
           .toLowerCase();
@@ -128,20 +136,29 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
           .split('\n')
           .map((i) => i.trim())
           .filter((i) => i.length > 0);
-        if (imeis.length === 0) return;
+        if (imeis.length === 0) {
+          toast.error('Ingresa al menos un IMEI');
+          return;
+        }
+
+        const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(data.marca, data.modelo);
 
         const promises = imeis.map((imei) =>
           createPhone.mutateAsync({
             ...data,
             condition: data.condition || 'Grade A',
             imei: imei,
+            marca: finalMarca,
+            supplierCode: supplierCode,
           })
         );
         await Promise.all(promises);
       } else if (modalMode === 'edit' && selectedPhone) {
+        const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(data.marca, data.modelo);
         await updatePhone.mutateAsync({
           id: selectedPhone.id,
-          data,
+          data: { ...data, marca: finalMarca, supplierCode: supplierCode },
+          previousEstado: selectedPhone.estado,
         });
       }
       onSuccess();

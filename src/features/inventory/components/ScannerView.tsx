@@ -20,6 +20,7 @@ import { useBatches } from '../hooks/useBatches';
 import BatchManager from './BatchManager';
 import { useAuth } from '../../../context';
 import GlassCard from '../../../components/ui/GlassCard';
+import { splitMarcaAndSupplier } from '../../../lib/phoneUtils';
 
 // ... interface update
 interface ScannedItem {
@@ -41,7 +42,7 @@ interface ScannerViewProps {
 }
 
 export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProps) {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const { batches } = useBatches();
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
   const [inputBuffer, setInputBuffer] = useState('');
@@ -209,19 +210,21 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
 
     setIsProcessing(true);
     try {
-      const promises = scannedItems.map((item) =>
-        createPhone.mutateAsync({
+      const promises = scannedItems.map((item) => {
+        const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(item.brand, item.model);
+        return createPhone.mutateAsync({
           imei: item.imei,
-          marca: item.brand,
+          marca: finalMarca,
+          supplierCode: supplierCode,
           modelo: item.model,
           storage: item.storage,
           costo: item.cost,
           precioVenta: item.price,
           lote: batchLot,
-          estado: 'En Stock (Disponible para Venta)',
+          estado: userRole === 'admin' ? 'En Bodega (USA)' : 'En Stock (Disponible para Venta)',
           condition: 'Grade A',
-        })
-      );
+        });
+      });
 
       await Promise.all(promises);
       toast.success(`${scannedItems.length} teléfonos creados!`);

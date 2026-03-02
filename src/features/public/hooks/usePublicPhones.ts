@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import type { Phone } from '../../../types';
 
@@ -11,7 +11,8 @@ export function usePublicPhones() {
     const phonesRef = collection(db, 'phones');
     const q = query(
       phonesRef,
-      where('estado', 'in', ['En Stock (Disponible para Venta)', 'Apartado'])
+      where('estado', 'in', ['En Stock (Disponible para Venta)', 'Apartado']),
+      limit(200)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {

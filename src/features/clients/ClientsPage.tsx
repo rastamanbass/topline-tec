@@ -3,13 +3,14 @@ import { useState } from 'react';
 import { useAuth } from '../../context';
 import ClientTable from './components/ClientTable';
 import ClientModal from './components/ClientModal';
+import ClientDetailsModal from './components/ClientDetailsModal';
 import type { Client } from '../../types';
-// import { useClients } from './hooks/useClients';
 
 export default function ClientsPage() {
   const { userRole } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [viewClient, setViewClient] = useState<Client | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   const canCreate = ['admin', 'gerente'].includes(userRole || '');
@@ -51,7 +52,7 @@ export default function ClientsPage() {
           <div className="relative max-w-md">
             <input
               type="text"
-              placeholder="Buscar por nombre, teléfono o email..."
+              placeholder="Buscar cliente..."
               className="input-field pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -62,16 +63,29 @@ export default function ClientsPage() {
 
         {/* Table */}
         <div className="card overflow-hidden">
-          <ClientTable searchQuery={searchQuery} onEdit={handleOpenModal} />
+          <ClientTable
+            searchQuery={searchQuery}
+            onEdit={handleOpenModal}
+            onView={(client) => setViewClient(client)}
+          />
         </div>
       </main>
 
-      {/* Modal */}
+      {/* Edit/Create Modal */}
       {isModalOpen && (
         <ClientModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           client={selectedClient}
+        />
+      )}
+
+      {/* Details Modal */}
+      {viewClient && (
+        <ClientDetailsModal
+          isOpen={!!viewClient}
+          onClose={() => setViewClient(null)}
+          client={viewClient}
         />
       )}
     </div>

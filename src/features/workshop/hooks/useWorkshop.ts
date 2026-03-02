@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, query, where, limit, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import type { Phone, Repair } from '../../../types';
+import { buildHistoryEntry } from '../../../lib/historyUtils';
 
 export function useWorkshopPhones() {
   return useQuery({
@@ -15,7 +16,7 @@ export function useWorkshopPhones() {
         'Recibido de Taller (OK)',
       ];
 
-      const q = query(collection(db, 'phones'), where('estado', 'in', statuses));
+      const q = query(collection(db, 'phones'), where('estado', 'in', statuses), limit(200));
 
       const snapshot = await getDocs(q);
       return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Phone[];
@@ -37,6 +38,7 @@ export function useAddRepairTicket() {
       await updateDoc(phoneRef, {
         reparaciones: arrayUnion(repair),
         estado: 'En Taller (Recibido)',
+        statusHistory: arrayUnion(buildHistoryEntry('En Taller (Recibido)', 'Ticket de reparación creado')),
       });
     },
     onSuccess: () => {

@@ -32,6 +32,7 @@ interface InventoryStore {
   toggleSelection: (id: string) => void;
   selectAll: (ids: string[]) => void;
   clearSelection: () => void;
+  deselectMany: (ids: string[]) => void;
 }
 
 export const useInventoryStore = create<InventoryStore>((set) => ({
@@ -94,4 +95,10 @@ export const useInventoryStore = create<InventoryStore>((set) => ({
     }),
   selectAll: (ids) => set({ selectedPhoneIds: new Set(ids) }),
   clearSelection: () => set({ selectedPhoneIds: new Set() }),
+  deselectMany: (ids) =>
+    set((state) => {
+      const newSet = new Set(state.selectedPhoneIds);
+      ids.forEach((id) => newSet.delete(id));
+      return { selectedPhoneIds: newSet };
+    }),
 }));

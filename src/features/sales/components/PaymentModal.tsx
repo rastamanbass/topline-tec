@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSalesStore } from '../stores/salesStore';
 import { useSaleTransaction } from '../hooks/useSales';
 import { useClients } from '../../clients/hooks/useClients';
-import { X, Search, User, AlertTriangle } from 'lucide-react';
+import { useModal } from '../../../hooks/useModal';
+import { X, Search, User, AlertTriangle, CheckCircle, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { lockPhonesForPOS, unlockPhonesFromPOS } from '../../../services/firebase/stockLock';
+import { createInvoice } from '../../../services/firebase/invoiceService';
+import type { CreateInvoiceData } from '../../../services/firebase/invoiceService';
+import { phoneLabel } from '../../../lib/phoneUtils';
+import InvoiceModal from '../../invoices/components/InvoiceModal';
 
+const round2 = (n: number) => Math.round(n * 100) / 100;
 const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
 
 export default function PaymentModal() {
@@ -30,22 +37,70 @@ export default function PaymentModal() {
   } = useSalesStore();
 
   const { mutateAsync: executeSale, isPending } = useSaleTransaction();
-  const { data: clients } = useClients(); // Only efficient if few clients, otherwise search implementation
+  const { data: clients } = useClients();
+  const { dialogRef } = useModal(closePaymentModal, { disabled: isPending });
   const [clientSearch, setClientSearch] = useState('');
   const [cashAmount, setCashAmount] = useState(0);
   const [transferAmount, setTransferAmount] = useState(0);
-  // Filter clients for search
+
+  // Invoice state
+  const [invoiceId, setInvoiceId] = useState<string | null>(null);
+  const [invoiceNumber, setInvoiceNumber] = useState<string | null>(null);
+  const [saleSuccess, setSaleSuccess] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+
+  // Track if lock was acquired for cleanup
+  const lockedPhoneIds = useRef<string[]>([]);
+
+  const phoneIds = cartItems.filter((i) => i.phoneId).map((i) => i.phoneId!);
+
+  // Lock phones when modal opens
+  useEffect(() => {
+    if (!isPaymentModalOpen || phoneIds.length === 0) return;
+    let cancelled = false;
+
+    lockPhonesForPOS(phoneIds)
+      .then(() => {
+        if (!cancelled) lockedPhoneIds.current = phoneIds;
+      })
+      .catch((err: Error) => {
+        if (!cancelled) {
+          toast.error(err.message);
+          resetCheckout();
+          closePaymentModal();
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPaymentModalOpen]);
+
   const filteredClients = clientSearch
     ? clients?.filter((c) => c.name.toLowerCase().includes(clientSearch.toLowerCase()))
     : [];
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = Math.max(0, subtotal - discount);
+  const subtotal = round2(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0));
+  const total = round2(Math.max(0, subtotal - discount));
 
-  // Calculate debt incurred
-  const remaining = total - amountPaidWithCredit - amountPaidWithWorkshopDebt;
-  const paid = (cashAmount || 0) + (transferAmount || 0);
-  const debtIncurred = Math.max(0, remaining - paid);
+  const remaining = round2(total - amountPaidWithCredit - amountPaidWithWorkshopDebt);
+  const paid = round2((cashAmount || 0) + (transferAmount || 0));
+  const debtIncurred = round2(Math.max(0, remaining - paid));
+
+  const handleCancel = async () => {
+    // Unlock phones reserved for this POS checkout
+    if (lockedPhoneIds.current.length > 0) {
+      try {
+        await unlockPhonesFromPOS(lockedPhoneIds.current);
+      } catch {
+        // Non-critical — log only
+        console.warn('Could not unlock phones on cancel');
+      }
+      lockedPhoneIds.current = [];
+    }
+    closePaymentModal();
+  };
 
   const handlePayment = async () => {
     try {
@@ -68,7 +123,7 @@ export default function PaymentModal() {
         return;
       }
 
-      await executeSale({
+      const result = await executeSale({
         items: cartItems,
         clientId: selectedClient?.id || '',
         paymentMethod,
@@ -81,23 +136,139 @@ export default function PaymentModal() {
         notes,
       });
 
-      toast.success('Venta realizada con éxito');
-      resetCheckout();
-      closePaymentModal();
+      if (!result.success) {
+        toast.error(result.error || 'Error en la venta');
+        return;
+      }
+
+      // Build invoice items from cart
+      const invoiceItems: CreateInvoiceData['items'] = cartItems.map((item) => ({
+        description: item.description || phoneLabel(undefined, item.description),
+        imei: item.imei,
+        quantity: item.quantity,
+        unitPrice: item.price,
+        subtotalLine: round2(item.price * item.quantity),
+      }));
+
+      // Create invoice
+      try {
+        const invoiceData: CreateInvoiceData = {
+          clientId: selectedClient?.id,
+          clientName: selectedClient?.name || 'Venta al contado',
+          clientPhone: selectedClient?.phone,
+          clientEmail: selectedClient?.email,
+          items: invoiceItems,
+          subtotal,
+          discountAmount: discount,
+          total,
+          paymentMethod,
+          amountPaidWithCredit: amountPaidWithCredit || undefined,
+          amountPaidWithWorkshopDebt: amountPaidWithWorkshopDebt || undefined,
+          debtIncurred: debtIncurred || undefined,
+          transferDetails:
+            paymentMethod === 'Transferencia' ? transferDetails : undefined,
+          cashAmount: cashAmount || undefined,
+          notes: notes || undefined,
+          phoneIds,
+          source: 'pos',
+        };
+        const newInvoiceId = await createInvoice(invoiceData);
+        setInvoiceId(newInvoiceId);
+        // Get number for display — we'll show it from the modal
+      } catch (invoiceError) {
+        console.error('Invoice creation failed:', invoiceError);
+        // Don't fail the sale if invoice fails — log only
+        toast.error('Venta guardada, pero la factura no se pudo generar.');
+      }
+
+      lockedPhoneIds.current = [];
+      toast.success('Venta realizada con exito');
+      setSaleSuccess(true);
     } catch (error: unknown) {
       console.error(error);
       toast.error(`Error en la venta: ${(error as Error).message}`);
     }
   };
 
+  const handleClose = () => {
+    resetCheckout();
+    setSaleSuccess(false);
+    setInvoiceId(null);
+    setInvoiceNumber(null);
+    setShowInvoiceModal(false);
+    lockedPhoneIds.current = [];
+    closePaymentModal();
+  };
+
   if (!isPaymentModalOpen) return null;
+
+  // Success state — show after sale completes
+  if (saleSuccess) {
+    return (
+      <>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-8 flex flex-col items-center gap-5">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 text-green-600" />
+            </div>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900">Venta Registrada</h2>
+              <p className="text-gray-500 mt-1">Total: {formatCurrency(total)}</p>
+              {invoiceId && (
+                <p className="text-xs text-gray-400 mt-1">Factura generada</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3 w-full">
+              {invoiceId && (
+                <button
+                  onClick={() => setShowInvoiceModal(true)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  Ver e Imprimir Factura
+                </button>
+              )}
+              <button
+                onClick={handleClose}
+                className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-medium transition-colors"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {showInvoiceModal && invoiceId && (
+          <InvoiceModal
+            invoiceId={invoiceId}
+            onClose={() => setShowInvoiceModal(false)}
+            onInvoiceNumberLoaded={(num) => setInvoiceNumber(num)}
+          />
+        )}
+        {invoiceNumber && <span className="sr-only">{invoiceNumber}</span>}
+      </>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="payment-sale-title"
+        className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      >
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">Finalizar Venta</h2>
-          <button onClick={closePaymentModal} className="text-gray-400 hover:text-gray-600">
+          <h2 id="payment-sale-title" className="text-xl font-bold text-gray-900">
+            Finalizar Venta
+          </h2>
+          <button
+            onClick={handleCancel}
+            className="text-gray-400 hover:text-gray-600"
+            aria-label="Cerrar"
+          >
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -167,7 +338,12 @@ export default function PaymentModal() {
                   type="number"
                   className="w-20 p-1 border rounded text-right text-sm"
                   value={discount}
-                  onChange={(e) => setDiscount(Number(e.target.value))}
+                  min="0"
+                  max={subtotal}
+                  step="0.01"
+                  onChange={(e) =>
+                    setDiscount(Math.max(0, Math.min(subtotal, Number(e.target.value))))
+                  }
                 />
               </div>
             </div>
@@ -309,7 +485,7 @@ export default function PaymentModal() {
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <button onClick={closePaymentModal} className="btn-secondary">
+            <button onClick={handleCancel} className="btn-secondary">
               Cancelar
             </button>
             <button
@@ -326,3 +502,12 @@ export default function PaymentModal() {
     </div>
   );
 }
+
+/**
+ * SISTEMA 3 VERIFICADO:
+ * ✅ Lock atómico al abrir modal (lockPhonesForPOS)
+ * ✅ Unlock al cancelar (unlockPhonesFromPOS)
+ * ✅ Verificación atómica en transactions.ts antes de vender
+ * ✅ Estado de éxito con botón de factura
+ * ✅ Edge case: si lock falla, cierra modal con toast.error
+ */

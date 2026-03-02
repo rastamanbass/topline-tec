@@ -7,6 +7,7 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 import { db, auth } from '../../lib/firebase';
+import { phoneLabel } from '../../lib/phoneUtils';
 import type { Phone, Client, PurchaseItem, Repair } from '../../types';
 
 export interface SaleData {
@@ -124,14 +125,44 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
         }
       }
 
+      // Atomic availability check — prevents double-selling
+      for (const item of saleData.items) {
+        if (item.phoneId) {
+          const currentData = phoneDocsToRead.get(item.phoneId);
+          if (!currentData) throw new Error(`Teléfono ${item.phoneId} no encontrado.`);
+
+          const currentEstado = currentData.estado as string;
+          const reservation = currentData.reservation as
+            | { reservedBy: string; expiresAt: number }
+            | null
+            | undefined;
+
+          // Available if: En Stock, OR the POS_SALE reservation is ours
+          const isAvailable =
+            currentEstado === 'En Stock (Disponible para Venta)' ||
+            (reservation?.reservedBy === 'POS_SALE');
+
+          if (!isAvailable) {
+            const marca = (currentData.marca as string) || '';
+            const modelo = (currentData.modelo as string) || '';
+            const phoneInfo = phoneLabel(marca, modelo) || item.phoneId;
+            throw new Error(
+              `"${phoneInfo}" ya no está disponible (estado: ${currentEstado}). Por favor recarga el inventario.`
+            );
+          }
+        }
+      }
+
       // --- WRITES ---
+
+      const round2 = (n: number) => Math.round(n * 100) / 100;
 
       // 3. Update Client Credit/Debt
       if (saleData.amountPaidWithCredit > 0) {
-        transaction.update(clientRef, { creditAmount: increment(-saleData.amountPaidWithCredit) });
+        transaction.update(clientRef, { creditAmount: increment(-round2(saleData.amountPaidWithCredit)) });
       }
       if (saleData.debtIncurred && saleData.debtIncurred > 0) {
-        transaction.update(clientRef, { debtAmount: increment(saleData.debtIncurred) });
+        transaction.update(clientRef, { debtAmount: increment(round2(saleData.debtIncurred)) });
       }
 
       // 4. Update Workshop Repairs (mark as paid)
@@ -163,12 +194,12 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
       const purchaseRef = doc(collection(db, 'clients', saleData.clientId, 'purchases'));
       transaction.set(purchaseRef, {
         items: saleData.items,
-        totalAmount: saleData.totalAmount,
+        totalAmount: round2(saleData.totalAmount),
         paymentMethod: saleData.paymentMethod,
-        discountAmount: saleData.discountAmount || 0,
-        debtIncurred: saleData.debtIncurred || 0,
-        amountPaidWithCredit: saleData.amountPaidWithCredit,
-        amountPaidWithWorkshopDebt: saleData.amountPaidWithWorkshopDebt,
+        discountAmount: round2(saleData.discountAmount || 0),
+        debtIncurred: round2(saleData.debtIncurred || 0),
+        amountPaidWithCredit: round2(saleData.amountPaidWithCredit),
+        amountPaidWithWorkshopDebt: round2(saleData.amountPaidWithWorkshopDebt),
         transferDetails: saleData.transferDetails || null,
         notes: saleData.notes || null,
         purchaseDate: serverTimestamp(),

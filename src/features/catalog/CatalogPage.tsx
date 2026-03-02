@@ -4,12 +4,16 @@ import { db } from '../../lib/firebase';
 import type { CatalogItem } from '../../types';
 import { Loader2, Search, Tag, Edit2, Trash2, Save, X, HardDrive } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
+import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel } from '../../lib/phoneUtils';
 
 export default function CatalogPage() {
   const [items, setItems] = useState<CatalogItem[]>([]);
-  const [fileteredItems, setFilteredItems] = useState<CatalogItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<CatalogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [syncConfirmOpen, setSyncConfirmOpen] = useState(false);
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState<string | null>(null);
 
   // Editing State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -33,7 +37,6 @@ export default function CatalogPage() {
 
   // Sync Logic
   const handleSync = async () => {
-    if (!confirm('¿Analizar el inventario actual para aprender precios?')) return;
     setIsLoading(true);
     let learned = 0;
     try {
@@ -43,8 +46,12 @@ export default function CatalogPage() {
       for (const phoneDoc of phonesSnap.docs) {
         const phone = phoneDoc.data();
         if (phone.precioVenta > 0 && phone.modelo) {
-          const storageVal = phone.storage || 'Unknown';
-          const safeId = `${phone.marca}-${phone.modelo}-${storageVal}`
+          const displayBrand = normalizeDisplayBrand(phone.marca as string);
+          const storageVal = normalizeStorage(phone.storage as string | undefined);
+          const normalizedModel = displayBrand === 'Apple'
+            ? normalizeIPhoneModel(phone.modelo as string || '')
+            : ((phone.modelo as string) || 'Unknown');
+          const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
             .replace(/\//g, '-')
             .replace(/\s+/g, '-')
             .toLowerCase();
@@ -56,7 +63,7 @@ export default function CatalogPage() {
             setDoc(
               catalogRef,
               {
-                brand: phone.marca,
+                brand: displayBrand,
                 model: phone.modelo,
                 storage: storageVal,
                 averagePrice: phone.precioVenta,
@@ -100,7 +107,6 @@ export default function CatalogPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Eliminar este precio guardado?')) return;
     try {
       await deleteDoc(doc(db, 'price_catalog', id));
       setItems((prev) => prev.filter((i) => i.id !== id));
@@ -187,7 +193,7 @@ export default function CatalogPage() {
 
           <div className="flex gap-2">
             <button
-              onClick={handleSync}
+              onClick={() => setSyncConfirmOpen(true)}
               className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-200"
               title="Aprender precios del inventario existente"
             >
@@ -235,11 +241,15 @@ export default function CatalogPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {fileteredItems.map((item) => (
+                {filteredItems.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 space-x-2">
-                      {item.brand === 'Apple' ? '🍎' : item.brand === 'Samsung' ? '🤖' : '📱'}
-                      <span className="font-medium text-gray-900">{item.brand}</span>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-full bg-gray-100 text-xs font-bold flex items-center justify-center text-gray-600 shrink-0">
+                          {item.brand?.charAt(0) || '?'}
+                        </span>
+                        <span className="font-medium text-gray-900">{item.brand}</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-800">{item.model}</td>
                     <td className="px-6 py-4">
@@ -298,7 +308,7 @@ export default function CatalogPage() {
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleDelete(item.id)}
+                              onClick={() => setDeleteConfirmItem(item.id)}
                               className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -314,6 +324,25 @@ export default function CatalogPage() {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={syncConfirmOpen}
+        title="Sincronizar Cerebro"
+        message="¿Analizar el inventario actual para aprender precios?"
+        confirmLabel="Sincronizar"
+        onConfirm={() => { setSyncConfirmOpen(false); handleSync(); }}
+        onCancel={() => setSyncConfirmOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={!!deleteConfirmItem}
+        title="Eliminar precio"
+        message="¿Eliminar este precio guardado?"
+        confirmLabel="Eliminar"
+        onConfirm={() => { if (deleteConfirmItem) handleDelete(deleteConfirmItem); setDeleteConfirmItem(null); }}
+        onCancel={() => setDeleteConfirmItem(null)}
+        danger
+      />
     </div>
   );
 }

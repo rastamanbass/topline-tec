@@ -1,5 +1,19 @@
 import { z } from 'zod';
 
+/** Luhn algorithm — validates IMEI check digit */
+function luhn(imei: string): boolean {
+  let sum = 0;
+  for (let i = 0; i < imei.length; i++) {
+    let digit = parseInt(imei[imei.length - 1 - i], 10);
+    if (i % 2 === 1) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+  }
+  return sum % 10 === 0;
+}
+
 const PHONE_STATUSES = [
   'En Bodega (USA)',
   'En Tránsito (a El Salvador)',
@@ -21,7 +35,11 @@ const PHONE_STATUSES = [
 
 export const phoneSchema = z
   .object({
-    imei: z.string().min(1, 'IMEI es requerido'),
+    imei: z
+      .string()
+      .min(1, 'IMEI es requerido')
+      .regex(/^\d{15}$/, 'IMEI debe tener exactamente 15 dígitos numéricos')
+      .refine(luhn, 'IMEI inválido (falla verificación de dígito Luhn)'),
     marca: z.string().min(1, 'Marca es requerida'),
     modelo: z.string().min(1, 'Modelo es requerido'),
     storage: z.string().optional(),

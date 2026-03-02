@@ -11,6 +11,8 @@ import {
 } from './hooks/useAccessories';
 import AccessoryForm from './components/AccessoryForm';
 import { useAuth } from '../../context';
+import ConfirmModal from '../../components/ConfirmModal';
+import { ACCESSORIES_MARGIN_THRESHOLDS } from '../../lib/constants';
 
 const fmt = (n: number) =>
   new Intl.NumberFormat('en-US', {
@@ -30,6 +32,7 @@ export default function AccessoriesPage() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState<Accessory | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Accessory | null>(null);
 
   const canWrite = ['admin', 'gerente'].includes(userRole || '');
 
@@ -64,9 +67,7 @@ export default function AccessoriesPage() {
   };
 
   const handleDelete = (acc: Accessory) => {
-    if (confirm(`¿Eliminar "${acc.name}"? Esta acción no se puede deshacer.`)) {
-      deleteMut.mutate(acc.id);
-    }
+    setDeleteTarget(acc);
   };
 
   return (
@@ -216,9 +217,9 @@ export default function AccessoriesPage() {
                       <td className="px-4 py-3 text-right">
                         <span
                           className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            margin >= 30
+                            margin >= ACCESSORIES_MARGIN_THRESHOLDS.healthy
                               ? 'bg-emerald-100 text-emerald-700'
-                              : margin >= 15
+                              : margin >= ACCESSORIES_MARGIN_THRESHOLDS.acceptable
                                 ? 'bg-yellow-100 text-yellow-700'
                                 : 'bg-red-100 text-red-700'
                           }`}
@@ -282,6 +283,19 @@ export default function AccessoriesPage() {
           isLoading={updateMut.isPending}
         />
       )}
+
+      <ConfirmModal
+        isOpen={!!deleteTarget}
+        title="Eliminar accesorio"
+        message={`¿Eliminar "${deleteTarget?.name}"? Esta acción no se puede deshacer.`}
+        confirmLabel="Eliminar"
+        onConfirm={() => {
+          if (deleteTarget) deleteMut.mutate(deleteTarget.id);
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+        danger
+      />
     </div>
   );
 }

@@ -23,7 +23,7 @@ export default function BulkActions({ phones }: BulkActionsProps) {
 
   const count = selectedPhoneIds.size;
   const canDelete = userRole === 'admin';
-  const canEdit = ['admin', 'gerente'].includes(userRole || '');
+  const canChangeStatus = userRole === 'admin';
 
   const handleBulkSell = () => {
     const selectedPhones = phones.filter((p) => selectedPhoneIds.has(p.id));
@@ -93,7 +93,7 @@ export default function BulkActions({ phones }: BulkActionsProps) {
           Venta Rápida
         </button>
 
-        {canEdit && (
+        {canChangeStatus && (
           <button
             onClick={handleBulkStatusChange}
             className="flex items-center gap-2 px-3 py-1.5 bg-amber-600 text-white rounded hover:bg-amber-700 transition-colors text-sm font-medium"
@@ -114,7 +114,11 @@ export default function BulkActions({ phones }: BulkActionsProps) {
         )}
       </div>
 
-      <BulkStatusModal isOpen={isStatusModalOpen} onClose={() => setIsStatusModalOpen(false)} />
+      <BulkStatusModal
+        isOpen={isStatusModalOpen}
+        onClose={() => setIsStatusModalOpen(false)}
+        selectedPhones={phones.filter((p) => selectedPhoneIds.has(p.id))}
+      />
     </div>
   );
 }

@@ -1,19 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { collection, getDocs, query, orderBy, collectionGroup } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, collectionGroup } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import type { Purchase, Client } from '../../../types';
 
 export interface SaleRecord extends Purchase {
   clientName: string;
   clientId: string;
+  invoiceId?: string;   // Populated if an invoice document links to this purchase
 }
 
 export function useSalesHistory() {
   return useQuery({
     queryKey: ['sales-history'],
     queryFn: async () => {
-      // Fetch all clients first
-      const clientsSnap = await getDocs(collection(db, 'clients'));
+      // Fetch clients (limited — used only for name lookup)
+      const clientsSnap = await getDocs(query(collection(db, 'clients'), limit(500)));
       const clientMap = new Map<string, string>();
       clientsSnap.docs.forEach((d) => {
         const data = d.data() as Client;
@@ -23,7 +24,8 @@ export function useSalesHistory() {
       // Use collectionGroup to get ALL purchases across all clients
       const purchasesQuery = query(
         collectionGroup(db, 'purchases'),
-        orderBy('purchaseDate', 'desc')
+        orderBy('purchaseDate', 'desc'),
+        limit(500)
       );
       const purchasesSnap = await getDocs(purchasesQuery);
 

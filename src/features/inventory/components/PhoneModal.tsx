@@ -1,12 +1,14 @@
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import { useInventoryStore } from '../stores/inventoryStore';
+import { useModal } from '../../../hooks/useModal';
 import ManualForm from './ManualForm';
 import ScannerView from './ScannerView';
 
 export default function PhoneModal() {
   const { isModalOpen, modalMode, closeModal, initialBatch } = useInventoryStore();
   const [entryMode, setEntryMode] = useState<'scanner' | 'manual'>('scanner');
+  const { dialogRef } = useModal(closeModal, { disabled: !isModalOpen });
 
   if (!isModalOpen || modalMode === 'view') return null;
 
@@ -27,8 +29,11 @@ export default function PhoneModal() {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      {/* Dynamic Width: Wider for Scanner Mode (Create), Narrower for Edit */}
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={modalMode === 'create' ? 'Nuevo Teléfono' : 'Editar Teléfono'}
         className={`bg-white rounded-lg shadow-xl w-full transition-all duration-300 ${modalMode === 'create' ? 'max-w-5xl h-[90vh]' : 'max-w-2xl max-h-[90vh] overflow-y-auto'}`}
       >
         {modalMode === 'create' ? (

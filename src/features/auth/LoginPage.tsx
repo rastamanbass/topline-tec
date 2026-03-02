@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context';
 import toast from 'react-hot-toast';
 import { Lock, Mail } from 'lucide-react';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,6 +12,19 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error('Ingresa tu email primero');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success('Email de recuperación enviado. Revisa tu bandeja.');
+    } catch {
+      toast.error('No se pudo enviar el email. Verifica la dirección.');
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -113,12 +128,20 @@ export default function LoginPage() {
             >
               {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
+
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-sm text-primary-600 hover:underline mt-1 block mx-auto"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
           </form>
         </div>
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-600 mt-4">
-          © 2026 Top Line Tec. Todos los derechos reservados.
+          © {new Date().getFullYear()} Top Line Tec. Todos los derechos reservados.
         </p>
       </div>
     </div>

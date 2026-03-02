@@ -67,45 +67,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             setUser(authUser);
           } else {
-            // User document doesn't exist in Firestore
-            console.warn('User document not found in Firestore. Checking fallbacks...');
-
-            let role: UserRole | null = null;
-            let name = 'User';
-
-            // TODO: Remove emergency fallbacks before production
-            // Emergency Fallback for known admins/legacy users
-            if (firebaseUser.email === 'admin@toplinetecinc.com') {
-              role = 'admin';
-              name = 'Admin Master';
-            } else if (firebaseUser.email === 'gerencia1@toplinetec.com') {
-              role = 'gerente';
-              name = 'Gerencia';
-            }
-
-            if (role) {
-              // Auto-fix: Create the missing document
-              const { setDoc } = await import('firebase/firestore');
-              await setDoc(doc(db, 'users', firebaseUser.uid), {
-                email: firebaseUser.email,
-                name,
-                role,
-                createdAt: new Date(),
-                legacy: true,
-              });
-
-              setUserRole(role);
-              setUser({
-                uid: firebaseUser.uid,
-                email: firebaseUser.email,
-                displayName: name,
-                role,
-              });
-            } else {
-              console.error('No fallback role found for user.');
-              setUser(null);
-              setUserRole(null);
-            }
+            // User document doesn't exist in Firestore — deny access
+            console.error('User document not found in Firestore. Access denied for uid:', firebaseUser.uid);
+            setUser(null);
+            setUserRole(null);
           }
         } catch (error) {
           console.error('Error fetching user role:', error);

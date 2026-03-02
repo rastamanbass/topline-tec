@@ -27,8 +27,8 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     return <Navigate to="/login" replace />;
   }
 
-  // Check role-based access
-  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+  // Check role-based access — deny if role not loaded yet or not in allowed list
+  if (allowedRoles && (!userRole || !allowedRoles.includes(userRole))) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="card max-w-md text-center">

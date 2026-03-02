@@ -2,33 +2,155 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom base styles */
+/* ─── Design Token Variables ─────────────────────────────────────────────── */
+:root {
+  /* Shadows */
+  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:   0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-lg:   0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+  --shadow-xl:   0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.08);
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;   /* 6px  */
+  --radius-md: 0.5rem;     /* 8px  */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.25rem;   /* 20px */
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: all 0.12s ease;
+  --transition-base: all 0.18s ease;
+  --transition-slow: all 0.28s ease;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-gray-200;
   }
-  
+
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-50 text-gray-900 antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Smooth focus outline for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-1;
   }
 }
 
-/* Custom component styles */
+/* ─── Component Library ──────────────────────────────────────────────────── */
 @layer components {
+
+  /* ── Buttons ── */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply inline-flex items-center justify-center gap-2
+           bg-primary-600 hover:bg-primary-700 active:bg-primary-800
+           text-white font-semibold text-sm
+           py-2 px-4 rounded-lg
+           shadow-sm hover:shadow-md
+           transition-all duration-150
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1;
   }
-  
+
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply inline-flex items-center justify-center gap-2
+           bg-white hover:bg-gray-50 active:bg-gray-100
+           text-gray-700 font-semibold text-sm
+           py-2 px-4 rounded-lg
+           border border-gray-200 hover:border-gray-300
+           shadow-sm hover:shadow-md
+           transition-all duration-150
+           focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-1;
   }
-  
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           bg-red-600 hover:bg-red-700 active:bg-red-800
+           text-white font-semibold text-sm
+           py-2 px-4 rounded-lg
+           shadow-sm hover:shadow-md
+           transition-all duration-150;
+  }
+
+  /* ── Input fields ── */
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500;
+    @apply w-full px-3 py-2.5
+           border border-gray-300 rounded-lg
+           bg-white text-gray-900 text-sm placeholder:text-gray-400
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400
+           transition-all duration-150;
+    box-shadow: var(--shadow-sm);
   }
-  
+
+  /* ── Cards ── */
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    @apply bg-white rounded-xl border border-gray-100;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:-translate-y-0.5;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-hover:hover {
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* ── Status badges ── */
+  .badge {
+    @apply inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+
+  .badge-success {
+    @apply badge bg-emerald-50 text-emerald-700 border border-emerald-100;
+  }
+
+  .badge-warning {
+    @apply badge bg-amber-50 text-amber-700 border border-amber-100;
+  }
+
+  .badge-danger {
+    @apply badge bg-red-50 text-red-700 border border-red-100;
+  }
+
+  .badge-info {
+    @apply badge bg-blue-50 text-blue-700 border border-blue-100;
+  }
+
+  .badge-neutral {
+    @apply badge bg-gray-100 text-gray-600 border border-gray-200;
+  }
+
+  /* ── Table utilities ── */
+  .table-header-cell {
+    @apply px-5 py-3.5 text-left text-xs font-bold text-gray-500 uppercase tracking-wider select-none;
+  }
+
+  .table-cell {
+    @apply px-5 py-3.5 text-sm text-gray-700;
+  }
+
+  .table-row {
+    @apply hover:bg-blue-50/30 transition-colors duration-100 cursor-default;
+  }
+
+  /* ── Icon badge circles ── */
+  .icon-badge {
+    @apply w-10 h-10 rounded-full flex items-center justify-center shrink-0;
+  }
+
+  .icon-badge-sm {
+    @apply w-8 h-8 rounded-full flex items-center justify-center shrink-0;
+  }
+
+  /* ── Page headers ── */
+  .page-header {
+    @apply bg-white border-b border-gray-100 sticky top-0 z-40;
+    box-shadow: var(--shadow-sm);
   }
 }

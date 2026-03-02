@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import PublicLayout from '../components/PublicLayout';
-import PublicPhoneCard from '../components/PublicPhoneCard';
+import GroupedPhoneCard from '../components/GroupedPhoneCard';
 import FloatingCart from '../components/FloatingCart';
 import { usePublicPhones } from '../hooks/usePublicPhones';
 import { useReservations } from '../hooks/useReservations';
 import { Search, PackageX } from 'lucide-react';
+import type { Phone } from '../../../types';
 
 export default function PublicCatalogPage() {
   const { data: phones, isLoading } = usePublicPhones();
@@ -31,12 +32,44 @@ export default function PublicCatalogPage() {
       const matchesCondition =
         selectedCondition === 'all' || (p.condition || 'Grade A') === selectedCondition;
 
-      // Only show if En Stock OR Reserved by me OR Reserved by someone else (to show locked state)
-      // usePublicPhones should already filter by status, but we need to ensure we fetch 'Apartado' too.
-      // (Assuming usePublicPhones was updated or we will check it next)
       return matchesSearch && matchesBrand && matchesCondition;
     });
   }, [phones, search, selectedBrand, selectedCondition]);
+
+  // Agrupar por modelo para el catálogo
+  const groupedPhones = useMemo(() => {
+    const groups = new Map<string, {
+      key: string;
+      marca: string;
+      modelo: string;
+      almacenamiento?: string;
+      condicion: string;
+      precio: number;
+      count: number;
+      phones: Phone[];
+    }>();
+
+    filteredPhones.forEach((phone) => {
+      const key = `${phone.marca}||${phone.modelo}||${phone.storage || ''}||${phone.condition || 'Grade A'}`;
+      if (groups.has(key)) {
+        const g = groups.get(key)!;
+        g.count++;
+        g.phones.push(phone);
+      } else {
+        groups.set(key, {
+          key,
+          marca: phone.marca,
+          modelo: phone.modelo,
+          almacenamiento: phone.storage,
+          condicion: phone.condition || 'Grade A',
+          precio: phone.precioVenta,
+          count: 1,
+          phones: [phone],
+        });
+      }
+    });
+    return Array.from(groups.values()).sort((a, b) => b.count - a.count);
+  }, [filteredPhones]);
 
   // Get my reserved phones for the cart
   const myReservedPhones = useMemo(() => {
@@ -130,7 +163,7 @@ export default function PublicCatalogPage() {
               <div key={i} className="bg-gray-200 h-80 rounded-xl"></div>
             ))}
           </div>
-        ) : filteredPhones.length === 0 ? (
+        ) : groupedPhones.length === 0 ? (
           <div className="text-center py-20">
             <PackageX className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900">No encontramos resultados</h3>
@@ -138,26 +171,20 @@ export default function PublicCatalogPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredPhones.map((phone) => {
-              const isReservedByMe = phone.reservation?.reservedBy === sessionId;
-              const isReservedByOther = !!phone.reservation && !isReservedByMe;
-
-              return (
-                <PublicPhoneCard
-                  key={phone.id}
-                  phone={phone}
-                  isReservedByMe={isReservedByMe}
-                  isReservedByOther={isReservedByOther}
-                  onToggle={() => toggleReservation(phone.id, isReservedByMe)}
-                  isProcessing={isProcessing === phone.id}
-                />
-              );
-            })}
+            {groupedPhones.map((group) => (
+              <GroupedPhoneCard
+                key={group.key}
+                group={group}
+                sessionId={sessionId}
+                onToggle={(phoneId, isReservedByMe) => toggleReservation(phoneId, isReservedByMe)}
+                isProcessing={isProcessing}
+              />
+            ))}
           </div>
         )}
       </div>
 
-      <FloatingCart reservedPhones={myReservedPhones} sessionId={sessionId} timeLeft={30} />
+      <FloatingCart reservedPhones={myReservedPhones} sessionId={sessionId} timeLeft={30 * 60 * 1000} />
     </PublicLayout>
   );
 }

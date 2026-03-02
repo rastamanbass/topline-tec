@@ -1,8 +1,10 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ShoppingBag, Search, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Search, ChevronDown, ChevronUp, X, FileText } from 'lucide-react';
 import { useSalesHistory, type SaleRecord } from './hooks/useSalesHistory';
+import { useRecentInvoicesMap } from '../invoices/hooks/useInvoicesByClient';
 import type { PurchaseItem } from '../../types';
+import InvoiceModal from '../invoices/components/InvoiceModal';
 
 const fmt = (n: number) =>
   new Intl.NumberFormat('en-US', {
@@ -22,8 +24,10 @@ const fmtDate = (d: Date) =>
 
 export default function SalesHistoryPage() {
   const { data: sales = [], isLoading } = useSalesHistory();
+  const { data: invoicesData } = useRecentInvoicesMap();
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [viewingInvoiceId, setViewingInvoiceId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return sales;
@@ -117,40 +121,55 @@ export default function SalesHistoryPage() {
                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase font-medium border-b border-gray-100">
                   <th className="text-left px-4 py-3">Fecha</th>
                   <th className="text-left px-4 py-3">Cliente</th>
-                  <th className="text-left px-4 py-3">Método Pago</th>
+                  <th className="text-left px-4 py-3">Metodo Pago</th>
                   <th className="text-right px-4 py-3">Descuento</th>
                   <th className="text-right px-4 py-3">Deuda</th>
                   <th className="text-right px-4 py-3">Total</th>
                   <th className="text-center px-4 py-3">Items</th>
+                  <th className="text-center px-4 py-3">Factura</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filtered.map((sale) => (
-                  <SaleRow
-                    key={sale.id}
-                    sale={sale}
-                    isExpanded={expandedId === sale.id}
-                    onToggle={() => setExpandedId(expandedId === sale.id ? null : sale.id)}
-                  />
-                ))}
+                {filtered.map((sale) => {
+                  const invoiceId = invoicesData?.purchaseToInvoice.get(sale.id);
+                  return (
+                    <SaleRow
+                      key={sale.id}
+                      sale={sale}
+                      invoiceId={invoiceId}
+                      isExpanded={expandedId === sale.id}
+                      onToggle={() => setExpandedId(expandedId === sale.id ? null : sale.id)}
+                      onViewInvoice={setViewingInvoiceId}
+                    />
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
       </main>
+
+      {/* Invoice Modal */}
+      {viewingInvoiceId && (
+        <InvoiceModal invoiceId={viewingInvoiceId} onClose={() => setViewingInvoiceId(null)} />
+      )}
     </div>
   );
 }
 
 function SaleRow({
   sale,
+  invoiceId,
   isExpanded,
   onToggle,
+  onViewInvoice,
 }: {
   sale: SaleRecord;
+  invoiceId?: string;
   isExpanded: boolean;
   onToggle: () => void;
+  onViewInvoice: (id: string) => void;
 }) {
   const itemCount = sale.items?.length || 0;
 
@@ -181,18 +200,31 @@ function SaleRow({
             {itemCount}
           </span>
         </td>
+        <td className="px-4 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+          {invoiceId ? (
+            <button
+              onClick={() => onViewInvoice(invoiceId)}
+              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium mx-auto"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              Ver
+            </button>
+          ) : (
+            <span className="text-xs text-gray-300">—</span>
+          )}
+        </td>
         <td className="px-4 py-3 text-gray-400">
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </td>
       </tr>
       {isExpanded && (
         <tr>
-          <td colSpan={8} className="px-4 pb-4 bg-blue-50/20">
+          <td colSpan={9} className="px-4 pb-4 bg-blue-50/20">
             <div className="rounded-xl border border-blue-100 bg-white overflow-hidden mt-2">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-gray-50 text-gray-500 uppercase font-medium">
-                    <th className="text-left px-3 py-2">Descripción</th>
+                    <th className="text-left px-3 py-2">Descripcion</th>
                     <th className="text-left px-3 py-2">IMEI</th>
                     <th className="text-right px-3 py-2">Precio</th>
                     <th className="text-right px-3 py-2">Cant.</th>

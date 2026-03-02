@@ -4,6 +4,7 @@ import {
   getDocs,
   query,
   orderBy,
+  limit,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -44,7 +45,7 @@ export function useAccessories() {
   return useQuery({
     queryKey: ['accessories'],
     queryFn: async () => {
-      const q = query(collection(db, 'accessories'), orderBy('name', 'asc'));
+      const q = query(collection(db, 'accessories'), orderBy('name', 'asc'), limit(500));
       const snap = await getDocs(q);
       return snap.docs.map((d) => ({
         id: d.id,

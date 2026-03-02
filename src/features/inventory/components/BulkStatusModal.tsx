@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useChangePhoneStatus } from '../hooks/usePhones';
-import type { PhoneStatus } from '../../../types';
+import type { Phone, PhoneStatus } from '../../../types';
 import { useInventoryStore } from '../stores/inventoryStore';
 import toast from 'react-hot-toast';
+
+const TRANSIT_STATES: PhoneStatus[] = ['En Bodega (USA)', 'En Tránsito (a El Salvador)'];
 
 interface BulkStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedPhones: Phone[];
 }
 
 const ALL_STATUSES: PhoneStatus[] = [
@@ -24,7 +28,7 @@ const ALL_STATUSES: PhoneStatus[] = [
   'De Baja',
 ];
 
-export default function BulkStatusModal({ isOpen, onClose }: BulkStatusModalProps) {
+export default function BulkStatusModal({ isOpen, onClose, selectedPhones }: BulkStatusModalProps) {
   const { selectedPhoneIds, clearSelection } = useInventoryStore();
   const changeStatus = useChangePhoneStatus();
   const [selectedStatus, setSelectedStatus] = useState<PhoneStatus | ''>('');
@@ -34,6 +38,11 @@ export default function BulkStatusModal({ isOpen, onClose }: BulkStatusModalProp
   if (!isOpen) return null;
 
   const count = selectedPhoneIds.size;
+
+  // Reception gate: phones in transit/warehouse cannot go directly to En Stock
+  const phonesInTransit = selectedPhones.filter((p) => TRANSIT_STATES.includes(p.estado as PhoneStatus));
+  const isBlockedByReception =
+    selectedStatus === 'En Stock (Disponible para Venta)' && phonesInTransit.length > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,6 +118,29 @@ export default function BulkStatusModal({ isOpen, onClose }: BulkStatusModalProp
             />
           </div>
 
+          {/* Reception gate warning */}
+          {isBlockedByReception && (
+            <div className="flex items-start gap-3 bg-amber-50 border border-amber-300 rounded-lg p-3 text-sm text-amber-900">
+              <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-semibold">
+                  {phonesInTransit.length} equipo{phonesInTransit.length !== 1 ? 's' : ''} en
+                  Bodega USA o En Tránsito.
+                </p>
+                <p className="text-amber-800">
+                  Para registrar su llegada, usa el módulo de Recepción.
+                </p>
+                <Link
+                  to="/recepcion"
+                  onClick={onClose}
+                  className="inline-flex items-center gap-1 font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2"
+                >
+                  Ir a Recepción →
+                </Link>
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
@@ -119,7 +151,7 @@ export default function BulkStatusModal({ isOpen, onClose }: BulkStatusModalProp
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || !selectedStatus}
+              disabled={isSubmitting || !selectedStatus || isBlockedByReception}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg shadow-sm transition-all hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}

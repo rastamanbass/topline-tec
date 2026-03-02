@@ -15,6 +15,54 @@
         { "fieldPath": "lote", "order": "ASCENDING" },
         { "fieldPath": "fechaIngreso", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "phones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "estado", "order": "ASCENDING" },
+        { "fieldPath": "fechaIngreso", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "phones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "estado", "order": "ASCENDING" },
+        { "fieldPath": "fechaVenta", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pendingOrders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "clientId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "shipments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "clientId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "phones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "supplierCode", "order": "ASCENDING" },
+        { "fieldPath": "estado", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "phones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "supplierCode", "order": "ASCENDING" },
+        { "fieldPath": "fechaIngreso", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
