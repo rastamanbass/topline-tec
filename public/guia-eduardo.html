@@ -361,7 +361,7 @@
           <span style="font-size:22px;">🛡️</span>
           <div style="flex:1;">
             <div style="font-weight:800;font-size:13px;color:#1e3a8a;">Admin — Eduardo (Admin)</div>
-            <div style="font-size:12px;color:#1d4ed8;margin-top:1px;">Comprás los teléfonos en USA → subís el Excel al sistema (Inventario → Importar) → creás el envío (Más → Envíos). Acceso total.</div>
+            <div style="font-size:12px;color:#1d4ed8;margin-top:1px;">Comprás teléfonos en USA → los metés al sistema escaneando IMEI con la pistola <strong>o</strong> subiendo el Excel del proveedor → creás el envío (Más → Envíos). Acceso total.</div>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#eff6ff;border-radius:12px;border-left:3px solid #3b82f6;">
@@ -480,8 +480,12 @@
         <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;">
           <div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:white;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
           <div style="flex:1;">
-            <div style="font-weight:700;font-size:13px;color:#0f172a;">📄 Eduardo sube el Excel del proveedor al sistema</div>
-            <div style="font-size:12px;color:#64748b;margin-top:2px;">Inventario → Importar Excel. Los teléfonos quedan registrados con estado <span class="status status-bodega">En Bodega (USA)</span>. Aquí también se le asigna el precio de venta a cada modelo.</div>
+            <div style="font-weight:700;font-size:13px;color:#0f172a;">📲 Eduardo mete los teléfonos al sistema (pistola o Excel)</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;">
+              <strong>Método 1 — Pistola Bluetooth (más común):</strong> Inventario → "＋ Nuevo Teléfono" → pestaña 📷 Escáner. Eduardo apunta la pistola al código de barras del IMEI de cada teléfono. El sistema detecta automáticamente la marca/modelo. Puede escanear varios seguidos.<br>
+              <strong>Método 2 — Excel del proveedor:</strong> Inventario → "Importar Excel". Carga el archivo del proveedor en bloque. Requiere revisar y asignar precios antes de confirmar.<br>
+              En ambos casos los teléfonos quedan en estado <span class="status status-bodega">En Bodega (USA)</span>.
+            </div>
           </div>
           <div style="font-size:11px;font-weight:700;color:#1d4ed8;background:#dbeafe;padding:3px 8px;border-radius:999px;white-space:nowrap;">Admin</div>
         </div>
@@ -707,9 +711,68 @@
         <span class="pill pill-gerente">Gerente</span>
       </div>
 
-      <!-- ── WORKFLOW 1: IMPORTAR FACTURA ── -->
+      <!-- ── WORKFLOW 0: AGREGAR CON PISTOLA ── -->
       <details open>
-        <summary>📄 1. Importar Factura del Proveedor (Excel)</summary>
+        <summary>🔫 1. Agregar Teléfonos con Pistola (IMEI — método principal)</summary>
+        <div class="info" style="margin-top:8px;">
+          <span class="info-icon">ℹ️</span>
+          <span>Este es el método más común para ingresar teléfonos. Eduardo escanea el código de barras del IMEI de cada equipo y el sistema lo registra automáticamente. También sirve el teclado o el ingreso manual.</span>
+        </div>
+        <ol class="steps" style="margin-top:10px;">
+          <li class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Inventario → botón "＋ Nuevo Teléfono"</div>
+              <div class="step-desc">Arriba a la derecha del inventario. Se abre el modal de ingreso.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Seleccionar pestaña 📷 Escáner</div>
+              <div class="step-desc">El campo de texto queda activo esperando el IMEI. Conectar la pistola Bluetooth al teléfono/tablet antes de continuar.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Apuntar la pistola al código de barras del IMEI</div>
+              <div class="step-desc">
+                El sistema lee el IMEI y detecta automáticamente marca y modelo desde la base de datos TAC (más de 111,000 modelos). El teléfono aparece en la lista.<br>
+                <strong>Sin pistola:</strong> escribir el IMEI en el campo y presionar <span class="kbd">Enter</span>.
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Repetir para cada teléfono del lote</div>
+              <div class="step-desc">Se van acumulando en la lista. Al final se asigna costo y precio de venta a todos en conjunto o individualmente.</div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Click "Procesar" — teléfonos quedan en el inventario</div>
+              <div class="step-desc">Los teléfonos se crean con estado <span class="status status-bodega">En Bodega (USA)</span> (Admin) listos para crear el envío.</div>
+            </div>
+          </li>
+        </ol>
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>También podés ingresar varios IMEIs a la vez copiando y pegando una lista (uno por línea) en el campo de texto.</span>
+        </div>
+        <div class="warning">
+          <span class="warning-icon">⚠️</span>
+          <span>Si el IMEI tiene 16 dígitos en lugar de 15, el escáner le agregó un "1" al inicio. El sistema lo corrige solo. Si tiene 4 dígitos, Eduardo lo anotó sin tener el equipo físico — hay que completarlo después.</span>
+        </div>
+      </details>
+
+      <div class="divider"></div>
+
+      <!-- ── WORKFLOW 1: IMPORTAR FACTURA ── -->
+      <details>
+        <summary>📄 2. Importar Factura del Proveedor (Excel — cuando el proveedor manda archivo)</summary>
         <div class="info" style="margin-top:8px;">
           <span class="info-icon">ℹ️</span>
           <span>Eduardo (Admin) hace esto desde USA luego de comprar teléfonos. Sube el Excel del proveedor al sistema. Los teléfonos quedan registrados en estado <strong>"En Bodega (USA)"</strong> hasta que se cree el envío y lleguen a El Salvador.</span>
@@ -775,7 +838,7 @@
 
       <!-- ── WORKFLOW 2: CREAR ENVÍO ── -->
       <details>
-        <summary>🚚 2. Crear un Envío (USA → El Salvador)</summary>
+        <summary>🚚 3. Crear un Envío (USA → El Salvador)</summary>
         <div class="info" style="margin-top:8px;">
           <span class="info-icon">ℹ️</span>
           <span>Cuando los teléfonos ya están en bodega y van a mandarse a El Salvador. Los teléfonos pasan a <span class="status status-transito">En Tránsito</span>.</span>
@@ -841,7 +904,7 @@
 
       <!-- ── WORKFLOW 3: RECIBIR ENVÍO ── -->
       <details>
-        <summary>📦 3. Recibir Envío con Escáner (Marta)</summary>
+        <summary>📦 4. Recibir Envío con Escáner (Marta)</summary>
         <div class="info" style="margin-top:8px;">
           <span class="info-icon">ℹ️</span>
           <span>Cuando llegan los teléfonos a El Salvador. Marta o Eduardo escanea cada teléfono con la pistola Bluetooth. Los teléfonos pasan a <span class="status status-stock">En Stock (Disponible)</span>.</span>
@@ -917,7 +980,7 @@
 
       <!-- ── WORKFLOW 4: VENDER ── -->
       <details>
-        <summary>💰 4. Vender un Teléfono (Canal 1 — Venta Directa)</summary>
+        <summary>💰 5. Vender un Teléfono (Canal 1 — Venta Directa)</summary>
         <div class="info" style="margin-top:8px;">
           <span class="info-icon">ℹ️</span>
           <span>Esta es la venta principal del negocio. Admin o Gerente registra la venta desde el inventario — con pistola Bluetooth o búsqueda manual por IMEI/modelo. Sin carrito público, sin pago online.</span>
@@ -976,7 +1039,7 @@
 
       <!-- ── WORKFLOW 5: CLIENTES ── -->
       <details>
-        <summary>👥 5. Gestionar Clientes</summary>
+        <summary>👥 6. Gestionar Clientes</summary>
         <ol class="steps" style="margin-top:10px;">
           <li class="step">
             <div class="step-num">1</div>
@@ -1013,7 +1076,7 @@
 
       <!-- ── WORKFLOW 6: DASHBOARD ── -->
       <details>
-        <summary>📊 6. Ver el Dashboard (métricas del negocio)</summary>
+        <summary>📊 7. Ver el Dashboard (métricas del negocio)</summary>
         <div class="info" style="margin-top:8px;">
           <span class="info-icon">ℹ️</span>
           <span>El dashboard muestra el estado actual del negocio en tiempo real.</span>
@@ -1042,7 +1105,7 @@
 
       <!-- ── WORKFLOW 7: PROVEEDORES Y FACTURAS ── -->
       <details>
-        <summary>🏢 7. Proveedores y Facturas de Proveedores</summary>
+        <summary>🏢 8. Proveedores y Facturas de Proveedores</summary>
         <ol class="steps" style="margin-top:10px;">
           <li class="step">
             <div class="step-num">1</div>
