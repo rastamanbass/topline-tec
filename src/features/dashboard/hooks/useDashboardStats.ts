@@ -87,7 +87,12 @@ async function getStaleStockCount(): Promise<number> {
 async function getRecentSales() {
   const q = query(
     collection(db, 'phones'),
-    where('estado', 'in', ['Vendido', 'Pagado', 'Entregado al Cliente', 'Vendido (Pendiente de Entrega)']),
+    where('estado', 'in', [
+      'Vendido',
+      'Pagado',
+      'Entregado al Cliente',
+      'Vendido (Pendiente de Entrega)',
+    ]),
     orderBy('fechaVenta', 'desc'),
     limit(5)
   );
@@ -116,8 +121,12 @@ function computeSoldMetrics(sold: Phone[]) {
   function toMs(val: unknown): number {
     if (!val) return NaN;
     // Firestore Timestamp object
-    if (typeof val === 'object' && val !== null && typeof (val as any).toDate === 'function') {
-      return (val as any).toDate().getTime();
+    if (
+      typeof val === 'object' &&
+      val !== null &&
+      typeof (val as { toDate?: () => Date }).toDate === 'function'
+    ) {
+      return (val as { toDate: () => Date }).toDate().getTime();
     }
     // ISO string
     if (typeof val === 'string') return new Date(val).getTime();
@@ -134,9 +143,7 @@ function computeSoldMetrics(sold: Phone[]) {
     if (!isNaN(days) && days >= 0) validDays.push(days);
   });
   const avgDaysToSell =
-    validDays.length > 0
-      ? round2(validDays.reduce((s, d) => s + d, 0) / validDays.length)
-      : 0;
+    validDays.length > 0 ? round2(validDays.reduce((s, d) => s + d, 0) / validDays.length) : 0;
 
   // Unpaid repair costs on phones sold this month (eats into real margin)
   const repairCostImpact = round2(
@@ -171,13 +178,15 @@ function computeSoldMetrics(sold: Phone[]) {
   // Top models: normalize brand + normalize model string for consistent deduplication.
   // e.g. "14 PRO MAX 128GB" and "14 pro max 128gb" both → "14 Pro Max 128GB"
   // "Apple 14 Pro Max 128GB" → "14 Pro Max 128GB" (strips redundant brand prefix)
-  const modelMap = new Map<string, { marca: string; modelo: string; count: number; revenue: number }>();
+  const modelMap = new Map<
+    string,
+    { marca: string; modelo: string; count: number; revenue: number }
+  >();
   sold.forEach((p) => {
     const normalizedMarca = normalizeDisplayBrand(p.marca);
     const rawLabel = phoneLabel(p.marca, p.modelo);
-    const normalizedModelo = normalizedMarca === 'Apple'
-      ? normalizeIPhoneModel(rawLabel) || rawLabel
-      : rawLabel;
+    const normalizedModelo =
+      normalizedMarca === 'Apple' ? normalizeIPhoneModel(rawLabel) || rawLabel : rawLabel;
     const key = `${normalizedMarca}|${normalizedModelo}`;
     const existing = modelMap.get(key);
     if (existing) {
@@ -192,9 +201,7 @@ function computeSoldMetrics(sold: Phone[]) {
       });
     }
   });
-  const topModels = [...modelMap.values()]
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 5);
+  const topModels = [...modelMap.values()].sort((a, b) => b.revenue - a.revenue).slice(0, 5);
 
   // Workshop debt from unpaid repairs on sold phones
   const workshopDebt = repairCostImpact;
@@ -309,13 +316,19 @@ function useOptimizedDashboardData(period: DashboardPeriod = '3m') {
         getRecentTransitCount().catch(() => 0),
       ]);
 
+      // Seized phones count (separate query — Firestore can't combine != with in on different fields)
+      const seizedQuery = query(collection(db, 'phones'), where('seized', '==', true));
+      const seizedSnap = await getCountFromServer(seizedQuery);
+      const seizedCount = seizedSnap.data().count;
+
       const thisMetrics = computeSoldMetrics(thisMonthSold);
       const lastMetrics = computeSoldMetrics(lastMonthSold);
 
       const revenueChangePct =
         lastMetrics.monthRevenue > 0
           ? round2(
-              ((thisMetrics.monthRevenue - lastMetrics.monthRevenue) / lastMetrics.monthRevenue) * 100
+              ((thisMetrics.monthRevenue - lastMetrics.monthRevenue) / lastMetrics.monthRevenue) *
+                100
             )
           : null;
 
@@ -328,7 +341,10 @@ function useOptimizedDashboardData(period: DashboardPeriod = '3m') {
         const bucketDate = new Date(now);
         bucketDate.setMonth(bucketDate.getMonth() - i);
         const monthKey = `${bucketDate.getFullYear()}-${String(bucketDate.getMonth() + 1).padStart(2, '0')}`;
-        const monthLabel = bucketDate.toLocaleDateString('es-SV', { month: 'short', year: '2-digit' });
+        const monthLabel = bucketDate.toLocaleDateString('es-SV', {
+          month: 'short',
+          year: '2-digit',
+        });
 
         const monthPhones = thisMonthSold.filter((p) => {
           const fv = typeof p.fechaVenta === 'string' ? p.fechaVenta : '';
@@ -390,8 +406,8 @@ function useOptimizedDashboardData(period: DashboardPeriod = '3m') {
         // BI metrics
         avgDaysToSell: thisMetrics.avgDaysToSell,
         repairCostImpact: thisMetrics.repairCostImpact,
-        capitalEnInventario,   // always ~$0 until Eduardo enters costs; kept for future use
-        capitalEnTransito,     // always ~$0 until Eduardo enters costs; kept for future use
+        capitalEnInventario, // always ~$0 until Eduardo enters costs; kept for future use
+        capitalEnTransito, // always ~$0 until Eduardo enters costs; kept for future use
         brandRevenueAnalysis: thisMetrics.brandRevenueAnalysis,
         // Charts
         topModels: thisMetrics.topModels,
@@ -409,6 +425,7 @@ function useOptimizedDashboardData(period: DashboardPeriod = '3m') {
         sellThroughRate,
         inTransitTotal,
         modelVelocity: thisMetrics.modelVelocity,
+        seizedCount,
       };
     },
     staleTime: 2 * 60 * 1000,
