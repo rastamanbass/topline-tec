@@ -5,6 +5,7 @@ export interface User {
   role?: 'admin' | 'gerente' | 'vendedor' | 'comprador' | 'taller';
   clientId?: string; // Link to Client for B2B buyers
   isActive?: boolean; // Admin can deactivate accounts
+  fcmToken?: string; // Firebase Cloud Messaging token for push notifications
 }
 
 export interface Phone {
@@ -27,6 +28,9 @@ export interface Phone {
   createdBy?: string; // UID of user who created
   updatedAt?: Date; // Last update timestamp
   photos?: string[]; // URLs in Storage (future)
+  seized?: boolean; // true = phone confiscated (CECOT, customs, etc.)
+  seizedReason?: string; // "CECOT", "Aduana", etc.
+  seizedDate?: string; // ISO date when seized
   reservation?: {
     reservedBy: string; // SessionID
     orderId?: string; // Link to PendingOrder
@@ -148,16 +152,12 @@ export interface PendingOrder {
   // Payment
   paymentMethod?: string; // 'stripe', 'paypal', 'transfer', 'cash', etc.
   paymentDetails?: {
-    paypalOrderId?: string;
-    paypalPayerId?: string;
-    paypalPaymentId?: string;
     transferReference?: string;
     transferBank?: string;
   };
 
   // Online payment IDs (set by Cloud Functions)
   stripeSessionId?: string;
-  paypalOrderId?: string;
   transferRef?: string;
 
   // Source
@@ -208,11 +208,11 @@ export interface Shipment {
   orderId: string;
   phoneIds: string[];
   carrier: ShipmentCarrier;
-  carrierCustomName?: string;   // cuando carrier === 'Otro'
-  courierName?: string;         // cuando carrier === 'Persona'
-  trackingNumber?: string;      // número de guía (si aplica)
+  carrierCustomName?: string; // cuando carrier === 'Otro'
+  courierName?: string; // cuando carrier === 'Persona'
+  trackingNumber?: string; // número de guía (si aplica)
   status: ShipmentStatus;
-  estimatedArrival?: string;    // YYYY-MM-DD
+  estimatedArrival?: string; // YYYY-MM-DD
   notes?: string;
   clientId?: string;
   clientName?: string;
@@ -235,8 +235,8 @@ export interface InvoiceItem {
 
 export interface Invoice {
   id: string;
-  invoiceNumber: string;       // "INV-2026-0001" — sequential, never repeats
-  issuedAt: unknown;           // serverTimestamp (Firestore Timestamp in DB)
+  invoiceNumber: string; // "INV-2026-0001" — sequential, never repeats
+  issuedAt: unknown; // serverTimestamp (Firestore Timestamp in DB)
   issuedByEmail: string;
   issuedByName?: string | null;
 
@@ -293,7 +293,7 @@ export interface ReceptionAct {
   id: string;
   lote: string;
   reportId: string;
-  receivedAt: unknown;           // serverTimestamp
+  receivedAt: unknown; // serverTimestamp
   receivedByEmail: string;
   responsibleName: string;
   signatureDataUrl: string;
@@ -327,7 +327,7 @@ export interface SupplierImportTemplate {
 export interface Supplier {
   id: string;
   name: string;
-  code?: string;           // Matches phones.marca for supplier-code phones
+  code?: string; // Matches phones.marca for supplier-code phones
   email?: string;
   phone?: string;
   address?: string;
@@ -335,7 +335,7 @@ export interface Supplier {
   importTemplate?: SupplierImportTemplate;
   invoiceCount: number;
   totalPhonesPurchased: number;
-  autoSeeded?: boolean;    // true if created by auto-seed from inventory
+  autoSeeded?: boolean; // true if created by auto-seed from inventory
   createdAt: unknown;
   updatedAt?: unknown;
 }
@@ -383,29 +383,29 @@ export interface SupplierInvoice {
 // ── Import Shipments (USA → El Salvador) ─────────────────────────────────────
 
 export type ImportShipmentStatus =
-  | 'preparando'   // Eduardo configuring the shipment (phones still in En Bodega)
-  | 'en_transito'  // Phones marked En Tránsito, on the way to El Salvador
-  | 'recibido';    // Fully received in El Salvador
+  | 'preparando' // Eduardo configuring the shipment (phones still in En Bodega)
+  | 'en_transito' // Phones marked En Tránsito, on the way to El Salvador
+  | 'recibido'; // Fully received in El Salvador
 
 export interface ImportShipment {
   id: string;
-  name: string;              // "Envío Nov 2026" — free text
-  lote: string;              // Lote name (to match phones)
-  phoneIds: string[];        // Phone document IDs included
+  name: string; // "Envío Nov 2026" — free text
+  lote: string; // Lote name (to match phones)
+  phoneIds: string[]; // Phone document IDs included
   carrier: ShipmentCarrier;
-  carrierCustomName?: string;  // When carrier === 'Otro'
-  courierName?: string;        // When carrier === 'Persona'
+  carrierCustomName?: string; // When carrier === 'Otro'
+  courierName?: string; // When carrier === 'Persona'
   trackingNumber?: string;
   status: ImportShipmentStatus;
-  estimatedArrival?: string;   // YYYY-MM-DD
+  estimatedArrival?: string; // YYYY-MM-DD
   notes?: string;
-  createdBy: string;           // User email
+  createdBy: string; // User email
   createdAt: unknown;
   updatedAt?: unknown;
   receivedAt?: unknown;
   receivedBy?: string;
   receivedCount?: number;
-  reportId?: string;           // Link to receivingReports collection
+  reportId?: string; // Link to receivingReports collection
 }
 
 // ... existing code ...
