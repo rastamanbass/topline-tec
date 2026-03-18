@@ -29,11 +29,21 @@ export function useTransitLotes() {
   const { data: phones = [], isLoading } = usePhones({
     status: 'En Tránsito (a El Salvador)',
   });
-  const lotes = useMemo(
-    () => [...new Set(phones.map((p) => p.lote).filter(Boolean))].sort(),
-    [phones]
-  );
-  return { lotes, isLoading };
+  const lotesWithCount = useMemo(() => {
+    const counts = new Map<string, number>();
+    phones.forEach((p) => {
+      if (p.lote) counts.set(p.lote, (counts.get(p.lote) || 0) + 1);
+    });
+    return [...counts.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, count]) => ({
+        name,
+        count,
+        label: `${name} (${count} ${count === 1 ? 'equipo' : 'equipos'})`,
+      }));
+  }, [phones]);
+  const lotes = useMemo(() => lotesWithCount.map((l) => l.name), [lotesWithCount]);
+  return { lotes, lotesWithCount, isLoading };
 }
 
 export function useReceivingSession(selectedLote: string) {
@@ -52,7 +62,10 @@ export function useReceivingSession(selectedLote: string) {
   // Build lookup maps: imei → Phone
   const transitMap = useMemo(() => {
     const m = new Map<string, Phone>();
-    transitPhones.forEach((p) => m.set(p.imei, p));
+    transitPhones.forEach((p) => {
+      if (p.seized) return; // skip seized phones — excluded from receiving workflow
+      m.set(p.imei, p);
+    });
     return m;
   }, [transitPhones]);
 
@@ -81,8 +94,13 @@ export function useReceivingSession(selectedLote: string) {
 
   const processScan = useCallback(
     (rawImei: string) => {
-      const imei = rawImei.trim();
+      let imei = rawImei.trim().replace(/\D/g, '');
       if (!imei || imei.length < 8) return 'ignored' as const;
+
+      // GS1 normalization: 16-digit barcodes starting with '1' → strip leading '1'
+      if (imei.length === 16 && imei[0] === '1') {
+        imei = imei.substring(1);
+      }
 
       if (processedImeis.has(imei)) {
         setScannedResults((prev) => [{ imei, status: 'duplicate' }, ...prev]);
