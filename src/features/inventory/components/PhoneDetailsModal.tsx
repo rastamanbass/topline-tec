@@ -1,4 +1,8 @@
-import { X, Edit2, Trash2, Calendar, DollarSign, Package, Clock } from 'lucide-react';
+import { X, Edit2, Trash2, Calendar, DollarSign, Package, Clock, ShieldOff } from 'lucide-react';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { db } from '../../../lib/firebase';
 import { useInventoryStore } from '../stores/inventoryStore';
 import { useAuth } from '../../../context';
 import { useDeletePhone } from '../hooks/usePhones';
@@ -42,6 +46,7 @@ export default function PhoneDetailsModal() {
   const { isModalOpen, modalMode, selectedPhone, closeModal, openModal } = useInventoryStore();
   const { userRole } = useAuth();
   const deletePhone = useDeletePhone();
+  const queryClient = useQueryClient();
 
   if (!isModalOpen || modalMode !== 'view' || !selectedPhone) return null;
 
@@ -113,6 +118,14 @@ export default function PhoneDetailsModal() {
 
         {/* Content */}
         <div className="p-6 space-y-6">
+          {/* Seized banner */}
+          {selectedPhone.seized && (
+            <div className="bg-red-100 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-800 font-semibold flex items-center gap-2">
+              <ShieldOff className="w-5 h-5" />
+              INHABILITADO — {selectedPhone.seizedReason} ({selectedPhone.seizedDate})
+            </div>
+          )}
+
           {/* Status Badge */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Estado Actual</label>
@@ -221,7 +234,9 @@ export default function PhoneDetailsModal() {
             </h3>
 
             {sortedHistory.length === 0 ? (
-              <p className="text-sm text-gray-400 italic">Sin historial de movimientos registrado.</p>
+              <p className="text-sm text-gray-400 italic">
+                Sin historial de movimientos registrado.
+              </p>
             ) : (
               <div className="relative pl-6 space-y-0 max-h-72 overflow-y-auto">
                 {/* Vertical line */}
@@ -244,11 +259,16 @@ export default function PhoneDetailsModal() {
                           </p>
                         </div>
                         <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                          <p className="text-xs text-gray-500 truncate max-w-[200px]" title={change.user}>
+                          <p
+                            className="text-xs text-gray-500 truncate max-w-[200px]"
+                            title={change.user}
+                          >
                             {change.user}
                           </p>
                           {change.details && (
-                            <p className="text-xs text-gray-600 italic truncate">{change.details}</p>
+                            <p className="text-xs text-gray-600 italic truncate">
+                              {change.details}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -266,6 +286,42 @@ export default function PhoneDetailsModal() {
             Cerrar
           </button>
           <div className="flex items-center gap-3">
+            {userRole === 'admin' && (
+              <button
+                onClick={async () => {
+                  const phoneRef = doc(db, 'phones', selectedPhone.id);
+                  if (selectedPhone.seized) {
+                    await updateDoc(phoneRef, {
+                      seized: false,
+                      seizedReason: null,
+                      seizedDate: null,
+                      updatedAt: serverTimestamp(),
+                    });
+                    toast.success('Teléfono rehabilitado');
+                  } else {
+                    const reason = prompt('Razón (ej: CECOT, Aduana):');
+                    if (!reason) return;
+                    await updateDoc(phoneRef, {
+                      seized: true,
+                      seizedReason: reason,
+                      seizedDate: new Date().toISOString().split('T')[0],
+                      updatedAt: serverTimestamp(),
+                    });
+                    toast.success('Teléfono marcado como inhabilitado');
+                  }
+                  closeModal();
+                  queryClient.invalidateQueries({ queryKey: ['phones'] });
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                  selectedPhone.seized
+                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                    : 'bg-red-100 text-red-700 hover:bg-red-200'
+                }`}
+              >
+                <ShieldOff className="w-4 h-4" />
+                {selectedPhone.seized ? 'Rehabilitar' : 'Inhabilitar (CECOT)'}
+              </button>
+            )}
             {canEdit && (
               <button onClick={handleEdit} className="btn-primary flex items-center gap-2">
                 <Edit2 className="w-4 h-4" />
