@@ -35,6 +35,7 @@ const SupplierInvoicesPage = lazy(
 const SuppliersPage = lazy(() => import('./features/suppliers/SuppliersPage'));
 const ImportShipmentsPage = lazy(() => import('./features/import-shipments/ImportShipmentsPage'));
 const CotizadorPage = lazy(() => import('./features/cotizador/CotizadorPage'));
+const PhonePortalPage = lazy(() => import('./features/phone-portal/PhonePortalPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -246,6 +247,16 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['admin', 'gerente']}>
                       <CotizadorPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Phone Portal — internal QR/barcode scan detail view */}
+                <Route
+                  path="/phone/:imei"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <PhonePortalPage />
                     </ProtectedRoute>
                   }
                 />
