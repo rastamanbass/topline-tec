@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import BottomNav from './components/layout/BottomNav';
 import LoginPage from './features/auth/LoginPage';
 import ErrorBoundary from './components/ErrorBoundary';
+import { usePushNotifications } from './hooks/usePushNotifications';
 
 const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage'));
 const InventoryPage = lazy(() => import('./features/inventory/InventoryPage'));
@@ -23,18 +24,17 @@ const ReceivingPage = lazy(() => import('./features/receiving/ReceivingPage'));
 const InsightsPage = lazy(() => import('./features/insights/InsightsPage'));
 
 // Payments & Orders
-const CheckoutSuccessPage = lazy(
-  () => import('./features/public/pages/CheckoutSuccessPage')
-);
-const CheckoutCancelPage = lazy(
-  () => import('./features/public/pages/CheckoutCancelPage')
-);
+const CheckoutSuccessPage = lazy(() => import('./features/public/pages/CheckoutSuccessPage'));
+const CheckoutCancelPage = lazy(() => import('./features/public/pages/CheckoutCancelPage'));
 const MyOrdersPage = lazy(() => import('./features/public/pages/MyOrdersPage'));
 const OrdersPage = lazy(() => import('./features/orders/OrdersPage'));
 const LoteClientViewPage = lazy(() => import('./features/inventory/pages/LoteClientViewPage'));
-const SupplierInvoicesPage = lazy(() => import('./features/supplier-invoices/SupplierInvoicesPage'));
+const SupplierInvoicesPage = lazy(
+  () => import('./features/supplier-invoices/SupplierInvoicesPage')
+);
 const SuppliersPage = lazy(() => import('./features/suppliers/SuppliersPage'));
 const ImportShipmentsPage = lazy(() => import('./features/import-shipments/ImportShipmentsPage'));
+const CotizadorPage = lazy(() => import('./features/cotizador/CotizadorPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -56,196 +56,207 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <PushNotificationRegistrar />
         <BrowserRouter>
           <ErrorBoundary>
-          <Suspense fallback={<PageLoader />}>
-            <BottomNav />
-            <Routes>
-              {/* Root Redirect Logic */}
-              <Route path="/" element={<RootRedirect />} />
+            <Suspense fallback={<PageLoader />}>
+              <BottomNav />
+              <Routes>
+                {/* Root Redirect Logic */}
+                <Route path="/" element={<RootRedirect />} />
 
-              {/* Public Routes */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/catalogo" element={<PublicCatalogPage />} />
-              <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
-              <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
+                {/* Public Routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/catalogo" element={<PublicCatalogPage />} />
+                <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+                <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
 
-              {/* Buyer portal — requires auth but open to all roles */}
-              <Route
-                path="/mis-pedidos"
-                element={
-                  <ProtectedRoute>
-                    <MyOrdersPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Buyer portal — requires auth but open to all roles */}
+                <Route
+                  path="/mis-pedidos"
+                  element={
+                    <ProtectedRoute>
+                      <MyOrdersPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Protected Routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Protected Routes */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/inventory"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor', 'comprador']}>
-                    <InventoryPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/inventory"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor', 'comprador']}>
+                      <InventoryPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/clients"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
-                    <ClientsPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/clients"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
+                      <ClientsPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/catalog"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
-                    <CatalogPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/catalog"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
+                      <CatalogPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/taller"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'taller']}>
-                    <WorkshopPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/taller"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente', 'taller']}>
+                      <WorkshopPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/admin/usuarios"
-                element={
-                  <ProtectedRoute>
-                    <UsersManagementPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/admin/usuarios"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <UsersManagementPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/store"
-                element={
-                  <ProtectedRoute allowedRoles={['comprador', 'admin', 'gerente']}>
-                    <ClientStorePage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/store"
+                  element={
+                    <ProtectedRoute allowedRoles={['comprador', 'admin', 'gerente']}>
+                      <ClientStorePage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/finanzas"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
-                    <FinancePage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/finanzas"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <FinancePage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/ventas"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
-                    <SalesHistoryPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/ventas"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <SalesHistoryPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/accesorios"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
-                    <AccessoriesPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/accesorios"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
+                      <AccessoriesPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/recepcion"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'comprador']}>
-                    <ReceivingPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/recepcion"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente', 'comprador']}>
+                      <ReceivingPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/insights"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
-                    <InsightsPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/insights"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <InsightsPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Lote client view — shareable per-lot summary */}
-              <Route
-                path="/lote/:loteId"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
-                    <LoteClientViewPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Lote client view — shareable per-lot summary */}
+                <Route
+                  path="/lote/:loteId"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente', 'vendedor']}>
+                      <LoteClientViewPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Admin: Orders panel */}
-              <Route
-                path="/ordenes"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
-                    <OrdersPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Admin: Orders panel */}
+                <Route
+                  path="/ordenes"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <OrdersPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Suppliers Management */}
-              <Route
-                path="/suppliers"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente', 'comprador']}>
-                    <SuppliersPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Suppliers Management */}
+                <Route
+                  path="/suppliers"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <SuppliersPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Supplier Invoices */}
-              <Route
-                path="/supplier-invoices"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
-                    <SupplierInvoicesPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Supplier Invoices */}
+                <Route
+                  path="/supplier-invoices"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <SupplierInvoicesPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Import Shipments (USA → El Salvador) */}
-              <Route
-                path="/envios"
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'gerente']}>
-                    <ImportShipmentsPage />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Import Shipments (USA → El Salvador) */}
+                <Route
+                  path="/envios"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <ImportShipmentsPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Default redirect */}
-              {/* <Route path="/" element={<Navigate to="/dashboard" replace />} /> Replaced by RootRedirect */}
+                {/* Cotizador — pre-purchase negotiation table */}
+                <Route
+                  path="/cotizador"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <CotizadorPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* 404 */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
-          </Suspense>
+                {/* Default redirect */}
+                {/* <Route path="/" element={<Navigate to="/dashboard" replace />} /> Replaced by RootRedirect */}
+
+                {/* 404 */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              </Routes>
+            </Suspense>
           </ErrorBoundary>
         </BrowserRouter>
 
@@ -277,17 +288,23 @@ function App() {
   );
 }
 
+function PushNotificationRegistrar() {
+  usePushNotifications();
+  return null;
+}
+
 function RootRedirect() {
   const { user, userRole, loading } = useAuth();
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600 mx-auto mb-3" />
-        <p className="text-sm text-gray-400">Cargando...</p>
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600 mx-auto mb-3" />
+          <p className="text-sm text-gray-400">Cargando...</p>
+        </div>
       </div>
-    </div>
-  );
+    );
   if (!user) return <Navigate to="/login" replace />;
 
   if (userRole === 'comprador') {

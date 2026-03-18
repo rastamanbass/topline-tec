@@ -107,6 +107,12 @@ const MORE_ITEMS: NavItem[] = [
     label: 'Facturas Prov.',
     roles: ['admin', 'gerente'],
   },
+  {
+    to: '/cotizador',
+    icon: <ShoppingBag className="w-5 h-5 text-cyan-600" />,
+    label: 'Cotizador',
+    roles: ['admin', 'gerente'],
+  },
 ];
 
 // Pages where BottomNav should NOT appear
@@ -121,12 +127,9 @@ export default function BottomNav() {
   if (!user || HIDDEN_ON.some((p) => location.pathname.startsWith(p))) return null;
 
   const isActive = (to: string) =>
-    to === '/dashboard'
-      ? location.pathname === '/dashboard'
-      : location.pathname.startsWith(to);
+    to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(to);
 
-  const canAccess = (item: NavItem) =>
-    !item.roles || item.roles.includes(userRole || '');
+  const canAccess = (item: NavItem) => !item.roles || item.roles.includes(userRole || '');
 
   const visibleTabs = MAIN_TABS.filter(canAccess);
   const visibleMore = MORE_ITEMS.filter(canAccess);
@@ -135,10 +138,7 @@ export default function BottomNav() {
     <>
       {/* More overlay */}
       {showMore && (
-        <div
-          className="fixed inset-0 z-40 bg-black/30"
-          onClick={() => setShowMore(false)}
-        >
+        <div className="fixed inset-0 z-40 bg-black/30" onClick={() => setShowMore(false)}>
           <div
             className="absolute bottom-16 left-0 right-0 bg-white rounded-t-2xl shadow-2xl p-5 pb-6"
             onClick={(e) => e.stopPropagation()}
@@ -185,14 +185,10 @@ export default function BottomNav() {
                 key={item.to}
                 to={item.to}
                 className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl transition-all ${
-                  active
-                    ? 'text-primary-600'
-                    : 'text-gray-400 hover:text-gray-600'
+                  active ? 'text-primary-600' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
-                <span
-                  className={`transition-transform ${active ? 'scale-110' : ''}`}
-                >
+                <span className={`transition-transform ${active ? 'scale-110' : ''}`}>
                   {item.icon}
                 </span>
                 <span
@@ -225,7 +221,7 @@ export default function BottomNav() {
       </nav>
 
       {/* Spacer so content doesn't hide behind nav */}
-      <div className="h-16" />
+      <div className="h-20" />
     </>
   );
 }
