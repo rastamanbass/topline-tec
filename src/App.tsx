@@ -36,6 +36,7 @@ const SuppliersPage = lazy(() => import('./features/suppliers/SuppliersPage'));
 const ImportShipmentsPage = lazy(() => import('./features/import-shipments/ImportShipmentsPage'));
 const CotizadorPage = lazy(() => import('./features/cotizador/CotizadorPage'));
 const PhonePortalPage = lazy(() => import('./features/phone-portal/PhonePortalPage'));
+const StickerPrintView = lazy(() => import('./features/labels/components/StickerPrintView'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -257,6 +258,24 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['admin', 'gerente']}>
                       <PhonePortalPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Label printing — batch (by lote) or single (by IMEI) */}
+                <Route
+                  path="/labels/lote/:lote"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <StickerPrintView />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/labels/single/:imei"
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'gerente']}>
+                      <StickerPrintView />
                     </ProtectedRoute>
                   }
                 />
