@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { X, Edit2, Trash2, Calendar, DollarSign, Package, Clock, ShieldOff } from 'lucide-react';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -107,6 +108,13 @@ export default function PhoneDetailsModal() {
           <div>
             <h2 className="text-xl font-bold text-gray-900">Detalles del Teléfono</h2>
             <p className="text-sm text-gray-600 mt-1">IMEI: {selectedPhone.imei}</p>
+            <Link
+              to={`/phone/${selectedPhone.imei}`}
+              className="text-primary-600 hover:underline text-xs font-medium"
+              target="_blank"
+            >
+              Ver en portal →
+            </Link>
           </div>
           <button
             onClick={closeModal}
