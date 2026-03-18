@@ -10,6 +10,7 @@ import {
   PackageCheck,
   ChevronDown,
   Loader2,
+  Printer,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useTransitLotes, useReceivingSession } from './hooks/useReceivingSession';
@@ -31,6 +32,11 @@ function beep(ok: boolean) {
     osc.stop(ctx.currentTime + 0.12);
   } catch {
     // Browser may block audio without user gesture — silent fallback
+  }
+  try {
+    navigator.vibrate?.(ok ? 50 : [80, 40, 80]);
+  } catch {
+    // vibrate not supported — silent fallback
   }
 }
 
@@ -72,7 +78,7 @@ export default function ReceivingPage() {
     missingImeis: string[];
   } | null>(null);
 
-  const { lotes, isLoading: lotesLoading } = useTransitLotes();
+  const { lotesWithCount, isLoading: lotesLoading } = useTransitLotes();
   const {
     expectedCount,
     okCount,
@@ -101,7 +107,8 @@ export default function ReceivingPage() {
     (raw: string) => {
       const result = processScan(raw);
       if (result === 'ignored') return;
-      beep(result === 'ok');
+      const isOk = result === 'ok';
+      beep(isOk);
       setInputBuffer('');
     },
     [processScan]
@@ -125,7 +132,7 @@ export default function ReceivingPage() {
     try {
       const result = await closeReceiving();
       if (result) {
-        toast.success(`Listo! ${okCount} telefonos pasaron a En Stock.`);
+        toast.success(`Listo! ${okCount} teléfonos pasaron a En Stock.`);
         // Show the Acta modal instead of navigating immediately
         setActaData({
           reportId: result.reportId,
@@ -135,7 +142,7 @@ export default function ReceivingPage() {
         });
       }
     } catch {
-      toast.error('Error al cerrar la recepcion. Intenta de nuevo.');
+      toast.error('Error al cerrar la recepción. Intenta de nuevo.');
     }
   };
 
@@ -147,12 +154,16 @@ export default function ReceivingPage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 h-16 flex items-center gap-4">
-          <Link to="/dashboard" className="text-gray-400 hover:text-gray-600 transition-colors">
+          <Link
+            to="/dashboard"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Volver al dashboard"
+          >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-2">
             <PackageCheck className="w-5 h-5 text-primary-600" />
-            <h1 className="text-lg font-bold text-gray-900">Recepcion de Envios</h1>
+            <h1 className="text-lg font-bold text-gray-900">Recepción de Envíos</h1>
           </div>
         </div>
       </header>
@@ -160,29 +171,30 @@ export default function ReceivingPage() {
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-6 space-y-5">
         {/* Step 1: Select lote */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+          <label htmlFor="lote-select" className="block text-sm font-semibold text-gray-700 mb-1">
             Selecciona el lote que acaba de llegar:
           </label>
           <p className="text-xs text-gray-400 mb-2">
-            Solo aparecen lotes con equipos pendientes de recepcion
+            Solo aparecen lotes con equipos pendientes de recepción
           </p>
           {lotesLoading ? (
             <div className="h-11 bg-gray-100 rounded-xl animate-pulse" />
-          ) : lotes.length === 0 ? (
+          ) : lotesWithCount.length === 0 ? (
             <div className="rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-700">
-              No hay lotes en transito en este momento.
+              No hay lotes en tránsito en este momento.
             </div>
           ) : (
             <div className="relative">
               <select
+                id="lote-select"
                 value={selectedLote}
                 onChange={(e) => handleLoteChange(e.target.value)}
                 className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
               >
                 <option value="">— Selecciona un lote —</option>
-                {lotes.map((l) => (
-                  <option key={l} value={l}>
-                    {l}
+                {lotesWithCount.map((l) => (
+                  <option key={l.name} value={l.name}>
+                    {l.label}
                   </option>
                 ))}
               </select>
@@ -209,14 +221,21 @@ export default function ReceivingPage() {
                     {phonesLoading
                       ? 'Cargando...'
                       : isComplete
-                        ? 'Todos los telefonos recibidos!'
+                        ? 'Todos los teléfonos recibidos!'
                         : `Faltan ${expectedCount - okCount} por escanear`}
                   </p>
                 </div>
                 {isComplete && <CheckCircle2 className="w-10 h-10 text-emerald-500" />}
               </div>
               {/* Progress bar */}
-              <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-3 bg-gray-100 rounded-full overflow-hidden"
+                role="progressbar"
+                aria-valuenow={Math.round(progressPct)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${okCount} de ${expectedCount} teléfonos escaneados`}
+              >
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
                     isComplete ? 'bg-emerald-500' : 'bg-primary-500'
@@ -255,7 +274,7 @@ export default function ReceivingPage() {
             >
               <div className="flex items-center gap-3 mb-3">
                 <ScanBarcode className="w-6 h-6 text-emerald-400 animate-pulse" />
-                <p className="text-white font-semibold">Escaner activo</p>
+                <p className="text-white font-semibold">Escáner activo</p>
                 <span className="ml-auto text-xs text-slate-400">
                   Apunta y dispara con tu pistola Bluetooth
                 </span>
@@ -271,15 +290,21 @@ export default function ReceivingPage() {
                 placeholder="_ _ _ _ _ _ _ _ _ _ _ _ _ _ _"
                 autoComplete="off"
                 spellCheck={false}
+                aria-label="Escanear IMEI"
+                inputMode="numeric"
               />
               <p className="text-slate-500 text-xs mt-2 text-center">
-                El IMEI aparecera aqui — presiona Enter o la pistola lo envia sola
+                El IMEI aparecerá aquí — presiona Enter o la pistola lo envía sola
               </p>
             </div>
 
             {/* Results list */}
             {scannedResults.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+                aria-live="polite"
+                aria-label="Resultados de escaneo"
+              >
                 <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
                   <p className="text-sm font-semibold text-gray-700">
                     Resultados ({scannedResults.length})
@@ -300,7 +325,7 @@ export default function ReceivingPage() {
                     const cfg = STATUS_CONFIG[r.status];
                     return (
                       <div
-                        key={i}
+                        key={`${r.imei}-${i}`}
                         className={`flex items-center gap-3 px-5 py-3 border-l-4 ${cfg.row}`}
                       >
                         <div className="shrink-0">{cfg.icon}</div>
@@ -338,10 +363,10 @@ export default function ReceivingPage() {
               <div className="bg-white rounded-2xl border border-red-100 shadow-sm overflow-hidden">
                 <div className="px-5 py-3 border-b border-red-50 bg-red-50">
                   <p className="text-sm font-semibold text-red-700">
-                    Telefonos faltantes ({missingPhones.length})
+                    Teléfonos faltantes ({missingPhones.length})
                   </p>
                   <p className="text-xs text-red-500">
-                    Estaban en transito pero no han sido escaneados
+                    Estaban en tránsito pero no han sido escaneados
                   </p>
                 </div>
                 <div className="divide-y divide-gray-50 max-h-40 overflow-y-auto">
@@ -362,13 +387,24 @@ export default function ReceivingPage() {
 
             {/* CTA */}
             {okCount > 0 && (
-              <button
-                onClick={() => setShowConfirm(true)}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-4 rounded-2xl text-lg shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <PackageCheck className="w-6 h-6" />
-                Cerrar recepcion · {okCount} telefonos a stock
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setShowConfirm(true)}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-4 rounded-2xl text-lg shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <PackageCheck className="w-6 h-6" />
+                  Cerrar recepción · {okCount} teléfonos a stock
+                </button>
+                <a
+                  href={`/labels/lote/${encodeURIComponent(selectedLote)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full border-2 border-primary-200 text-primary-700 font-bold py-3 rounded-2xl text-center block hover:bg-primary-50 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Printer className="w-5 h-5" />
+                  Imprimir stickers del lote
+                </a>
+              </div>
             )}
           </>
         )}
@@ -376,21 +412,28 @@ export default function ReceivingPage() {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirm-title"
+        >
           <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Cerrar recepcion?</h2>
+            <h2 id="confirm-title" className="text-xl font-bold text-gray-900 mb-1">
+              Cerrar recepción?
+            </h2>
             <p className="text-sm text-gray-500 mb-5">
               Lote: <strong>{selectedLote}</strong>
             </p>
 
             <div className="space-y-2 mb-6">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Telefonos a pasar a stock</span>
+                <span className="text-gray-600">Teléfonos a pasar a stock</span>
                 <span className="font-bold text-emerald-600">{okCount}</span>
               </div>
               {missingPhones.length > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Telefonos faltantes</span>
+                  <span className="text-gray-600">Teléfonos faltantes</span>
                   <span className="font-bold text-red-500">{missingPhones.length}</span>
                 </div>
               )}
@@ -406,7 +449,7 @@ export default function ReceivingPage() {
 
             {missingPhones.length > 0 && (
               <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-700 mb-5">
-                Hay telefonos que no llegaron. Quedaran en estado "En Transito" para seguimiento.
+                Hay teléfonos que no llegaron. Quedarán en estado "En Tránsito" para seguimiento.
               </div>
             )}
 
@@ -442,6 +485,7 @@ export default function ReceivingPage() {
           receivedPhones={actaData.receivedPhones}
           missingImeis={actaData.missingImeis}
           onDone={() => {
+            window.open(`/labels/lote/${encodeURIComponent(actaData.lote)}`, '_blank');
             setActaData(null);
             navigate('/inventory');
           }}
