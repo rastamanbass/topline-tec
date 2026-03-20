@@ -4,8 +4,6 @@
  * Uses the 'xlsx' library (SheetJS) which is already installed.
  */
 
-import * as XLSX from 'xlsx';
-
 export interface ParsedSheet {
   /** The detected header row values */
   headers: string[];
@@ -62,10 +60,7 @@ function findHeaderRowIndex(rawRows: unknown[][]): number {
  * Convert a raw 2D row into a Record using the header array as keys.
  * If a cell is a number that looks like an IMEI (14-15 digits), converts to string.
  */
-function rowToRecord(
-  row: unknown[],
-  headers: string[]
-): Record<string, unknown> {
+function rowToRecord(row: unknown[], headers: string[]): Record<string, unknown> {
   const record: Record<string, unknown> = {};
   headers.forEach((header, i) => {
     if (!header) return;
@@ -89,6 +84,8 @@ function rowToRecord(
  * Returns a ParsedSheet with detected headers and structured rows.
  */
 export async function parseExcelFile(file: File): Promise<ParsedSheet> {
+  const XLSX = await import('xlsx');
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
@@ -100,7 +97,6 @@ export async function parseExcelFile(file: File): Promise<ParsedSheet> {
         const workbook = XLSX.read(data, {
           type: 'array',
           cellDates: false,
-          // Keep raw numbers — we handle IMEI conversion ourselves
           raw: false,
         });
 
@@ -109,11 +105,10 @@ export async function parseExcelFile(file: File): Promise<ParsedSheet> {
 
         const worksheet = workbook.Sheets[sheetName];
 
-        // Convert sheet to 2D array
         const rawRows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, {
           header: 1,
           defval: null,
-          raw: true, // keep raw numeric values
+          raw: true,
         }) as unknown[][];
 
         if (rawRows.length === 0) {
@@ -125,9 +120,7 @@ export async function parseExcelFile(file: File): Promise<ParsedSheet> {
         const headerRow = rawRows[headerRowIndex];
 
         // Build clean header list (stringify each header cell)
-        const headers = headerRow.map((h) =>
-          h != null ? String(h).trim() : ''
-        );
+        const headers = headerRow.map((h) => (h != null ? String(h).trim() : ''));
 
         // Build data rows (everything after the header row)
         const dataRows = rawRows.slice(headerRowIndex + 1).filter((row) => {
