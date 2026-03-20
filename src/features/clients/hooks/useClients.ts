@@ -12,6 +12,7 @@ import {
   setDoc,
   serverTimestamp,
   runTransaction,
+  increment,
   type Timestamp,
 } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
@@ -278,9 +279,7 @@ export function useDebtHistory(clientId: string) {
         adjustedBy: d.data().adjustedBy as string | undefined,
       }));
 
-      return [...payments, ...adjustments].sort(
-        (a, b) => b.date.getTime() - a.date.getTime()
-      );
+      return [...payments, ...adjustments].sort((a, b) => b.date.getTime() - a.date.getTime());
     },
     enabled: !!clientId,
   });
@@ -300,12 +299,23 @@ export function useAddDebtAdjustment() {
       reason: string;
       adjustedBy: string;
     }) => {
+      const clientRef = doc(db, 'clients', clientId);
       const adjustmentRef = doc(collection(db, 'clients', clientId, 'debtAdjustments'));
-      await setDoc(adjustmentRef, {
-        amount,
-        reason,
-        adjustedBy,
-        adjustedAt: serverTimestamp(),
+
+      await runTransaction(db, async (transaction) => {
+        const clientDoc = await transaction.get(clientRef);
+        if (!clientDoc.exists()) throw new Error('Cliente no encontrado.');
+
+        transaction.set(adjustmentRef, {
+          amount,
+          reason,
+          adjustedBy,
+          adjustedAt: serverTimestamp(),
+        });
+
+        transaction.update(clientRef, {
+          debtAmount: increment(amount),
+        });
       });
     },
   });

@@ -50,13 +50,13 @@ service cloud.firestore {
                   resource.data.estado == 'En Stock (Disponible para Venta)' ||
                   resource.data.estado == 'Apartado';
 
-      // Allow public update only for reservation fields (unauthenticated)
+      // Allow authenticated update only for reservation fields (SEC-1 fix)
       // Allow taller role to update workshop-specific fields (estado, statusHistory, reparaciones)
       allow update: if (isAdmin() || isGerente()) ||
-                    (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt', 'estado']) && isValidReservationUpdate()) ||
+                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt', 'estado']) && isValidReservationUpdate()) ||
                     (isTaller() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'statusHistory', 'reparaciones', 'updatedAt']));
 
-      allow create: if isAdmin() || isGerente();
+      allow create: if isSignedIn() && getUserData().role in ['admin', 'gerente', 'taller'];
       allow delete: if isAdmin();
     }
 
@@ -133,10 +133,13 @@ service cloud.firestore {
       // Allow create if authenticated (B2B buyer creating order from catalog)
       allow create: if isSignedIn();
 
-      // Buyer can update their own order (e.g., set status to pending_transfer)
-      // Admin/Gerente can update any order
+      // Buyer can ONLY update payment-related fields on their own order
+      // Admin/Gerente can update any field
       allow update: if isSignedIn() && (
-        resource.data.clientId == request.auth.uid ||
+        (resource.data.clientId == request.auth.uid &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'paymentMethod', 'transferDetails', 'updatedAt']) &&
+         request.resource.data.status in ['pending_transfer', 'cancelled']
+        ) ||
         isAdminOrGerente()
       );
 

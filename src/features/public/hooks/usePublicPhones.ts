@@ -25,9 +25,15 @@ export function usePublicPhones() {
             }) as Phone
         )
         .sort((a, b) => {
-          const dateA = a.fechaIngreso instanceof Date ? a.fechaIngreso.getTime() : 0;
-          const dateB = b.fechaIngreso instanceof Date ? b.fechaIngreso.getTime() : 0;
-          return dateB - dateA;
+          const toMs = (v: unknown): number => {
+            if (!v) return 0;
+            if (typeof (v as { toMillis?: () => number }).toMillis === 'function')
+              return (v as { toMillis: () => number }).toMillis();
+            if (v instanceof Date) return v.getTime();
+            if (typeof v === 'string') return new Date(v).getTime();
+            return 0;
+          };
+          return toMs(b.fechaIngreso) - toMs(a.fechaIngreso);
         });
 
       setData(phones);

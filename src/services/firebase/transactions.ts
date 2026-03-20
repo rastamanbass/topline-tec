@@ -28,20 +28,32 @@ export interface SaleData {
 }
 
 export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phone[]) => {
-  const clientRef = doc(db, 'clients', saleData.clientId);
+  const clientRef = saleData.clientId ? doc(db, 'clients', saleData.clientId) : null;
 
   try {
     await runTransaction(db, async (transaction) => {
       // 1. Read Client Data
-      const clientDoc = await transaction.get(clientRef);
-      if (!clientDoc.exists()) throw new Error('Cliente no encontrado.');
+      let clientName = 'Venta en efectivo';
+      let currentCredit = 0;
 
-      const clientData = clientDoc.data() as Client;
-      const clientName = clientData.name;
-      const currentCredit = clientData.creditAmount || 0;
+      if (clientRef) {
+        const clientDoc = await transaction.get(clientRef);
+        if (!clientDoc.exists()) throw new Error('Cliente no encontrado.');
 
-      if (saleData.amountPaidWithCredit > currentCredit) {
-        throw new Error('Crédito insuficiente.');
+        const clientData = clientDoc.data() as Client;
+        clientName = clientData.name;
+        currentCredit = clientData.creditAmount || 0;
+
+        if (saleData.amountPaidWithCredit > currentCredit) {
+          throw new Error('Crédito insuficiente.');
+        }
+      } else {
+        if (saleData.amountPaidWithCredit > 0) {
+          throw new Error('No se puede usar crédito sin un cliente seleccionado.');
+        }
+        if (saleData.debtIncurred && saleData.debtIncurred > 0) {
+          throw new Error('No se puede generar deuda sin un cliente seleccionado.');
+        }
       }
 
       // 2. Prepare Workshop Debt Payment (if applicable)
@@ -65,7 +77,25 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
 
       const phoneDocsToRead = new Map<string, Record<string, unknown>>();
 
-      if (debtToPay > 0) {
+      if (debtToPay > 0 && allPhones.length > 0) {
+        // Use cache ONLY for phone ID discovery
+        const candidatePhoneIds = new Set<string>();
+        for (const phone of allPhones) {
+          if (phone.reparaciones?.some((r) => !r.paid && r.cost > 0)) {
+            candidatePhoneIds.add(phone.id);
+          }
+        }
+
+        // Read these phones inside the transaction for fresh data
+        for (const pid of candidatePhoneIds) {
+          const pRef = doc(db, 'phones', pid);
+          const pDoc = await transaction.get(pRef);
+          if (pDoc.exists()) {
+            phoneDocsToRead.set(pid, pDoc.data());
+          }
+        }
+
+        // Build pending repairs list from FRESH transaction data
         const allPendingRepairs: {
           phoneId: string;
           repairIndex: number;
@@ -73,17 +103,17 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
           date: Date;
         }[] = [];
 
-        allPhones.forEach((phone) => {
-          if (phone.reparaciones && phone.reparaciones.length > 0) {
-            phone.reparaciones.forEach((repair, index) => {
+        phoneDocsToRead.forEach((data, phoneId) => {
+          const repairs = data.reparaciones as Repair[] | undefined;
+          if (repairs) {
+            repairs.forEach((repair, index) => {
               if (!repair.paid && repair.cost > 0) {
-                // Convert timestamps if needed
                 const repairDate =
                   repair.date instanceof Date
                     ? repair.date
                     : (repair.date as { toDate: () => Date }).toDate();
                 allPendingRepairs.push({
-                  phoneId: phone.id,
+                  phoneId,
                   repairIndex: index,
                   cost: repair.cost,
                   date: repairDate,
@@ -101,15 +131,6 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
             pendingRepairsToProcess.push(repair);
             debtToPay -= repair.cost;
           }
-        }
-
-        // Read these phones for transaction
-        const phoneIdsToRead = [...new Set(pendingRepairsToProcess.map((p) => p.phoneId))];
-        for (const pid of phoneIdsToRead) {
-          const pRef = doc(db, 'phones', pid);
-          const pDoc = await transaction.get(pRef);
-          if (!pDoc.exists()) throw new Error(`Phone ${pid} for repair payment not found.`);
-          phoneDocsToRead.set(pid, pDoc.data());
         }
       }
 
@@ -140,7 +161,7 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
           // Available if: En Stock, OR the POS_SALE reservation is ours
           const isAvailable =
             currentEstado === 'En Stock (Disponible para Venta)' ||
-            (reservation?.reservedBy === 'POS_SALE');
+            reservation?.reservedBy === 'POS_SALE';
 
           if (!isAvailable) {
             const marca = (currentData.marca as string) || '';
@@ -148,6 +169,27 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
             const phoneInfo = phoneLabel(marca, modelo) || item.phoneId;
             throw new Error(
               `"${phoneInfo}" ya no está disponible (estado: ${currentEstado}). Por favor recarga el inventario.`
+            );
+          }
+
+          // Guard B2B: rechazar si hay una reserva B2B activa y no expirada.
+          // Esto previene doble-venta cuando un comprador online y un vendedor POS
+          // presionan "Confirmar" simultáneamente sobre el mismo teléfono.
+          const now = Date.now();
+          const hasActiveB2BReservation =
+            reservation != null &&
+            reservation.reservedBy !== 'POS_SALE' &&
+            reservation.expiresAt != null &&
+            reservation.expiresAt > now;
+
+          if (hasActiveB2BReservation) {
+            const marca = (currentData.marca as string) || '';
+            const modelo = (currentData.modelo as string) || '';
+            const phoneInfo = phoneLabel(marca, modelo) || item.phoneId;
+            const expireTime = new Date(reservation!.expiresAt).toLocaleTimeString('es-SV');
+            throw new Error(
+              `"${phoneInfo}" está reservado por un comprador online hasta las ${expireTime}. ` +
+                `Espera a que expire la reserva o coordina con el comprador.`
             );
           }
         }
@@ -158,10 +200,12 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
       const round2 = (n: number) => Math.round(n * 100) / 100;
 
       // 3. Update Client Credit/Debt
-      if (saleData.amountPaidWithCredit > 0) {
-        transaction.update(clientRef, { creditAmount: increment(-round2(saleData.amountPaidWithCredit)) });
+      if (saleData.amountPaidWithCredit > 0 && clientRef) {
+        transaction.update(clientRef, {
+          creditAmount: increment(-round2(saleData.amountPaidWithCredit)),
+        });
       }
-      if (saleData.debtIncurred && saleData.debtIncurred > 0) {
+      if (saleData.debtIncurred && saleData.debtIncurred > 0 && clientRef) {
         transaction.update(clientRef, { debtAmount: increment(round2(saleData.debtIncurred)) });
       }
 
@@ -191,19 +235,21 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
       }
 
       // 5. Create Purchase Record
-      const purchaseRef = doc(collection(db, 'clients', saleData.clientId, 'purchases'));
-      transaction.set(purchaseRef, {
-        items: saleData.items,
-        totalAmount: round2(saleData.totalAmount),
-        paymentMethod: saleData.paymentMethod,
-        discountAmount: round2(saleData.discountAmount || 0),
-        debtIncurred: round2(saleData.debtIncurred || 0),
-        amountPaidWithCredit: round2(saleData.amountPaidWithCredit),
-        amountPaidWithWorkshopDebt: round2(saleData.amountPaidWithWorkshopDebt),
-        transferDetails: saleData.transferDetails || null,
-        notes: saleData.notes || null,
-        purchaseDate: serverTimestamp(),
-      });
+      if (saleData.clientId) {
+        const purchaseRef = doc(collection(db, 'clients', saleData.clientId, 'purchases'));
+        transaction.set(purchaseRef, {
+          items: saleData.items,
+          totalAmount: round2(saleData.totalAmount),
+          paymentMethod: saleData.paymentMethod,
+          discountAmount: round2(saleData.discountAmount || 0),
+          debtIncurred: round2(saleData.debtIncurred || 0),
+          amountPaidWithCredit: round2(saleData.amountPaidWithCredit),
+          amountPaidWithWorkshopDebt: round2(saleData.amountPaidWithWorkshopDebt),
+          transferDetails: saleData.transferDetails || null,
+          notes: saleData.notes || null,
+          purchaseDate: serverTimestamp(),
+        });
+      }
 
       // 6. Update Inventory (Phones Sold)
       for (const item of saleData.items) {
@@ -223,10 +269,11 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
 
           transaction.update(phoneRef, {
             estado: 'Vendido',
-            clienteId: saleData.clientId,
+            clienteId: saleData.clientId || null,
             precioVenta: item.price,
             fechaVenta: new Date().toISOString().slice(0, 10), // Legacy format YYYY-MM-DD
             statusHistory: arrayUnion(historyEntry),
+            reservation: null,
           });
         } else if (item.accessoryId) {
           const accRef = doc(db, 'accessories', item.accessoryId);

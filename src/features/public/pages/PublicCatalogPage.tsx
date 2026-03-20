@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import PublicLayout from '../components/PublicLayout';
 import GroupedPhoneCard from '../components/GroupedPhoneCard';
 import FloatingCart from '../components/FloatingCart';
@@ -38,16 +38,19 @@ export default function PublicCatalogPage() {
 
   // Agrupar por modelo para el catálogo
   const groupedPhones = useMemo(() => {
-    const groups = new Map<string, {
-      key: string;
-      marca: string;
-      modelo: string;
-      almacenamiento?: string;
-      condicion: string;
-      precio: number;
-      count: number;
-      phones: Phone[];
-    }>();
+    const groups = new Map<
+      string,
+      {
+        key: string;
+        marca: string;
+        modelo: string;
+        almacenamiento?: string;
+        condicion: string;
+        precio: number;
+        count: number;
+        phones: Phone[];
+      }
+    >();
 
     filteredPhones.forEach((phone) => {
       const key = `${phone.marca}||${phone.modelo}||${phone.storage || ''}||${phone.condition || 'Grade A'}`;
@@ -76,6 +79,21 @@ export default function PublicCatalogPage() {
     if (!phones || !sessionId) return [];
     return phones.filter((p) => p.reservation?.reservedBy === sessionId);
   }, [phones, sessionId]);
+
+  // Live countdown from earliest reservation expiry
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (myReservedPhones.length === 0) return;
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [myReservedPhones.length]);
+
+  const earliestExpiry = myReservedPhones.reduce((min, phone) => {
+    const exp = phone.reservation?.expiresAt ?? Infinity;
+    return exp < min ? exp : min;
+  }, Infinity);
+  const timeLeft = myReservedPhones.length > 0 ? Math.max(0, earliestExpiry - now) : 0;
 
   return (
     <PublicLayout>
@@ -184,7 +202,7 @@ export default function PublicCatalogPage() {
         )}
       </div>
 
-      <FloatingCart reservedPhones={myReservedPhones} sessionId={sessionId} timeLeft={30 * 60 * 1000} />
+      <FloatingCart reservedPhones={myReservedPhones} sessionId={sessionId} timeLeft={timeLeft} />
     </PublicLayout>
   );
 }
