@@ -23,7 +23,11 @@ import type { Phone, PhoneStatus } from '../../../types';
 import toast from 'react-hot-toast';
 import { saveDeviceDefinition } from '../services/deviceService';
 import { buildHistoryEntry } from '../../../lib/historyUtils';
-import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel } from '../../../lib/phoneUtils';
+import {
+  normalizeDisplayBrand,
+  normalizeStorage,
+  normalizeIPhoneModel,
+} from '../../../lib/phoneUtils';
 
 // Filters interface
 export interface PhoneFilters {
@@ -32,7 +36,7 @@ export interface PhoneFilters {
   searchQuery?: string;
 }
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 200;
 
 // Convert Firestore Timestamp | Date | string to Date (handles legacy string dates from prod)
 const convertTimestamp = (timestamp: Timestamp | Date | string | unknown): Date => {
@@ -75,10 +79,7 @@ export function usePhonesPaginated(filters: PhoneFilters = {}) {
   return useInfiniteQuery({
     queryKey: ['phones-paginated', filters],
     queryFn: async ({ pageParam }) => {
-      const constraints: QueryConstraint[] = [
-        orderBy('fechaIngreso', 'desc'),
-        limit(PAGE_SIZE),
-      ];
+      const constraints: QueryConstraint[] = [orderBy('fechaIngreso', 'desc'), limit(PAGE_SIZE)];
       if (filters.lot) constraints.unshift(where('lote', '==', filters.lot));
       if (filters.status) constraints.unshift(where('estado', '==', filters.status));
       if (pageParam) constraints.push(startAfter(pageParam));
@@ -86,11 +87,13 @@ export function usePhonesPaginated(filters: PhoneFilters = {}) {
       const q = query(collection(db, 'phones'), ...constraints);
       const snapshot = await getDocs(q);
 
-      const phones = applyClientSearch(
-        snapshot.docs.map(mapPhone),
-        filters.searchQuery
-      );
+      const allPhones = snapshot.docs.map(mapPhone);
+      const phones = applyClientSearch(allPhones, filters.searchQuery);
 
+      // hasMore is based on raw Firestore page size (not filtered count)
+      // because the cursor needs raw docs for pagination. When searching,
+      // some pages may return fewer results than PAGE_SIZE — this is a
+      // known limitation of client-side search with cursor pagination.
       return {
         phones,
         lastDoc: snapshot.docs[snapshot.docs.length - 1] ?? null,
@@ -109,10 +112,7 @@ export function usePhones(filters: PhoneFilters = {}) {
   return useQuery({
     queryKey: ['phones', filters],
     queryFn: async () => {
-      const constraints: QueryConstraint[] = [
-        orderBy('fechaIngreso', 'desc'),
-        limit(500),
-      ];
+      const constraints: QueryConstraint[] = [orderBy('fechaIngreso', 'desc'), limit(500)];
       if (filters.lot) constraints.unshift(where('lote', '==', filters.lot));
       if (filters.status) constraints.unshift(where('estado', '==', filters.status));
 
@@ -139,9 +139,10 @@ export function useCreatePhone() {
       if (phone.precioVenta > 0 && phone.modelo) {
         const displayBrand = normalizeDisplayBrand(phone.marca);
         const storageVal = normalizeStorage(phone.storage);
-        const normalizedModel = displayBrand === 'Apple'
-          ? normalizeIPhoneModel(phone.modelo || '')
-          : (phone.modelo || 'Unknown');
+        const normalizedModel =
+          displayBrand === 'Apple'
+            ? normalizeIPhoneModel(phone.modelo || '')
+            : phone.modelo || 'Unknown';
         const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
           .replace(/\//g, '-')
           .replace(/\s+/g, '-')
