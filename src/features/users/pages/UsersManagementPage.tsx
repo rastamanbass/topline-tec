@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Plus, Edit2, Lock, Unlock, Loader2 } from 'lucide-react';
+import { Users, Plus, Edit2, Lock, Unlock, Loader2, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../../context';
 import { Navigate } from 'react-router-dom';
 import { useBuyerUsers } from '../hooks/useUsers';
@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import type { User } from '../../../types';
+import { seedDeviceDefinitions } from '../../inventory/services/deviceService';
 
 export default function UsersManagementPage() {
   const { userRole } = useAuth();
@@ -17,7 +18,20 @@ export default function UsersManagementPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [togglingUid, setTogglingUid] = useState<string | null>(null);
   const [createdUser, setCreatedUser] = useState<{ email: string; password: string } | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
   const queryClient = useQueryClient();
+
+  const handleSyncTacs = async () => {
+    setIsSyncing(true);
+    try {
+      const count = await seedDeviceDefinitions();
+      toast.success(`${count} TACs nuevos sincronizados`);
+    } catch {
+      toast.error('Error sincronizando TACs');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   // Solo admin/gerente
   if (!['admin', 'gerente'].includes(userRole || '')) {
@@ -68,6 +82,16 @@ export default function UsersManagementPage() {
             </div>
 
             <div className="flex items-center gap-2">
+              {userRole === 'admin' && (
+                <button
+                  onClick={handleSyncTacs}
+                  disabled={isSyncing}
+                  className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                  {isSyncing ? 'Sincronizando...' : 'Sincronizar TACs'}
+                </button>
+              )}
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="btn-primary flex items-center gap-2"

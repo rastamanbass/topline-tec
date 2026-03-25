@@ -1,0 +1,209 @@
+<h2>Fritz Sale Flow: Chat → Pre-Purchase Modal</h2>
+<p class="subtitle">Eduardo writes a sale request → Fritz shows a rich confirmation modal before executing</p>
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+
+  <!-- Step 1: Chat message -->
+  <div style="flex: 0 0 300px;">
+    <div style="text-align: center; margin-bottom: 8px;">
+      <span style="background: #6366f1; color: white; font-size: 11px; font-weight: bold; padding: 4px 12px; border-radius: 12px;">PASO 1: Eduardo escribe</span>
+    </div>
+    <div style="background: #0f0a2e; border-radius: 16px; padding: 16px; min-height: 400px; display: flex; flex-direction: column;">
+      <!-- Fritz header -->
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #1e1b4b;">
+        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <span style="font-size: 18px;">🤖</span>
+        </div>
+        <div>
+          <div style="color: #e2e8f0; font-size: 14px; font-weight: bold;">Fritz</div>
+          <div style="color: #22c55e; font-size: 10px;">● Online</div>
+        </div>
+      </div>
+
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+        <!-- Fritz greeting -->
+        <div style="background: #1e1b4b; border-radius: 12px 12px 12px 4px; padding: 10px 14px; color: #e2e8f0; font-size: 12px; max-width: 85%; align-self: flex-start;">
+          Hola Eduardo, ¿en qué te ayudo?
+        </div>
+
+        <!-- Eduardo message -->
+        <div style="background: #4338ca; border-radius: 12px 12px 4px 12px; padding: 10px 14px; color: white; font-size: 12px; max-width: 85%; align-self: flex-end;">
+          vende 5 iphone 13 a juan perez a 330 cada uno del envio de marzo
+        </div>
+
+        <!-- Fritz thinking -->
+        <div style="background: #1e1b4b; border-radius: 12px 12px 12px 4px; padding: 10px 14px; color: #a5b4fc; font-size: 12px; max-width: 85%; align-self: flex-start; display: flex; align-items: center; gap: 8px;">
+          <div style="display: flex; gap: 3px;">
+            <div style="width: 6px; height: 6px; background: #818cf8; border-radius: 50%; animation: pulse 1s infinite;"></div>
+            <div style="width: 6px; height: 6px; background: #818cf8; border-radius: 50%; animation: pulse 1s infinite 0.2s;"></div>
+            <div style="width: 6px; height: 6px; background: #818cf8; border-radius: 50%; animation: pulse 1s infinite 0.4s;"></div>
+          </div>
+          Buscando inventario...
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div style="margin-top: 12px; background: #1e1b4b; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 8px;">
+        <div style="color: #6366f1; font-size: 11px; flex: 1; opacity: 0.6;">Escribí a Fritz...</div>
+        <div style="width: 28px; height: 28px; background: #4338ca; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+          <span style="color: white; font-size: 14px;">↑</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div style="display: flex; align-items: center; font-size: 32px; color: #6366f1;">→</div>
+
+  <!-- Step 2: Pre-Purchase Modal -->
+  <div style="flex: 0 0 340px;">
+    <div style="text-align: center; margin-bottom: 8px;">
+      <span style="background: #059669; color: white; font-size: 11px; font-weight: bold; padding: 4px 12px; border-radius: 12px;">PASO 2: Fritz abre modal de pre-compra</span>
+    </div>
+    <div style="background: #0f0a2e; border-radius: 16px; padding: 16px; min-height: 400px; position: relative;">
+      <!-- Dimmed chat behind -->
+      <div style="opacity: 0.15; pointer-events: none;">
+        <div style="background: #1e1b4b; border-radius: 8px; padding: 8px; margin-bottom: 6px; color: #e2e8f0; font-size: 10px;">Hola Eduardo...</div>
+        <div style="background: #4338ca; border-radius: 8px; padding: 8px; margin-bottom: 6px; color: white; font-size: 10px;">vende 5 iphone 13...</div>
+      </div>
+
+      <!-- Modal overlay -->
+      <div style="position: absolute; top: 50px; left: 12px; right: 12px; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden;">
+        <!-- Modal header -->
+        <div style="background: linear-gradient(135deg, #059669, #047857); padding: 14px 16px; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">🤖</span>
+          <div>
+            <div style="color: white; font-size: 14px; font-weight: bold;">Fritz — Pre-Compra</div>
+            <div style="color: #a7f3d0; font-size: 10px;">Revisá antes de confirmar</div>
+          </div>
+        </div>
+
+        <!-- Client -->
+        <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+          <div style="font-size: 10px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Cliente</div>
+          <div style="font-size: 14px; font-weight: bold; color: #111827; margin-top: 2px;">Juan Pérez</div>
+          <div style="font-size: 11px; color: #6b7280;">Crédito disponible: $500 · Deuda: $0</div>
+        </div>
+
+        <!-- Items -->
+        <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+          <div style="font-size: 10px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px;">Items (5 teléfonos)</div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e5e7eb;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #111827;">Apple iPhone 13 128gb</div>
+              <div style="font-size: 10px; color: #6b7280;">ENVIO 2 MARZO AMERIJET</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 12px; font-weight: bold; color: #111827;">5 × $330</div>
+            </div>
+          </div>
+
+          <!-- IMEI list preview -->
+          <div style="margin-top: 8px; background: #f9fafb; border-radius: 8px; padding: 8px;">
+            <div style="font-size: 9px; color: #9ca3af; margin-bottom: 4px;">IMEIs asignados:</div>
+            <div style="font-size: 9px; color: #6b7280; font-family: monospace; line-height: 1.6;">
+              353559560263301<br>
+              352197560320759<br>
+              359009850298622<br>
+              354812110567823<br>
+              351234560789012
+            </div>
+          </div>
+        </div>
+
+        <!-- Totals -->
+        <div style="padding: 12px 16px; background: #f0fdf4;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span style="font-size: 11px; color: #6b7280;">Subtotal</span>
+            <span style="font-size: 11px; color: #374151;">$1,650.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span style="font-size: 11px; color: #6b7280;">Descuento</span>
+            <span style="font-size: 11px; color: #374151;">$0.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 2px solid #bbf7d0;">
+            <span style="font-size: 16px; font-weight: bold; color: #065f46;">Total</span>
+            <span style="font-size: 16px; font-weight: bold; color: #065f46;">$1,650.00</span>
+          </div>
+        </div>
+
+        <!-- Payment method -->
+        <div style="padding: 12px 16px; border-top: 1px solid #f1f5f9;">
+          <div style="font-size: 10px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 6px;">Método de pago</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <div style="padding: 6px 12px; background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; font-size: 11px; font-weight: 600; color: #1d4ed8;">Efectivo</div>
+            <div style="padding: 6px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 11px; color: #6b7280;">Tarjeta</div>
+            <div style="padding: 6px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 11px; color: #6b7280;">Transfer.</div>
+            <div style="padding: 6px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 11px; color: #6b7280;">Crédito</div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="padding: 12px 16px; display: flex; gap: 8px;">
+          <button style="flex: 1; padding: 10px; background: #f3f4f6; border: none; border-radius: 10px; font-size: 13px; color: #374151; font-weight: 600; cursor: pointer;">
+            ✏️ Editar
+          </button>
+          <button style="flex: 2; padding: 10px; background: linear-gradient(135deg, #059669, #047857); border: none; border-radius: 10px; font-size: 13px; color: white; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(5,150,105,0.3);">
+            ✓ Confirmar Venta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3: After confirmation -->
+<div style="max-width: 680px; margin: 24px auto 0;">
+  <div style="text-align: center; margin-bottom: 8px;">
+    <span style="background: #2563eb; color: white; font-size: 11px; font-weight: bold; padding: 4px 12px; border-radius: 12px;">PASO 3: Después de confirmar</span>
+  </div>
+  <div style="background: #0f0a2e; border-radius: 16px; padding: 20px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <!-- Eduardo's original message -->
+      <div style="background: #4338ca; border-radius: 12px 12px 4px 12px; padding: 10px 14px; color: white; font-size: 12px; max-width: 80%; align-self: flex-end;">
+        vende 5 iphone 13 a juan perez a 330 cada uno del envio de marzo
+      </div>
+
+      <!-- Fritz confirmation -->
+      <div style="background: #1e1b4b; border-radius: 12px 12px 12px 4px; padding: 14px; max-width: 90%; align-self: flex-start;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <div style="width: 24px; height: 24px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <span style="color: white; font-size: 12px;">✓</span>
+          </div>
+          <span style="color: #22c55e; font-size: 13px; font-weight: bold;">Venta procesada</span>
+        </div>
+        <div style="color: #e2e8f0; font-size: 12px; line-height: 1.6;">
+          5 iPhone 13 128gb vendidos a Juan Pérez por $1,650 (efectivo).<br>
+          <span style="color: #a5b4fc;">Factura:</span> INV-2026-0089
+        </div>
+
+        <!-- Quick actions -->
+        <div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;">
+          <div style="padding: 5px 10px; background: #312e81; border-radius: 6px; color: #a5b4fc; font-size: 10px; cursor: pointer;">📄 Ver factura</div>
+          <div style="padding: 5px 10px; background: #312e81; border-radius: 6px; color: #a5b4fc; font-size: 10px; cursor: pointer;">🏷️ Imprimir stickers</div>
+          <div style="padding: 5px 10px; background: #312e81; border-radius: 6px; color: #a5b4fc; font-size: 10px; cursor: pointer;">📱 Otra venta</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+</style>
+
+<div style="margin-top: 24px; padding: 16px; background: #1e293b; border-radius: 8px; border-left: 3px solid #6366f1;">
+  <p style="color: #c4b5fd; font-size: 13px; font-weight: bold; margin-bottom: 6px;">The full flow:</p>
+  <p style="color: #94a3b8; font-size: 12px; line-height: 1.8;">
+    <strong>1.</strong> Eduardo taps Fritz bubble → writes "vende 5 iphone 13 a juan a 330 del envio de marzo"<br>
+    <strong>2.</strong> Fritz searches inventory, finds 5 available iPhone 13s in that lot, resolves "juan" to "Juan Pérez"<br>
+    <strong>3.</strong> Fritz opens the <strong>Pre-Purchase Modal</strong> with full details: client info, items, IMEIs, totals, payment selector<br>
+    <strong>4.</strong> Eduardo can tap "Editar" to change price/quantity/payment, or "Confirmar Venta"<br>
+    <strong>5.</strong> Fritz executes the sale transaction (atomic), generates invoice, shows confirmation with quick actions<br>
+    <strong>6.</strong> Eduardo can tap "Ver factura" or "Otra venta" to keep going
+  </p>
+</div>

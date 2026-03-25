@@ -1,0 +1,164 @@
+<h2>Where should Fritz live in the app?</h2>
+<p class="subtitle">Eduardo and Marta will use Fritz constantly — it needs to be accessible from anywhere without blocking their work</p>
+
+<div class="cards">
+  <!-- Option A: Floating Bubble -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0f172a; padding: 20px; position: relative; min-height: 320px; overflow: hidden;">
+      <!-- Simulated app background -->
+      <div style="background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+        <div style="color: #94a3b8; font-size: 11px;">Top Line Tec — Inventario</div>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <div style="background: #334155; border-radius: 6px; padding: 8px 12px; color: #e2e8f0; font-size: 10px; flex:1;">177 En Stock</div>
+          <div style="background: #334155; border-radius: 6px; padding: 8px 12px; color: #e2e8f0; font-size: 10px; flex:1;">$203K Ventas</div>
+        </div>
+      </div>
+      <div style="background: #1e293b; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px;">
+        <div style="color: #64748b; font-size: 9px;">iPhone 13 128GB — $330</div>
+      </div>
+      <div style="background: #1e293b; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px;">
+        <div style="color: #64748b; font-size: 9px;">iPhone 14 Plus 128GB — $430</div>
+      </div>
+      <div style="background: #1e293b; border-radius: 8px; padding: 8px 12px;">
+        <div style="color: #64748b; font-size: 9px;">Samsung A36 5G — $220</div>
+      </div>
+
+      <!-- Fritz Bubble -->
+      <div style="position: absolute; bottom: 16px; right: 16px; width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(99,102,241,0.5); cursor: pointer;">
+        <span style="font-size: 24px;">🤖</span>
+      </div>
+      <!-- Notification badge -->
+      <div style="position: absolute; bottom: 60px; right: 16px; width: 18px; height: 18px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: bold;">2</div>
+    </div>
+    <div class="card-body">
+      <h3>A. Floating Bubble (WhatsApp-style)</h3>
+      <p>Bubble in bottom-right corner, always visible. Tap to open chat panel. Notification badge for alerts. Can be dragged to reposition.</p>
+      <div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 6px; font-size: 12px; color: #166534;">
+        ✓ Always accessible<br>
+        ✓ Familiar pattern (WhatsApp)<br>
+        ✓ Doesn't block content<br>
+        ✓ Shows notification count
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Side Panel -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0f172a; padding: 20px; position: relative; min-height: 320px; overflow: hidden; display: flex; gap: 8px;">
+      <!-- Main app (shrunk) -->
+      <div style="flex: 1.5;">
+        <div style="background: #1e293b; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+          <div style="color: #94a3b8; font-size: 10px;">Inventario</div>
+          <div style="display: flex; gap: 6px; margin-top: 6px;">
+            <div style="background: #334155; border-radius: 4px; padding: 6px; color: #e2e8f0; font-size: 9px; flex:1;">177</div>
+            <div style="background: #334155; border-radius: 4px; padding: 6px; color: #e2e8f0; font-size: 9px; flex:1;">$203K</div>
+          </div>
+        </div>
+        <div style="background: #1e293b; border-radius: 6px; padding: 6px 10px; margin-bottom: 4px;">
+          <div style="color: #64748b; font-size: 8px;">iPhone 13 — $330</div>
+        </div>
+        <div style="background: #1e293b; border-radius: 6px; padding: 6px 10px; margin-bottom: 4px;">
+          <div style="color: #64748b; font-size: 8px;">iPhone 14 — $430</div>
+        </div>
+      </div>
+
+      <!-- Fritz Panel -->
+      <div style="flex: 1; background: #1e1b4b; border-radius: 8px; padding: 10px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #312e81;">
+          <span style="font-size: 16px;">🤖</span>
+          <span style="color: #c4b5fd; font-size: 11px; font-weight: bold;">Fritz</span>
+          <span style="margin-left: auto; width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+          <div style="background: #312e81; border-radius: 6px; padding: 6px; color: #e2e8f0; font-size: 8px;">
+            Cuantos 13 tenemos?
+          </div>
+          <div style="background: #4338ca; border-radius: 6px; padding: 6px; color: #e2e8f0; font-size: 8px;">
+            23 iPhone 13 128gb en stock del Envío 2 Marzo
+          </div>
+        </div>
+        <div style="margin-top: 8px; background: #312e81; border-radius: 6px; padding: 6px; display: flex; align-items: center; gap: 4px;">
+          <div style="color: #818cf8; font-size: 8px; flex:1;">Escribí a Fritz...</div>
+          <div style="width: 20px; height: 20px; background: #6366f1; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+            <span style="color: white; font-size: 10px;">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Side Panel (Slack-style)</h3>
+      <p>Fritz lives in a collapsible right panel. Always visible when open, splits the screen. Chat history stays visible while working.</p>
+      <div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 6px; font-size: 12px; color: #166534;">
+        ✓ See chat + app simultaneously<br>
+        ✓ Full conversation history visible<br>
+        ✓ Professional look
+      </div>
+      <div style="margin-top: 4px; padding: 8px; background: #fef2f2; border-radius: 6px; font-size: 12px; color: #991b1b;">
+        ✗ Takes screen space on mobile<br>
+        ✗ More complex layout changes
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C: Bottom Sheet -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0f172a; padding: 20px; position: relative; min-height: 320px; overflow: hidden;">
+      <!-- App background (dimmed) -->
+      <div style="opacity: 0.3;">
+        <div style="background: #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+          <div style="color: #94a3b8; font-size: 11px;">Top Line Tec — Inventario</div>
+        </div>
+        <div style="background: #1e293b; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px;">
+          <div style="color: #64748b; font-size: 9px;">iPhone 13 128GB — $330</div>
+        </div>
+      </div>
+
+      <!-- Bottom Sheet -->
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, #1e1b4b, #0f0a2e); border-radius: 16px 16px 0 0; padding: 12px 16px 16px;">
+        <!-- Handle -->
+        <div style="width: 36px; height: 4px; background: #4338ca; border-radius: 2px; margin: 0 auto 12px;"></div>
+
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <span style="font-size: 20px;">🤖</span>
+          <span style="color: #c4b5fd; font-size: 13px; font-weight: bold;">Fritz AI</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
+          <div style="background: #312e81; border-radius: 8px; padding: 8px; color: #e2e8f0; font-size: 10px; align-self: flex-end; max-width: 80%;">
+            Vendé 5 iPhone 13 a Juan a $330
+          </div>
+          <div style="background: #4338ca; border-radius: 8px; padding: 8px; color: #e2e8f0; font-size: 10px; align-self: flex-start; max-width: 85%;">
+            Voy a vender 5 iPhone 13 128gb a Juan Pérez a $330 c/u. Total: $1,650. ¿Confirmo?
+          </div>
+        </div>
+
+        <div style="background: #312e81; border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 14px;">🎤</span>
+          <div style="color: #818cf8; font-size: 11px; flex:1;">Escribí o hablá...</div>
+          <div style="width: 28px; height: 28px; background: #6366f1; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <span style="color: white; font-size: 14px;">↑</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Bottom Sheet (Mobile-first)</h3>
+      <p>Fritz slides up from the bottom. Swipe up to expand full screen, swipe down to minimize. Like Google Assistant or Siri.</p>
+      <div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 6px; font-size: 12px; color: #166534;">
+        ✓ Best for mobile/tablet<br>
+        ✓ Natural gesture (swipe up/down)<br>
+        ✓ Can go full-screen for complex tasks<br>
+        ✓ Mic button for voice (future)
+      </div>
+      <div style="margin-top: 4px; padding: 8px; background: #fef2f2; border-radius: 6px; font-size: 12px; color: #991b1b;">
+        ✗ Covers content when open<br>
+        ✗ Less natural on desktop
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 24px; padding: 16px; background: #1e293b; border-radius: 8px; border-left: 3px solid #6366f1;">
+  <p style="color: #c4b5fd; font-size: 13px; font-weight: bold; margin-bottom: 4px;">My recommendation: A (Floating Bubble)</p>
+  <p style="color: #94a3b8; font-size: 12px;">Eduardo uses the app on a phone/tablet in the tienda. A bubble is the most natural — tap to talk to Fritz, tap again to close. Same pattern as WhatsApp which he already knows. The bubble can show notification badges when Fritz has alerts ("3 phones stuck in taller >14 days").</p>
+</div>

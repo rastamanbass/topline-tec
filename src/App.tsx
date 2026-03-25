@@ -8,6 +8,7 @@ import BottomNav from './components/layout/BottomNav';
 import LoginPage from './features/auth/LoginPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import { usePushNotifications } from './hooks/usePushNotifications';
+import { FritzBubble, FritzPanel, FritzSaleModal } from './features/fritz';
 
 const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage'));
 const InventoryPage = lazy(() => import('./features/inventory/InventoryPage'));
@@ -287,6 +288,10 @@ function App() {
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </Suspense>
+            {/* Fritz AI Assistant */}
+            <FritzBubble />
+            <FritzPanel />
+            <FritzSaleModal />
           </ErrorBoundary>
         </BrowserRouter>
 

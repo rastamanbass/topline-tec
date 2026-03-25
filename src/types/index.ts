@@ -113,6 +113,9 @@ export interface PurchaseItem {
   quantity: number;
   imei?: string;
   type: 'phone' | 'accessory';
+  originalPrice?: number;
+  discountReason?: string;
+  discountApprovedBy?: string;
 }
 
 export type OrderStatus =

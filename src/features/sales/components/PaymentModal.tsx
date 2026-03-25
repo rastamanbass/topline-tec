@@ -3,8 +3,9 @@ import { useSalesStore } from '../stores/salesStore';
 import { useSaleTransaction } from '../hooks/useSales';
 import { useClients } from '../../clients/hooks/useClients';
 import { useModal } from '../../../hooks/useModal';
-import { X, Search, User, AlertTriangle, CheckCircle, FileText } from 'lucide-react';
+import { X, Search, User, AlertTriangle, CheckCircle, Trash2, Smartphone } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { auth } from '../../../lib/firebase';
 import { lockPhonesForPOS, unlockPhonesFromPOS } from '../../../services/firebase/stockLock';
 import { createInvoice } from '../../../services/firebase/invoiceService';
 import type { CreateInvoiceData } from '../../../services/firebase/invoiceService';
@@ -19,6 +20,8 @@ export default function PaymentModal() {
     isPaymentModalOpen,
     closePaymentModal,
     cartItems,
+    removeFromCart,
+    updateCartItemPrice,
     selectedClient,
     setSelectedClient,
     paymentMethod,
@@ -45,9 +48,7 @@ export default function PaymentModal() {
 
   // Invoice state
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
-  const [invoiceNumber, setInvoiceNumber] = useState<string | null>(null);
   const [saleSuccess, setSaleSuccess] = useState(false);
-  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   // Track if lock was acquired for cleanup
   const lockedPhoneIds = useRef<string[]>([]);
@@ -194,60 +195,51 @@ export default function PaymentModal() {
     resetCheckout();
     setSaleSuccess(false);
     setInvoiceId(null);
-    setInvoiceNumber(null);
-    setShowInvoiceModal(false);
     lockedPhoneIds.current = [];
     closePaymentModal();
   };
 
+  // If cart becomes empty (user removed all items), close modal
+  useEffect(() => {
+    if (isPaymentModalOpen && cartItems.length === 0 && !saleSuccess) {
+      closePaymentModal();
+    }
+  }, [cartItems.length, isPaymentModalOpen, saleSuccess, closePaymentModal]);
+
   if (!isPaymentModalOpen) return null;
 
-  // Success state — show after sale completes
+  // Success state — auto-show invoice with all actions (Print, PDF, WhatsApp, Close)
   if (saleSuccess) {
+    // If invoice exists, show it directly — no extra click needed
+    if (invoiceId) {
+      return (
+        <InvoiceModal
+          invoiceId={invoiceId}
+          onClose={handleClose}
+          isNewInvoice
+        />
+      );
+    }
+
+    // Fallback: invoice creation failed — show simple success card
     return (
-      <>
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-8 flex flex-col items-center gap-5">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-10 h-10 text-green-600" />
-            </div>
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900">Venta Registrada</h2>
-              <p className="text-gray-500 mt-1">Total: {formatCurrency(total)}</p>
-              {invoiceId && (
-                <p className="text-xs text-gray-400 mt-1">Factura generada</p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-3 w-full">
-              {invoiceId && (
-                <button
-                  onClick={() => setShowInvoiceModal(true)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors"
-                >
-                  <FileText className="w-4 h-4" />
-                  Ver e Imprimir Factura
-                </button>
-              )}
-              <button
-                onClick={handleClose}
-                className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-medium transition-colors"
-              >
-                Cerrar
-              </button>
-            </div>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-8 flex flex-col items-center gap-5">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+            <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900">Venta Registrada</h2>
+            <p className="text-gray-500 mt-1">Total: {formatCurrency(total)}</p>
+          </div>
+          <button
+            onClick={handleClose}
+            className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-medium transition-colors"
+          >
+            Cerrar
+          </button>
         </div>
-
-        {showInvoiceModal && invoiceId && (
-          <InvoiceModal
-            invoiceId={invoiceId}
-            onClose={() => setShowInvoiceModal(false)}
-            onInvoiceNumberLoaded={(num) => setInvoiceNumber(num)}
-          />
-        )}
-        {invoiceNumber && <span className="sr-only">{invoiceNumber}</span>}
-      </>
+      </div>
     );
   }
 
@@ -322,6 +314,71 @@ export default function PaymentModal() {
                 )}
               </div>
             )}
+          </div>
+
+          {/* Cart Items */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Equipos en carrito ({cartItems.length})
+            </h3>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {cartItems.map((item, index) => (
+                <div
+                  key={item.imei || item.id || index}
+                  className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2"
+                >
+                  <div className="flex items-center gap-3">
+                    <Smartphone className="w-4 h-4 text-gray-400 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {item.description}
+                      </p>
+                      {item.imei && (
+                        <p className="text-xs text-gray-400 font-mono">{item.imei}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="text-xs text-gray-400">$</span>
+                      <input
+                        type="number"
+                        value={item.price}
+                        onChange={(e) => {
+                          const newPrice = parseFloat(e.target.value) || 0;
+                          updateCartItemPrice(index, newPrice, item.discountReason || '', auth.currentUser?.email || 'unknown');
+                        }}
+                        className="w-16 text-sm font-bold text-gray-900 bg-white border border-gray-200 rounded px-1 py-0.5 text-right"
+                        step="1"
+                        min={0}
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeFromCart(index)}
+                      className="shrink-0 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Quitar del carrito"
+                      aria-label={`Quitar ${item.description}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  {/* Discount info when price was modified */}
+                  {item.originalPrice != null && item.originalPrice !== item.price && (
+                    <div className="mt-1 ml-7 flex items-center gap-2">
+                      <span className="text-xs text-gray-400 line-through">${item.originalPrice}</span>
+                      <span className="text-xs font-medium text-green-600">
+                        -{(item.originalPrice - item.price).toFixed(0)}
+                      </span>
+                      <input
+                        type="text"
+                        value={item.discountReason || ''}
+                        onChange={(e) => updateCartItemPrice(index, item.price, e.target.value, auth.currentUser?.email || 'unknown')}
+                        placeholder="Razón del descuento..."
+                        className="flex-1 text-xs border-b border-gray-200 bg-transparent px-1 py-0.5 focus:border-blue-400 outline-none"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Totals Summary */}
@@ -402,10 +459,10 @@ export default function PaymentModal() {
                     className="input-field"
                     value={amountPaidWithCredit}
                     onChange={(e) => setAmountPaidWithCredit(Number(e.target.value))}
-                    disabled={selectedClient.creditAmount <= 0}
+                    disabled={!selectedClient.creditAmount || selectedClient.creditAmount <= 0}
                   />
                   <p className="text-xs text-gray-400 mt-1">
-                    Disp: ${selectedClient.creditAmount.toFixed(2)}
+                    Disp: ${(selectedClient.creditAmount ?? 0).toFixed(2)}
                   </p>
                 </div>
                 <div>

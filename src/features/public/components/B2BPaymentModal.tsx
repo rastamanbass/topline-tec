@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { X, User, Search, CreditCard, Loader2 } from 'lucide-react';
-import { useClients } from '../../clients/hooks/useClients';
-import type { Phone, Client } from '../../../types';
+import { X, CreditCard, Loader2 } from 'lucide-react';
+import type { Phone } from '../../../types';
 import toast from 'react-hot-toast';
 
 interface B2BPaymentModalProps {
@@ -27,48 +26,31 @@ export default function B2BPaymentModal({
   // sessionId,
   onConfirm,
 }: B2BPaymentModalProps) {
-  const { data: clients } = useClients();
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [clientSearch, setClientSearch] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<string>('pending');
-  const [discount, setDiscount] = useState(0);
   const [notes, setNotes] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Guest client fields
+  // Compradores públicos siempre operan como invitados
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
-  const [useGuest, setUseGuest] = useState(false);
-
-  const filteredClients = clientSearch
-    ? clients?.filter((c) => c.name.toLowerCase().includes(clientSearch.toLowerCase()))
-    : [];
 
   const subtotal = reservedPhones.reduce((sum, p) => sum + p.precioVenta, 0);
-  const total = Math.max(0, subtotal - discount);
 
   const handleConfirm = async () => {
     try {
       setIsProcessing(true);
 
-      if (!useGuest && !selectedClient) {
-        toast.error('Selecciona un cliente o usa "Cliente Invitado"');
-        return;
-      }
-
-      if (useGuest && !guestName) {
+      if (!guestName) {
         toast.error('Ingresa el nombre del cliente');
         return;
       }
 
       await onConfirm({
-        clientId: selectedClient?.id,
-        clientAlias: useGuest ? guestName : undefined,
-        clientEmail: useGuest ? guestEmail : undefined,
-        clientPhone: useGuest ? guestPhone : undefined,
-        paymentMethod,
-        discount,
+        clientAlias: guestName,
+        clientEmail: guestEmail || undefined,
+        clientPhone: guestPhone || undefined,
+        paymentMethod: 'pending',
+        discount: 0,
         notes,
       });
 
@@ -109,176 +91,50 @@ export default function B2BPaymentModal({
             </div>
           </div>
 
-          {/* Client Selection Toggle */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => setUseGuest(false)}
-              className={`flex-1 px-4 py-2 rounded-lg border font-medium transition-colors ${
-                !useGuest
-                  ? 'bg-primary-600 text-white border-primary-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Cliente Registrado
-            </button>
-            <button
-              onClick={() => setUseGuest(true)}
-              className={`flex-1 px-4 py-2 rounded-lg border font-medium transition-colors ${
-                useGuest
-                  ? 'bg-primary-600 text-white border-primary-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Cliente Invitado
-            </button>
-          </div>
-
-          {/* Client Selection */}
-          {!useGuest ? (
+          {/* Datos del comprador (siempre modo invitado — no se exponen datos internos) */}
+          <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
-              {selectedClient ? (
-                <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded">
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-blue-600" />
-                    <span className="font-medium text-blue-900">{selectedClient.name}</span>
-                    <span className="text-xs text-blue-600 ml-2">
-                      (Crédito: ${selectedClient.creditAmount} | Deuda: ${selectedClient.debtAmount}
-                      )
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setSelectedClient(null)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Buscar cliente..."
-                    className="input-field pl-10"
-                    value={clientSearch}
-                    onChange={(e) => setClientSearch(e.target.value)}
-                  />
-                  <Search className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
-                  {clientSearch && filteredClients && filteredClients.length > 0 && (
-                    <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto">
-                      {filteredClients.map((client) => (
-                        <div
-                          key={client.id}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => {
-                            setSelectedClient(client);
-                            setClientSearch('');
-                          }}
-                        >
-                          <p className="font-medium text-sm">{client.name}</p>
-                          <p className="text-xs text-gray-500">{client.email || client.phone}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nombre <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="input-field"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                placeholder="Nombre del comprador"
+              />
             </div>
-          ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre <span className="text-red-500">*</span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
-                  type="text"
+                  type="email"
                   className="input-field"
-                  value={guestName}
-                  onChange={(e) => setGuestName(e.target.value)}
-                  placeholder="Nombre del cliente"
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  placeholder="email@ejemplo.com"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    className="input-field"
-                    value={guestEmail}
-                    onChange={(e) => setGuestEmail(e.target.value)}
-                    placeholder="email@ejemplo.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                  <input
-                    type="tel"
-                    className="input-field"
-                    value={guestPhone}
-                    onChange={(e) => setGuestPhone(e.target.value)}
-                    placeholder="+503 1234-5678"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Discount */}
-          <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">${subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-sm items-center">
-              <span className="text-gray-600">Descuento</span>
-              <div className="flex items-center gap-1">
-                <span className="text-gray-500">-$</span>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
                 <input
-                  type="number"
-                  className="w-24 p-1 border rounded text-right text-sm"
-                  value={discount}
-                  onChange={(e) => setDiscount(Number(e.target.value))}
-                  min="0"
-                  max={subtotal}
+                  type="tel"
+                  className="input-field"
+                  value={guestPhone}
+                  onChange={(e) => setGuestPhone(e.target.value)}
+                  placeholder="+503 1234-5678"
                 />
               </div>
-            </div>
-            <div className="flex justify-between text-lg font-bold border-t pt-2 mt-2">
-              <span>Total</span>
-              <span className="text-primary-600">${total.toFixed(2)}</span>
             </div>
           </div>
 
-          {/* Payment Method */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Estado del Pago</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => setPaymentMethod('pending')}
-                className={`px-3 py-2 rounded border text-sm font-medium transition-colors ${
-                  paymentMethod === 'pending'
-                    ? 'bg-yellow-600 text-white border-yellow-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                Pendiente
-              </button>
-              <button
-                onClick={() => setPaymentMethod('paid')}
-                className={`px-3 py-2 rounded border text-sm font-medium transition-colors ${
-                  paymentMethod === 'paid'
-                    ? 'bg-green-600 text-white border-green-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                Pagado
-              </button>
+          {/* Total */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex justify-between text-lg font-bold">
+              <span>Total</span>
+              <span className="text-primary-600">${subtotal.toFixed(2)}</span>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
-              {paymentMethod === 'pending'
-                ? 'El pedido se creará como pendiente de pago'
-                : 'El pedido se marcará como pagado inmediatamente'}
-            </p>
           </div>
 
           {/* Notes */}
@@ -305,7 +161,7 @@ export default function B2BPaymentModal({
             >
               {isProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
               <CreditCard className="w-4 h-4" />
-              Confirmar Pedido (${total.toFixed(2)})
+              Confirmar Pedido (${subtotal.toFixed(2)})
             </button>
           </div>
         </div>

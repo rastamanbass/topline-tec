@@ -19,10 +19,10 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
       try {
         JsBarcode(barcodeRef.current, phone.imei, {
           format: 'CODE128',
-          width: 1.2,
-          height: 25,
+          width: 2.5,
+          height: 55,
           displayValue: false,
-          margin: 0,
+          margin: 2,
         });
       } catch {
         /* invalid data fallback */
@@ -31,36 +31,50 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
   }, [phone.imei, phone.seized]);
 
   return (
-    <div className="w-[40mm] h-[30mm] bg-white p-1 font-sans text-black flex flex-col overflow-hidden border border-dashed border-gray-300 print:border-none page-break-after-always">
-      {/* Row 1: Model info + QR side by side */}
-      <div className="flex items-start gap-1 mb-0.5">
-        <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-bold leading-tight truncate">{phone.modelo}</p>
-          <p className="text-[8px] leading-tight text-gray-700">{phone.storage || ''}</p>
-          <p className="text-[7px] text-gray-500 truncate mt-0.5">{phone.lote}</p>
-        </div>
-        {!phone.seized && <QRCodeSVG value={trackingUrl} size={36} className="shrink-0" />}
+    <div className="sticker-label bg-white font-sans text-black border-2 border-dashed border-gray-300 rounded-lg"
+      style={{ width: '100%', maxWidth: '420px', aspectRatio: '3/2', padding: '3%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}
+    >
+      {/* Zone A: Text only (no codes) */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexShrink: 0 }}>
+        <p style={{ fontSize: '18px', fontWeight: 'bold', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0, flex: 1, minWidth: 0 }}>
+          {phone.modelo}
+        </p>
+        {phone.storage && (
+          <span style={{ fontSize: '13px', color: '#555', lineHeight: 1.1, flexShrink: 0 }}>
+            {phone.storage}
+          </span>
+        )}
       </div>
+      <p style={{ fontSize: '10px', color: '#999', margin: '2px 0 0', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        {phone.lote}
+      </p>
 
-      {/* Row 2: Barcode or INHABILITADO */}
-      <div className="flex flex-col items-center mt-auto">
+      {/* Zone B: QR code (left-aligned, with vertical separation) */}
+      {!phone.seized && (
+        <div style={{ marginTop: '6px', flexShrink: 0 }}>
+          <QRCodeSVG value={trackingUrl} size={100} level="H" style={{ display: 'block' }} />
+        </div>
+      )}
+
+      {/* Zone C: Barcode (full width, separated from QR) */}
+      <div style={{ textAlign: 'center', marginTop: 'auto', paddingTop: '6px' }}>
         {phone.seized ? (
-          <div className="bg-red-600 text-white font-black text-[8px] px-2 py-0.5 rounded">
+          <div style={{ background: '#dc2626', color: 'white', fontWeight: 900, fontSize: '14px', padding: '2px 8px', borderRadius: '4px', display: 'inline-block' }}>
             INHABILITADO
           </div>
         ) : (
           <>
-            <svg ref={barcodeRef} className="w-full max-h-[20px]" />
-            <p className="text-[6px] tracking-[0.12em] font-bold leading-none mt-px">
+            <svg ref={barcodeRef} style={{ width: '100%', maxHeight: '45px' }} />
+            <p style={{ fontSize: '11px', letterSpacing: '0.15em', fontWeight: 'bold', margin: '2px 0 0', lineHeight: 1 }}>
               {formatImeiDisplay(phone.imei)}
             </p>
           </>
         )}
       </div>
 
-      {/* Counter (only in batch mode) */}
+      {/* Counter */}
       {index !== undefined && total !== undefined && (
-        <p className="text-[5px] text-center text-gray-400 leading-none mt-px">
+        <p style={{ fontSize: '8px', textAlign: 'center', color: '#aaa', margin: '1px 0 0', lineHeight: 1 }}>
           {index + 1}/{total}
         </p>
       )}

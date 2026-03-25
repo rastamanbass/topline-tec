@@ -110,7 +110,9 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold text-gray-900">
               Hola, {firstName}
             </h2>
-            <p className="text-sm text-gray-500">{periodLabel[period]}</p>
+            {!isComprador && (
+              <p className="text-sm text-gray-500">{periodLabel[period]}</p>
+            )}
           </div>
           {isAdminOrGerente && !isTaller && (
             <div className="flex bg-gray-100 rounded-xl p-1 gap-1 self-start">
@@ -133,6 +135,8 @@ export default function DashboardPage() {
 
         {isTaller ? (
           <TallerView />
+        ) : isComprador ? (
+          <CompradorView />
         ) : (
           <AdminView userRole={userRole || ''} period={period} />
         )}
@@ -169,6 +173,63 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+// ── Comprador view ────────────────────────────────────────────────────────────
+
+function CompradorView() {
+  const { stats, isLoading } = useDashboardStats();
+
+  return (
+    <div className="space-y-4">
+      {/* Stock disponible */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+            <Smartphone className="w-5 h-5 text-emerald-600" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Equipos disponibles
+            </p>
+            {isLoading || !stats ? (
+              <div className="h-8 w-16 bg-gray-200 rounded-lg animate-pulse mt-1" />
+            ) : (
+              <p className="text-3xl font-bold text-gray-900 leading-none">
+                {stats.inStock}
+              </p>
+            )}
+          </div>
+        </div>
+        <Link
+          to="/catalog"
+          className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors text-sm shadow-sm"
+        >
+          Ver Catálogo
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {/* Mis pedidos */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+            <ShoppingBag className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Mis pedidos</p>
+            <p className="text-xs text-gray-400">Historial de ordenes</p>
+          </div>
+        </div>
+        <Link
+          to="/mis-pedidos"
+          className="text-sm font-semibold text-primary-600 hover:underline"
+        >
+          Ver todos →
+        </Link>
+      </div>
     </div>
   );
 }

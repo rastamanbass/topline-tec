@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Line Tec - Sistema de Gestión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .tab-active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .modal {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal-active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .modal-active .modal-content {
+            transform: scale(1);
+        }
+
+        .filter-btn {
+            transition: all 0.2s;
+        }
+
+        .filter-btn-active {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profit { color: #16a34a; }
+        .loss { color: #dc2626; }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Table Styles for better mobile viewing */
+        @media (max-width: 768px) {
+            .responsive-table thead {
+                display: none;
+            }
+            .responsive-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #e2e8f0;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            }
+            .responsive-table td {
+                display: block;
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            .responsive-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0.5rem;
+                width: 45%;
+                padding-right: 0.5rem;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: 600;
+                color: #4a5568;
+            }
+            .responsive-table td:last-child {
+                text-align: center;
+                padding-left: 0;
+            }
+            .responsive-table td:last-child::before {
+                content: '';
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Iniciar sesión en su cuenta
+                </h2>
+            </div>
+            <form id="login-form" class="mt-8 space-y-6">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="email-address" class="sr-only">Correo Electrónico</label>
+                        <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Correo Electrónico">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Contraseña</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Contraseña">
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Iniciar Sesión
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Main App Screen (Initially Hidden) -->
+    <div id="app-screen" class="hidden">
+        <div class="container mx-auto p-4 md:p-6 lg:p-8">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Top Line Tec</h1>
+                    <p class="text-gray-500">Sistema de Gestión de Inventario y Ventas</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <div id="user-info" class="text-right">
+                        <p id="user-email" class="font-semibold text-gray-700"></p>
+                        <p id="user-role" class="text-sm text-gray-500 uppercase"></p>
+                    </div>
+                    <div id="main-actions" class="flex space-x-2">
+                        <button id="add-phone-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            Añadir Teléfono
+                        </button>
+                        <button id="add-client-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                            Añadir Cliente
+                        </button>
+                    </div>
+                    <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 mb-6">
+                <nav class="-mb-px flex space-x-6 overflow-x-auto" id="tabs">
+                    <a href="#" data-tab="dashboard" class="tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Dashboard</a>
+                    <a href="#" data-tab="finances" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Finanzas</a>
+                    <a href="#" data-tab="apartados" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Apartados</a>
+                    <a href="#" data-tab="inventory" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Inventario</a>
+                    <a href="#" data-tab="vendidos" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Vendidos</a>
+                    <a href="#" data-tab="accessories" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Accesorios</a>
+                    <a href="#" data-tab="lotes" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Lotes</a>
+                    <a href="#" data-tab="taller" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Reparaciones</a>
+                    <a href="#" data-tab="clients" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Clientes</a>
+                    <a href="#" data-tab="users" style="display: none;" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Gestionar Usuarios</a>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tab-content">
+                <div id="dashboard-content"></div>
+                <div id="finances-content" class="hidden"></div>
+                <div id="apartados-content" class="hidden"></div>
+                <div id="inventory-content" class="hidden"></div>
+                <div id="vendidos-content" class="hidden"></div>
+                <div id="accessories-content" class="hidden"></div>
+                <div id="lotes-content" class="hidden"></div>
+                <div id="taller-content" class="hidden"></div>
+                <div id="clients-content" class="hidden"></div>
+                <div id="users-content" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client View Screen -->
+    <div id="client-view-screen" class="hidden"></div>
+
+    <!-- Modals -->
+    <div id="phone-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-50 p-4 overflow-y-auto"></div>
+    <div id="client-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-50 p-4"></div>
+    <div id="accessory-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-50 p-4"></div>
+    <div id="sell-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-50 p-4"></div>
+    <div id="repair-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-50 p-4"></div>
+    <div id="bulk-sell-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-50 p-4"></div>
+    <div id="manage-client-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-[60] p-4 overflow-y-auto"></div>
+    <div id="payment-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-[70] p-4 overflow-y-auto"></div>
+    <div id="assign-accessory-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-[80] p-4 overflow-y-auto"></div>
+    <div id="delivery-note-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-[90] p-4"></div>
+    <div id="reentry-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-50 items-center justify-center z-[100] p-4"></div>
+
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, setDoc, deleteDoc, getDoc, updateDoc, serverTimestamp, writeBatch, runTransaction, increment, query, orderBy, getDocs, arrayUnion, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // =================================================================================
+        // --- CONFIGURATION & APP STATE ---
+        // =================================================================================
+
+        // --- ¡¡¡ CRITICAL SECURITY WARNING !!! ---
+        // Exposing Firebase config directly in client-side code is a security risk.
+        // Anyone with browser access can see these keys. For a production environment,
+        // this configuration MUST be moved to a secure server-side environment
+        // (like Firebase Cloud Functions) that acts as a proxy between your app and the database.
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgAt0AO5iBb_Ah5Vd0GaUwdazyeJ0MCg8",
+            authDomain: "inventario-a6aa3.firebaseapp.com",
+            projectId: "inventario-a6aa3",
+            storageBucket: "inventario-a6aa3.appspot.com",
+            messagingSenderId: "219546339547",
+            appId: "1:219546339547:web:4d5cecc15d39fb2cdee4fe"
+        };
+
+        const PHONES_COLLECTION = "phones";
+        const CLIENTS_COLLECTION = "clients";
+        const USERS_COLLECTION = "users";
+        const ACCESSORIES_COLLECTION = "accessories";
+        const TALLER_ACCOUNT_ID = "taller_main_account";
+        
+        // --- App State ---
+        let db, auth;
+        let unsubscribePhones, unsubscribeClients, unsubscribeUsers, unsubscribeAccessories;
+        let currentUserRole = null;
+        let phones = [], clients = [], users = [], accessories = [];
+        let cameFromFlow = null;
+        let selectedPhoneIds = new Set();
+        let paymentPromiseResolve = null; 
+        let tallerFilter = null;
+        let currentSaleItems = [];
+        let visibleLotesCount = 8;
+
+        // --- Data Loading State ---
+        let initialLoadComplete = false;
+        let dataReady = { phones: false, clients: false, accessories: false, users: false };
+
+        const ALL_ROLES = ['admin', 'gerente', 'taller', 'vendedor', 'comprador'];
+
+        const STATUS_OPTIONS = [
+            'En Bodega (USA)', 'En Tránsito (a El Salvador)', 'En Stock (Disponible para Venta)',
+            'Apartado', 'Pagado',
+            'Vendido (Pendiente de Entrega)', 'Vendido',    
+            'Enviado a Taller (Garantía)', 'Enviado a Taller (Externo)', 'En Taller (Recibido)', 'Enviado a Gerencia (Pendiente)', 'Enviado a Gerencia',
+            'Recibido de Taller (OK)', 'Entregado al Cliente',
+            'Reingreso (Tomado como parte de pago)', 'De Baja'
+        ];
+        
+        const STATUS_COLORS = {
+            'En Bodega (USA)': 'bg-gray-400',
+            'En Tránsito (a El Salvador)': 'bg-purple-500',
+            'En Stock (Disponible para Venta)': 'bg-green-500',
+            'Apartado': 'bg-yellow-400',    
+            'Pagado': 'bg-green-600',
+            'Vendido (Pendiente de Entrega)': 'bg-cyan-500',
+            'Vendido': 'bg-blue-500',
+            'Enviado a Taller (Garantía)': 'bg-yellow-500',
+            'Enviado a Taller (Externo)': 'bg-orange-500',
+            'En Taller (Recibido)': 'bg-pink-500',
+            'Enviado a Gerencia (Pendiente)': 'bg-indigo-400',
+            'Enviado a Gerencia': 'bg-purple-600',
+            'Recibido de Taller (OK)': 'bg-teal-500',
+            'Entregado al Cliente': 'bg-indigo-500',
+            'Reingreso (Tomado como parte de pago)': 'bg-pink-500',
+            'De Baja': 'bg-red-500',
+        };
+
+        // --- DOM Elements ---
+        const loginScreen = document.getElementById('login-screen');
+        const appScreen = document.getElementById('app-screen');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // --- Utility Functions ---
+        const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount || 0);
+        const findPhoneById = (id) => phones.find(p => p.id === id);
+        const findClientById = (id) => clients.find(c => c.id === id);
+        const findAccessoryById = (id) => accessories.find(a => a.id === id);
+        const calculateWorkshopDebt = () => {
+            return phones.reduce((total, phone) => {
+                const unpaidRepairsCost = (phone.reparaciones || [])
+                    .filter(r => !r.paid && r.cost > 0)
+                    .reduce((sum, r) => sum + r.cost, 0);
+                return total + unpaidRepairsCost;
+            }, 0);
+        };
+
+
+        // =================================================================================
+        // --- SERVICES (Firebase Communication) ---
+        // =================================================================================
+        
+        async function logStatusChange(phoneId, newStatus, details = null) {
+            const phoneRef = doc(db, PHONES_COLLECTION, phoneId);
+            const historyEntry = {
+                newStatus: newStatus,
+                date: new Date(),
+                user: auth.currentUser.email,
+                details: details || null
+            };
+            await updateDoc(phoneRef, {
+                statusHistory: arrayUnion(historyEntry)
+            });
+        }
+
+        async function executeSaleTransaction(saleData) {
+            const clientRef = doc(db, CLIENTS_COLLECTION, saleData.clientId);
+
+            try {
+                await runTransaction(db, async (transaction) => {
+                    // --- ALL READS MUST HAPPEN FIRST ---
+                    const clientDoc = await transaction.get(clientRef);
+                    if (!clientDoc.exists()) throw new Error("Cliente no encontrado.");
+
+                    const clientName = clientDoc.data().name;
+                    const currentCredit = clientDoc.data().creditAmount || 0;
+                    if (saleData.amountPaidWithCredit > currentCredit) {
+                        throw new Error("Crédito insuficiente.");
+                    }
+
+                    // --- PREPARE FOR DEBT PAYMENT (if any) ---
+                    let debtToPay = saleData.amountPaidWithWorkshopDebt;
+                    let pendingRepairsToProcess = [];
+                    const phoneDocsToRead = new Map();
+
+                    if (debtToPay > 0) {
+                        let allPendingRepairs = [];
+                        phones.forEach(phone => {
+                            if (phone.reparaciones && phone.reparaciones.length > 0) {
+                                phone.reparaciones.forEach((repair, index) => {
+                                    if (!repair.paid && repair.cost > 0) {
+                                        allPendingRepairs.push({
+                                            phoneId: phone.id,
+                                            repairIndex: index,
+                                            cost: repair.cost,
+                                            date: new Date(repair.date)
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        
+                        allPendingRepairs.sort((a, b) => a.date - b.date);
+                        
+                        for(const repair of allPendingRepairs) {
+                            if (debtToPay <= 0) break;
+                            if (debtToPay >= repair.cost) {
+                                pendingRepairsToProcess.push(repair);
+                                debtToPay -= repair.cost;
+                            }
+                        }
+
+                        const phoneIdsToRead = [...new Set(pendingRepairsToProcess.map(p => p.phoneId))];
+                        for (const phoneId of phoneIdsToRead) {
+                            const phoneRef = doc(db, PHONES_COLLECTION, phoneId);
+                            const phoneDoc = await transaction.get(phoneRef);
+                            if (!phoneDoc.exists()) throw new Error(`Phone with ID ${phoneId} for repair payment not found.`);
+                            phoneDocsToRead.set(phoneId, phoneDoc.data());
+                        }
+                    }
+
+
+                    // --- ALL WRITES HAPPEN AFTER READS ---
+
+                    // 1. Handle credit updates
+                    if (saleData.amountPaidWithCredit > 0) {
+                        transaction.update(clientRef, { creditAmount: increment(-saleData.amountPaidWithCredit) });
+                    }
+                    
+                    // 2. Handle NEW debt from this transaction
+                    if(saleData.debtIncurred > 0) {
+                        transaction.update(clientRef, { debtAmount: increment(saleData.debtIncurred) });
+                    }
+
+
+                    // 3. Handle workshop debt payment using the docs we read
+                    if (pendingRepairsToProcess.length > 0) {
+                        const updatedPhoneRepairs = new Map(); 
+
+                        for (const pending of pendingRepairsToProcess) {
+                            const phoneId = pending.phoneId;
+                            
+                            if (!updatedPhoneRepairs.has(phoneId)) {
+                                const originalPhoneData = phoneDocsToRead.get(phoneId);
+                                updatedPhoneRepairs.set(phoneId, JSON.parse(JSON.stringify(originalPhoneData.reparaciones || [])));
+                            }
+
+                            let currentRepairs = updatedPhoneRepairs.get(phoneId);
+                            if (currentRepairs[pending.repairIndex]) {
+                                currentRepairs[pending.repairIndex].paid = true;
+                            }
+                        }
+
+                        updatedPhoneRepairs.forEach((reparaciones, phoneId) => {
+                            const phoneRef = doc(db, PHONES_COLLECTION, phoneId);
+                            transaction.update(phoneRef, { reparaciones });
+                        });
+                    }
+
+                    // 4. Create the purchase record
+                    const purchaseRef = doc(collection(db, CLIENTS_COLLECTION, saleData.clientId, "purchases"));
+                    transaction.set(purchaseRef, { 
+                        items: saleData.items,
+                        totalAmount: saleData.totalAmount,
+                        paymentMethod: saleData.paymentMethod,
+                        discountAmount: saleData.discountAmount || 0,
+                        debtIncurred: saleData.debtIncurred || 0,
+                        amountPaidWithCredit: saleData.amountPaidWithCredit,
+                        amountPaidWithWorkshopDebt: saleData.amountPaidWithWorkshopDebt,
+                        transferDetails: saleData.transferDetails || null,
+                        notes: saleData.notes || null,
+                        purchaseDate: serverTimestamp() 
+                    });
+
+                    // 5. Update inventory for each item sold
+                    for (const item of saleData.items) {
+                        if (item.phoneId) {
+                            const phoneRef = doc(db, PHONES_COLLECTION, item.phoneId);
+                            const historyEntries = [
+                                {
+                                    newStatus: 'Vendido',
+                                    date: new Date(),
+                                    user: auth.currentUser.email,
+                                    details: `Vendido a ${clientName}`
+                                }
+                            ];
+                            transaction.update(phoneRef, { 
+                                estado: 'Vendido', 
+                                clienteId: saleData.clientId, 
+                                precioVenta: item.price,
+                                fechaVenta: new Date().toISOString().slice(0, 10),
+                                statusHistory: arrayUnion(...historyEntries)
+                            });
+                        } else if (item.accessoryId) {
+                            const accessoryRef = doc(db, ACCESSORIES_COLLECTION, item.accessoryId);
+                            transaction.update(accessoryRef, { cantidad: increment(-item.quantity) });
+                        }
+                    }
+                });
+                return { success: true };
+            } catch (e) {
+                console.error("Transaction failed: ", e);
+                return { success: false, error: e.message };
+            }
+        }
+        
+        // =================================================================================
+        // --- UI MANAGER (DOM Manipulation & Rendering) ---
+        // =================================================================================
+
+        const openModal = (modalId) => document.getElementById(modalId).classList.add('modal-active');
+        const closeModal = (modalId) => document.getElementById(modalId).classList.remove('modal-active');
+
+        const renderAll = () => {
+            const activeTabEl = document.querySelector('.tab-active');
+            if (!activeTabEl) return;
+            const activeTab = activeTabEl.dataset.tab;
+            
+            const contentMap = {
+                dashboard: renderDashboard,
+                finances: renderFinances,
+                apartados: renderApartadosTable,
+                inventory: renderInventoryTable,
+                vendidos: renderVendidosTable,
+                accessories: renderAccessoriesTable,
+                lotes: renderLotes,
+                taller: renderTallerTable,
+                clients: renderClientsTable,
+                users: renderUsersTable
+            };
+            
+            if (contentMap[activeTab]) {
+                contentMap[activeTab]();
+            }
+            adaptUIToRole(currentUserRole);
+        };
+
+        const renderDashboard = () => {
+            const container = document.getElementById('dashboard-content');
+
+            if (currentUserRole === 'taller') {
+                const pendingReception = phones.filter(p => p.estado === 'Enviado a Taller (Externo)' || p.estado === 'Enviado a Taller (Garantía)').length;
+                const inRepair = phones.filter(p => p.estado === 'En Taller (Recibido)').length;
+                const pendingManagement = phones.filter(p => p.estado === 'Enviado a Gerencia (Pendiente)').length;
+                const totalInProcess = phones.filter(p => p.estado && (p.estado.includes('Taller') || p.estado.includes('Gerencia'))).length;
+
+                container.innerHTML = `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard de Taller</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-yellow-100 p-6 rounded-xl shadow-md cursor-pointer" data-action="filter-taller" data-filter="pending_reception">
+                             <h3 class="text-yellow-800 text-sm font-medium">Pendientes de Recibir</h3>
+                             <p class="text-3xl font-bold mt-1 text-yellow-900">${pendingReception}</p>
+                        </div>
+                        <div class="bg-pink-100 p-6 rounded-xl shadow-md">
+                             <h3 class="text-pink-800 text-sm font-medium">Equipos en Reparación</h3>
+                             <p class="text-3xl font-bold mt-1 text-pink-900">${inRepair}</p>
+                        </div>
+                         <div class="bg-indigo-100 p-6 rounded-xl shadow-md cursor-pointer" data-action="filter-taller" data-filter="pending_management_reception">
+                             <h3 class="text-indigo-800 text-sm font-medium">Listos para Gerencia</h3>
+                             <p class="text-3xl font-bold mt-1 text-indigo-900">${pendingManagement}</p>
+                        </div>
+                        <div class="bg-gray-200 p-6 rounded-xl shadow-md">
+                             <h3 class="text-gray-600 text-sm font-medium">Total en Proceso</h3>
+                             <p class="text-3xl font-bold mt-1 text-gray-800">${totalInProcess}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const soldPhones = phones.filter(p => p.estado && (p.estado.includes('Vendido') || p.estado === 'Pagado'));
+                const totalRevenue = soldPhones.reduce((sum, p) => sum + (p.precioVenta || 0), 0);
+                const totalProfit = totalRevenue - soldPhones.reduce((sum, p) => sum + (p.costo || 0), 0);
+
+                let roleSpecificCards = '';
+                if (currentUserRole === 'admin' || currentUserRole === 'gerente') {
+                    const pendingManagementReception = phones.filter(p => p.estado === 'Enviado a Gerencia (Pendiente)').length;
+                    const totalPendingPayment = calculateWorkshopDebt();
+
+                    if (pendingManagementReception > 0) {
+                        roleSpecificCards += `
+                            <div class="bg-indigo-100 p-6 rounded-xl shadow-md cursor-pointer" data-action="filter-taller" data-filter="pending_management_reception">
+                                <h3 class="text-indigo-800 text-sm font-medium">Teléfonos Pendientes de Recepción</h3>
+                                <p class="text-3xl font-bold mt-1 text-indigo-900">${pendingManagementReception}</p>
+                            </div>
+                        `;
+                    }
+                    if (totalPendingPayment > 0) {
+                        roleSpecificCards += `
+                            <div class="bg-red-100 p-6 rounded-xl shadow-md cursor-pointer" data-action="filter-taller" data-filter="pending_payment">
+                                <h3 class="text-red-800 text-sm font-medium">Reparaciones Pendientes de Pago</h3>
+                                <p class="text-3xl font-bold mt-1 loss">${formatCurrency(totalPendingPayment)}</p>
+                            </div>
+                        `;
+                    }
+                }
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        ${roleSpecificCards}
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h3 class="text-gray-500 text-sm font-medium">Ganancia Bruta</h3>
+                            <p class="text-3xl font-bold mt-1 profit">${formatCurrency(totalProfit)}</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h3 class="text-gray-500 text-sm font-medium">Ingresos Totales</h3>
+                            <p class="text-3xl font-bold mt-1">${formatCurrency(totalRevenue)}</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h3 class="text-gray-500 text-sm font-medium">Disponibles para Venta</h3>
+                            <p class="text-3xl font-bold mt-1">${phones.filter(p => p.estado === 'En Stock (Disponible para Venta)').length}</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h3 class="text-gray-500 text-sm font-medium">En Taller Externo</h3>
+                            <p class="text-3xl font-bold mt-1">${phones.filter(p => p.estado && (p.estado.includes('Taller') || p.estado.includes('Gerencia'))).length}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+        
+        const renderFinances = () => {
+            const container = document.getElementById('finances-content');
+            
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 30);
+            
+            const defaultStartDate = startDate.toISOString().slice(0, 10);
+            const defaultEndDate = endDate.toISOString().slice(0, 10);
+
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-md space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Análisis Financiero</h2>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <label for="finances-start-date" class="text-sm">Desde:</label>
+                                <input type="date" id="finances-start-date" class="p-2 border rounded-lg text-sm" value="${defaultStartDate}">
+                                <label for="finances-end-date" class="text-sm">Hasta:</label>
+                                <input type="date" id="finances-end-date" class="p-2 border rounded-lg text-sm" value="${defaultEndDate}">
+                                <button id="apply-finances-filter" class="bg-blue-500 text-white py-2 px-4 rounded-lg text-sm">Aplicar Filtro</button>
+                            </div>
+                    </div>
+                    <div id="finances-kpis" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    </div>
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t">
+                         <div>
+                             <h3 class="text-lg font-semibold mb-2">Modelos Más Rentables</h3>
+                             <div id="top-models-table" class="overflow-y-auto max-h-96"></div>
+                         </div>
+                         <div>
+                             <h3 class="text-lg font-semibold mb-2">Clientes Más Valiosos</h3>
+                             <div id="top-clients-table" class="overflow-y-auto max-h-96"></div>
+                         </div>
+                     </div>
+                </div>
+            `;
+
+            document.getElementById('apply-finances-filter').addEventListener('click', updateFinancesDashboard);
+            
+            updateFinancesDashboard();
+        };

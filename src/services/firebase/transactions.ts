@@ -237,6 +237,19 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
       // 5. Create Purchase Record
       if (saleData.clientId) {
         const purchaseRef = doc(collection(db, 'clients', saleData.clientId, 'purchases'));
+        // Build per-item discount summary
+        const itemDiscounts = saleData.items
+          .filter((item) => item.originalPrice != null && item.originalPrice !== item.price)
+          .map((item) => ({
+            imei: item.imei || '',
+            description: item.description,
+            originalPrice: item.originalPrice!,
+            finalPrice: item.price,
+            discount: round2(item.originalPrice! - item.price),
+            reason: item.discountReason || '',
+            approvedBy: item.discountApprovedBy || '',
+          }));
+
         transaction.set(purchaseRef, {
           items: saleData.items,
           totalAmount: round2(saleData.totalAmount),
@@ -247,6 +260,7 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
           amountPaidWithWorkshopDebt: round2(saleData.amountPaidWithWorkshopDebt),
           transferDetails: saleData.transferDetails || null,
           notes: saleData.notes || null,
+          itemDiscounts: itemDiscounts.length > 0 ? itemDiscounts : null,
           purchaseDate: serverTimestamp(),
         });
       }

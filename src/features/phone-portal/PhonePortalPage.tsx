@@ -366,7 +366,7 @@ export default function PhonePortalPage() {
 
 // ── Sticky Header ─────────────────────────────────────────────────────────────
 
-function StickyHeader({ onPrint }: { onPrint?: () => void }) {
+function StickyHeader({ onPrint }: { imei?: string; onPrint?: () => void }) {
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">

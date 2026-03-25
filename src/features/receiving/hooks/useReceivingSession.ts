@@ -22,6 +22,7 @@ export interface ScannedResult {
   phoneId?: string;
   phoneInfo?: string;
   currentState?: string;
+  fullScannedImei?: string; // When partial IMEI matched, stores the real 15-digit IMEI
 }
 
 // Load lotes that currently have phones in transit
@@ -93,8 +94,28 @@ export function useReceivingSession(selectedLote: string) {
   );
 
   const processScan = useCallback(
-    (rawImei: string) => {
-      let imei = rawImei.trim().replace(/\D/g, '');
+    (rawInput: string) => {
+      const trimmed = rawInput.trim();
+
+      // Extract IMEI from QR tracking URL: .../phone/353559560263301
+      let imei: string;
+      const urlMatch = trimmed.match(/\/phone\/(\d{14,15})(?:\?|$|#)/);
+      if (urlMatch) {
+        imei = urlMatch[1];
+      } else {
+        try {
+          const url = new URL(trimmed);
+          const pathMatch = url.pathname.match(/\/phone\/(\d{14,15})$/);
+          if (pathMatch) {
+            imei = pathMatch[1];
+          } else {
+            imei = trimmed.replace(/\D/g, '');
+          }
+        } catch {
+          imei = trimmed.replace(/\D/g, '');
+        }
+      }
+
       if (!imei || imei.length < 8) return 'ignored' as const;
 
       // GS1 normalization: 16-digit barcodes starting with '1' → strip leading '1'
@@ -119,6 +140,47 @@ export function useReceivingSession(selectedLote: string) {
           ...prev,
         ]);
         return 'ok' as const;
+      }
+
+      // --- PARTIAL IMEI MATCHING (for short IMEIs entered by Eduardo) ---
+      // If exact match failed, check if any transit phone has a short IMEI
+      // that is a suffix of the scanned full IMEI
+      const suffixMatches: Phone[] = [];
+      transitMap.forEach((phone, storedImei) => {
+        if (storedImei.length < imei.length && imei.endsWith(storedImei)) {
+          suffixMatches.push(phone);
+        }
+      });
+
+      if (suffixMatches.length === 1) {
+        const matched = suffixMatches[0];
+        const info = [matched.marca, matched.modelo, matched.storage]
+          .filter(Boolean)
+          .join(' · ');
+        // Track by the STORED imei so closeReceiving() can find it in transitMap
+        processedImeis.add(matched.imei);
+        setScannedResults((prev) => [
+          {
+            imei: matched.imei,
+            status: 'ok',
+            phoneId: matched.id,
+            phoneInfo: `${info} (IMEI parcial corregido)`,
+            fullScannedImei: imei,
+          },
+          ...prev,
+        ]);
+        return 'ok' as const;
+      }
+
+      if (suffixMatches.length > 1) {
+        const names = suffixMatches
+          .map((p) => `${p.marca} ${p.modelo} (${p.imei})`)
+          .join(', ');
+        setScannedResults((prev) => [
+          { imei, status: 'not_found', phoneInfo: `Ambiguo — múltiples coincidencias: ${names}` },
+          ...prev,
+        ]);
+        return 'not_found' as const;
       }
 
       const other = allLoteMap.get(imei);
@@ -163,7 +225,7 @@ export function useReceivingSession(selectedLote: string) {
         const phoneRef = doc(db, 'phones', r.phoneId);
         const phone = transitMap.get(r.imei);
         const history = phone?.statusHistory || [];
-        batch.update(phoneRef, {
+        const updateData: Record<string, unknown> = {
           estado: 'En Stock (Disponible para Venta)',
           updatedAt: serverTimestamp(),
           statusHistory: [
@@ -175,7 +237,12 @@ export function useReceivingSession(selectedLote: string) {
               details: `Recibido – lote ${selectedLote}`,
             },
           ],
-        });
+        };
+        // Fix short IMEIs: if we matched a partial IMEI, update to the full scanned IMEI
+        if (r.fullScannedImei && r.fullScannedImei !== r.imei) {
+          updateData.imei = r.fullScannedImei;
+        }
+        batch.update(phoneRef, updateData);
       });
 
       await batch.commit();

@@ -1,10 +1,9 @@
 import type { Phone } from '../../../types';
 import PhoneCard from './PhoneCard';
-import { Leaf, ChevronDown, ExternalLink } from 'lucide-react';
+import { Smartphone, ChevronDown, ExternalLink, Leaf } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import { CannabisIcon } from '../../../components/icons/CannabisIcon';
 
 interface CatalogViewProps {
   phones: Phone[];
@@ -196,7 +195,7 @@ export default function CatalogView({ phones, isLoading, error }: CatalogViewPro
                   {clientViewMode ? (
                     <Leaf className="w-5 h-5" />
                   ) : (
-                    <CannabisIcon className="w-5 h-5" />
+                    <Smartphone className="w-5 h-5" />
                   )}
                 </div>
                 <h2 className="text-lg font-bold text-gray-800">{humanizeLote(lot)}</h2>

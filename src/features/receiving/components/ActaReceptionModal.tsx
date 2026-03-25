@@ -230,7 +230,7 @@ export default function ActaReceptionModal({
               <p className="text-xs font-bold text-primary-600 uppercase tracking-widest">
                 TOP LINE TEC
               </p>
-              <h2 className="text-lg font-bold text-gray-900">Acta de Recepcion — {lote}</h2>
+              <h2 className="text-lg font-bold text-gray-900">Acta de Recepción — {lote}</h2>
             </div>
             {actaGenerated ? (
               <button
@@ -417,7 +417,7 @@ export default function ActaReceptionModal({
             <h1 className="text-2xl font-black tracking-tight">TOP LINE TEC</h1>
             <p className="text-sm text-gray-500">Miami, FL, USA</p>
             <h2 className="text-lg font-bold mt-3 uppercase tracking-wider">
-              Acta de Recepcion de Mercancia
+              Acta de Recepción de Mercancía
             </h2>
             <p className="text-sm text-gray-600 mt-1">No. de Acta: {actaNumber}</p>
           </div>

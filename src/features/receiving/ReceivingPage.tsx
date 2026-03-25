@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   ScanBarcode,
+  Camera,
+  X,
   CheckCircle2,
   XCircle,
   AlertTriangle,
@@ -92,16 +94,18 @@ export default function ReceivingPage() {
   } = useReceivingSession(selectedLote);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const scannerRef = useRef<unknown>(null);
   const [inputBuffer, setInputBuffer] = useState('');
+  const [cameraOpen, setCameraOpen] = useState(false);
 
-  // Keep scanner input always focused
+  // Keep scanner input always focused (only when camera is closed)
   const refocusInput = useCallback(() => {
-    setTimeout(() => inputRef.current?.focus(), 50);
-  }, []);
+    if (!cameraOpen) setTimeout(() => inputRef.current?.focus(), 50);
+  }, [cameraOpen]);
 
   useEffect(() => {
-    if (selectedLote) inputRef.current?.focus();
-  }, [selectedLote]);
+    if (selectedLote && !cameraOpen) inputRef.current?.focus();
+  }, [selectedLote, cameraOpen]);
 
   const handleScan = useCallback(
     (raw: string) => {
@@ -126,6 +130,62 @@ export default function ReceivingPage() {
     reset();
     setInputBuffer('');
   };
+
+  // Camera scanner for reading barcodes/QR when the gun can't
+  const startCamera = useCallback(async () => {
+    setCameraOpen(true);
+    await new Promise((r) => setTimeout(r, 100));
+    try {
+      const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
+      const scanner = new Html5Qrcode('receiving-camera', {
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.ITF,
+        ],
+        verbose: false,
+      });
+      scannerRef.current = scanner;
+
+      await scanner.start(
+        { facingMode: 'environment' },
+        { fps: 15, qrbox: { width: 300, height: 200 }, aspectRatio: 1.5 },
+        (decodedText) => {
+          const result = processScan(decodedText);
+          if (result !== 'ignored') {
+            beep(result === 'ok');
+            toast(result === 'ok' ? 'Escaneado con cámara' : `Estado: ${result}`, {
+              icon: result === 'ok' ? '📷' : '⚠️',
+            });
+          }
+        },
+        () => {} // ignore frames without code
+      );
+    } catch (err) {
+      console.error('Camera scanner error:', err);
+      toast.error('No se pudo abrir la cámara');
+      setCameraOpen(false);
+    }
+  }, [processScan]);
+
+  const stopCamera = useCallback(() => {
+    const scanner = scannerRef.current as { stop: () => Promise<void> } | null;
+    if (scanner) {
+      scanner.stop().catch(() => {});
+      scannerRef.current = null;
+    }
+    setCameraOpen(false);
+  }, []);
+
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      const scanner = scannerRef.current as { stop: () => Promise<void> } | null;
+      if (scanner) scanner.stop().catch(() => {});
+    };
+  }, []);
 
   const handleClose = async () => {
     setShowConfirm(false);
@@ -275,10 +335,31 @@ export default function ReceivingPage() {
               <div className="flex items-center gap-3 mb-3">
                 <ScanBarcode className="w-6 h-6 text-emerald-400 animate-pulse" />
                 <p className="text-white font-semibold">Escáner activo</p>
-                <span className="ml-auto text-xs text-slate-400">
-                  Apunta y dispara con tu pistola Bluetooth
-                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    cameraOpen ? stopCamera() : startCamera();
+                  }}
+                  className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    cameraOpen
+                      ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                      : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                  }`}
+                >
+                  {cameraOpen ? <X className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
+                  {cameraOpen ? 'Cerrar cámara' : 'Usar cámara'}
+                </button>
               </div>
+
+              {cameraOpen && (
+                <div className="mb-3 bg-black rounded-xl overflow-hidden">
+                  <div id="receiving-camera" className="w-full" />
+                  <p className="text-center text-white/50 text-xs py-2">
+                    Apunta al código de barras o QR del sticker
+                  </p>
+                </div>
+              )}
+
               <input
                 ref={inputRef}
                 type="text"
@@ -290,11 +371,11 @@ export default function ReceivingPage() {
                 placeholder="_ _ _ _ _ _ _ _ _ _ _ _ _ _ _"
                 autoComplete="off"
                 spellCheck={false}
-                aria-label="Escanear IMEI"
+                aria-label="Escanear IMEI o QR"
                 inputMode="numeric"
               />
               <p className="text-slate-500 text-xs mt-2 text-center">
-                El IMEI aparecerá aquí — presiona Enter o la pistola lo envía sola
+                Pistola Bluetooth, cámara, o escribe el IMEI manualmente
               </p>
             </div>
 

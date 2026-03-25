@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Line Tec — Website Concept</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ─────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 40px;
+    height: 70px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 22px;
+    background: linear-gradient(135deg, #00d4ff, #00ffa3);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    color: rgba(255,255,255,0.6); text-decoration: none;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.5px;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: #00d4ff; }
+  .nav-cta {
+    background: linear-gradient(135deg, #00d4ff, #00ffa3);
+    color: #0a0a0a; border: none; padding: 10px 24px;
+    border-radius: 50px; font-weight: 700; font-size: 13px;
+    cursor: pointer; letter-spacing: 0.5px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,212,255,0.3);
+  }
+
+  /* ── HERO ─────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0a0a0a 0%, #0a1628 50%, #0a0a0a 100%);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: url('https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?w=1920&q=80') center/cover;
+    opacity: 0.15;
+    filter: saturate(0.5);
+  }
+  .hero-gradient {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 80%, rgba(0,212,255,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(0,255,163,0.08) 0%, transparent 40%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center; max-width: 900px; padding: 0 24px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2);
+    padding: 8px 20px; border-radius: 50px;
+    font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+    color: #00d4ff; text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .hero-badge::before {
+    content: ''; width: 6px; height: 6px;
+    background: #00d4ff; border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 800; line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -2px;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, #00d4ff, #00ffa3, #00d4ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  .hero-sub {
+    font-size: clamp(16px, 2.5vw, 22px);
+    color: rgba(255,255,255,0.5);
+    font-weight: 300; letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .hero-desc {
+    font-size: 18px; color: rgba(255,255,255,0.6);
+    max-width: 600px; margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ffa3);
+    color: #0a0a0a; border: none; padding: 16px 36px;
+    border-radius: 50px; font-weight: 700; font-size: 15px;
+    cursor: pointer; letter-spacing: 0.5px;
+    display: inline-flex; align-items: center; gap: 10px;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,212,255,0.35);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff; padding: 16px 36px;
+    border-radius: 50px; font-weight: 600; font-size: 15px;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(0,212,255,0.3);
+  }
+
+  /* ── STATS BAR ───────────────────────────── */
+  .stats-bar {
+    background: rgba(255,255,255,0.03);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 40px 24px;
+  }
+  .stats-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px; text-align: center;
+  }
+  .stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 42px; font-weight: 700;
+    background: linear-gradient(135deg, #00d4ff, #00ffa3);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label {
+    font-size: 13px; color: rgba(255,255,255,0.4);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-top: 4px; font-weight: 500;
+  }
+
+  /* ── SERVICES ────────────────────────────── */
+  .services {
+    padding: 100px 24px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .section-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #00d4ff;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700; margin-bottom: 60px;
+    line-height: 1.1;
+  }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .service-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px; padding: 40px 32px;
+    transition: all 0.4s;
+    position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .service-card:hover::before { opacity: 1; }
+  .service-card:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-4px);
+    border-color: rgba(0,212,255,0.15);
+  }
+  .service-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: rgba(0,212,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px; font-size: 24px;
+  }
+  .service-card h3 {
+    font-size: 22px; font-weight: 700; margin-bottom: 12px;
+  }
+  .service-card p {
+    font-size: 15px; color: rgba(255,255,255,0.5);
+    line-height: 1.7;
+  }
+
+  /* ── CATALOG ─────────────────────────────── */
+  .catalog {
+    padding: 100px 24px;
+    background: linear-gradient(180deg, #0a0a0a, #0a1220, #0a0a0a);
+  }
+  .catalog-inner { max-width: 1200px; margin: 0 auto; }
+  .catalog-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .cat-card {
+    position: relative; border-radius: 20px;
+    overflow: hidden; aspect-ratio: 3/4;
+    cursor: pointer; group: true;
+  }
+  .cat-card img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s, filter 0.6s;
+  }
+  .cat-card:hover img {
+    transform: scale(1.08);
+    filter: brightness(0.7);
+  }
+  .cat-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%);
+    display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 24px;
+  }
+  .cat-overlay h3 {
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .cat-overlay p {
+    font-size: 13px; color: rgba(255,255,255,0.5);
+    font-weight: 500;
+  }
+  .cat-badge {
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(0,212,255,0.15); backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,212,255,0.3);
+    padding: 6px 14px; border-radius: 50px;
+    font-size: 11px; font-weight: 700; color: #00d4ff;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  /* ── WHY US ──────────────────────────────── */
+  .why-us {
+    padding: 100px 24px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .why-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .why-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; padding: 32px;
+    display: flex; gap: 20px; align-items: flex-start;
+    transition: all 0.3s;
+  }
+  .why-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(0,212,255,0.15);
+  }
+  .why-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(0,255,163,0.1);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 20px;
+  }
+  .why-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .why-card p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+  /* ── CTA ──────────────────────────────────── */
+  .cta-section {
+    padding: 120px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(0,212,255,0.08) 0%, transparent 60%);
+  }
+  .cta-section h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800; margin-bottom: 20px;
+    position: relative;
+  }
+  .cta-section p {
+    font-size: 18px; color: rgba(255,255,255,0.5);
+    max-width: 500px; margin: 0 auto 40px;
+    position: relative;
+  }
+  .whatsapp-btn {
+    background: #25D366; color: #fff; border: none;
+    padding: 18px 40px; border-radius: 50px;
+    font-weight: 700; font-size: 16px;
+    cursor: pointer; display: inline-flex;
+    align-items: center; gap: 12px;
+    transition: all 0.3s; position: relative;
+  }
+  .whatsapp-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(37,211,102,0.35);
+  }
+
+  /* ── FOOTER ──────────────────────────────── */
+  footer {
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 60px 24px 30px;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+  }
+  .footer-brand h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px; font-weight: 700;
+    background: linear-gradient(135deg, #00d4ff, #00ffa3);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .footer-brand p {
+    font-size: 14px; color: rgba(255,255,255,0.35);
+    line-height: 1.7;
+  }
+  footer h4 {
+    font-size: 13px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: rgba(255,255,255,0.6);
+    margin-bottom: 16px;
+  }
+  footer a {
+    display: block; color: rgba(255,255,255,0.35);
+    text-decoration: none; font-size: 14px;
+    margin-bottom: 10px; transition: color 0.3s;
+  }
+  footer a:hover { color: #00d4ff; }
+  .footer-bottom {
+    max-width: 1100px; margin: 40px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: rgba(255,255,255,0.25);
+  }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 768px) {
+    .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    .services-grid { grid-template-columns: 1fr; }
+    .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+    .why-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+
+  /* ── FLOATING WHATSAPP ───────────────────── */
+  .wa-float {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #25D366; display: flex;
+    align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    cursor: pointer; transition: all 0.3s;
+    font-size: 28px;
+  }
+  .wa-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(37,211,102,0.5);
+  }
+
+  /* ── LABEL ───────────────────────────────── */
+  .mockup-label {
+    position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.3);
+    padding: 8px 20px; border-radius: 50px; z-index: 200;
+    font-size: 12px; font-weight: 600; color: #00d4ff;
+    letter-spacing: 1px; backdrop-filter: blur(10px);
+  }
+</style>
+</head>
+<body>
+
+<div class="mockup-label">MOCKUP — toplinetec.net — Concepto Visual</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">TOP LINE TEC</div>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Products</a>
+    <a href="#">Services</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+  <button class="nav-cta">Get a Quote</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Wholesale Electronics — Miami, FL</div>
+    <h1><span class="gradient">TOP LINE</span></h1>
+    <h1 style="margin-top: -8px;">TEC</h1>
+    <p class="hero-sub">M I A M I</p>
+    <p class="hero-desc">
+      Premium wholesale electronics for businesses worldwide.
+      iPhones, Samsung, gaming consoles, laptops — direct from Miami.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.75.75 0 00.917.917l4.458-1.495A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.376 0-4.569-.816-6.304-2.183l-.44-.348-3.082 1.033 1.033-3.082-.348-.44A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+        WhatsApp Us
+      </button>
+      <button class="btn-secondary">View Inventory →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">2,000+</div>
+      <div class="stat-label">Clients Worldwide</div>
+    </div>
+    <div>
+      <div class="stat-num">50K+</div>
+      <div class="stat-label">Devices Sold</div>
+    </div>
+    <div>
+      <div class="stat-num">15+</div>
+      <div class="stat-label">Countries Served</div>
+    </div>
+    <div>
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Quality Tested</div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services">
+  <p class="section-label">What We Do</p>
+  <h2 class="section-title">Your Trusted Wholesale<br>Electronics Partner</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">📱</div>
+      <h3>Buy</h3>
+      <p>We purchase new and used electronics in wholesale quantities. iPhones, Samsung, tablets — top dollar for quality inventory.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🌎</div>
+      <h3>Sell & Export</h3>
+      <p>Direct exports from Miami to Latin America, Caribbean, and worldwide. Reliable logistics and competitive wholesale pricing.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🔧</div>
+      <h3>Quality Assurance</h3>
+      <p>Every device is tested, graded, and certified before shipping. Transparent condition reports and IMEI verification included.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CATALOG -->
+<section class="catalog">
+  <div class="catalog-inner">
+    <p class="section-label">Our Inventory</p>
+    <h2 class="section-title" style="margin-bottom: 48px;">Premium Categories</h2>
+    <div class="catalog-grid">
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=600&q=80" alt="iPhones" loading="lazy">
+        <div class="cat-overlay">
+          <h3>iPhones</h3>
+          <p>iPhone 12 — iPhone 16 Pro Max</p>
+        </div>
+        <div class="cat-badge">In Stock</div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=600&q=80" alt="Samsung Galaxy" loading="lazy">
+        <div class="cat-overlay">
+          <h3>Samsung Galaxy</h3>
+          <p>Galaxy S22 — S25 Ultra</p>
+        </div>
+        <div class="cat-badge">In Stock</div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=600&q=80" alt="Gaming Consoles" loading="lazy">
+        <div class="cat-overlay">
+          <h3>Gaming</h3>
+          <p>Nintendo Switch, PS5, Xbox</p>
+        </div>
+        <div class="cat-badge">In Stock</div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&q=80" alt="Laptops" loading="lazy">
+        <div class="cat-overlay">
+          <h3>Laptops</h3>
+          <p>MacBook, HP, Dell, Lenovo</p>
+        </div>
+        <div class="cat-badge">In Stock</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-us">
+  <p class="section-label">Why Top Line Tec</p>
+  <h2 class="section-title" style="margin-bottom: 48px;">Built Different</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">📍</div>
+      <div>
+        <h4>Miami Based</h4>
+        <p>Strategically located in Miami for fast shipping to Latin America, Caribbean, and worldwide markets.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">✅</div>
+      <div>
+        <h4>IMEI Verified</h4>
+        <p>Every device is IMEI-checked, blacklist-verified, and condition-graded before it ships. No surprises.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🚀</div>
+      <div>
+        <h4>Fast Turnaround</h4>
+        <p>Orders processed and shipped within 24-48 hours. Real-time tracking and dedicated support.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">💰</div>
+      <div>
+        <h4>Competitive Wholesale</h4>
+        <p>Direct wholesale pricing with volume discounts. No middlemen, no markups — straight from our warehouse.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to Order?</h2>
+  <p>Get wholesale pricing on premium electronics. Quick response, same-day quotes.</p>
+  <button class="whatsapp-btn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.75.75 0 00.917.917l4.458-1.495A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.376 0-4.569-.816-6.304-2.183l-.44-.348-3.082 1.033 1.033-3.082-.348-.44A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+    Contact Us on WhatsApp
+  </button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h3>TOP LINE TEC</h3>
+      <p>Premium wholesale electronics from Miami to the world. Quality tested, IMEI verified, shipped fast.</p>
+      <p style="margin-top: 16px;">
+        📍 12555 Biscayne Blvd #1164<br>
+        North Miami, FL 33181
+      </p>
+    </div>
+    <div>
+      <h4>Products</h4>
+      <a href="#">iPhones</a>
+      <a href="#">Samsung Galaxy</a>
+      <a href="#">Gaming Consoles</a>
+      <a href="#">Laptops</a>
+      <a href="#">Accessories</a>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Services</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+    <div>
+      <h4>Connect</h4>
+      <a href="#">📱 +1 (786) 659-3427</a>
+      <a href="#">✉️ administration@toplinetecinc.com</a>
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Top Line Tec Inc. All rights reserved.</span>
+    <span>Miami, Florida 🌴</span>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<div class="wa-float">💬</div>
+
+</body>
+</html>

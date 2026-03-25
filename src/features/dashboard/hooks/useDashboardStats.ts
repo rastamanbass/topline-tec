@@ -317,9 +317,14 @@ function useOptimizedDashboardData(period: DashboardPeriod = '3m') {
       ]);
 
       // Seized phones count (separate query — Firestore can't combine != with in on different fields)
-      const seizedQuery = query(collection(db, 'phones'), where('seized', '==', true));
-      const seizedSnap = await getCountFromServer(seizedQuery);
-      const seizedCount = seizedSnap.data().count;
+      let seizedCount = 0;
+      try {
+        const seizedQuery = query(collection(db, 'phones'), where('seized', '==', true));
+        const seizedSnap = await getCountFromServer(seizedQuery);
+        seizedCount = seizedSnap.data().count;
+      } catch {
+        // Index may not exist yet — fallback silently
+      }
 
       const thisMetrics = computeSoldMetrics(thisMonthSold);
       const lastMetrics = computeSoldMetrics(lastMonthSold);

@@ -5,7 +5,9 @@ interface SalesStore {
   // Cart
   cartItems: PurchaseItem[];
   addToCart: (item: PurchaseItem) => void;
+  addBulkToCart: (items: PurchaseItem[]) => void;
   removeFromCart: (index: number) => void;
+  updateCartItemPrice: (index: number, newPrice: number, reason: string, approvedBy?: string) => void;
   clearCart: () => void;
 
   // Checkout State
@@ -38,9 +40,24 @@ interface SalesStore {
 export const useSalesStore = create<SalesStore>((set) => ({
   cartItems: [],
   addToCart: (item) => set((state) => ({ cartItems: [...state.cartItems, item] })),
+  addBulkToCart: (items) => set((state) => ({ cartItems: [...state.cartItems, ...items] })),
   removeFromCart: (index) =>
     set((state) => ({
       cartItems: state.cartItems.filter((_, i) => i !== index),
+    })),
+  updateCartItemPrice: (index, newPrice, reason, approvedBy) =>
+    set((state) => ({
+      cartItems: state.cartItems.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              originalPrice: item.originalPrice ?? item.price,
+              price: newPrice,
+              discountReason: reason,
+              discountApprovedBy: approvedBy || 'unknown',
+            }
+          : item
+      ),
     })),
   clearCart: () => set({ cartItems: [] }),
 

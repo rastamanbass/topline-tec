@@ -1,0 +1,1 @@
+export { fritzChat } from "./fritzChat";

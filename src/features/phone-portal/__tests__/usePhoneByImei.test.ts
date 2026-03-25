@@ -26,9 +26,13 @@ import { buildPhoneQuery } from '../hooks/usePhoneByImei';
 
 describe('usePhoneByImei', () => {
   beforeEach(() => vi.clearAllMocks());
-  it('validates IMEI must be at least 8 digits', () => {
-    expect(buildPhoneQuery('123')).toBeNull();
+  it('rejects empty input', () => {
     expect(buildPhoneQuery('')).toBeNull();
+    expect(buildPhoneQuery('   ')).toBeNull();
+  });
+  it('accepts short IMEIs (partial digits entered by user)', () => {
+    expect(buildPhoneQuery('1234')).toBe('1234');
+    expect(buildPhoneQuery('5678')).toBe('5678');
   });
   it('strips non-digit characters from IMEI', () => {
     expect(buildPhoneQuery('356-371-101-234-567')).toBe('356371101234567');

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
-import { X, Printer, CheckCircle } from 'lucide-react';
+import { X, Printer, CheckCircle, Download, MessageCircle } from 'lucide-react';
 import { useInvoice } from '../hooks/useInvoices';
+import { downloadInvoicePDF } from '../../../services/pdf/generateInvoicePDF';
+import { openInvoiceWhatsApp } from '../../../utils/whatsappUtils';
 
 interface InvoiceModalProps {
   invoiceId: string;
@@ -58,6 +60,28 @@ export default function InvoiceModal({
               </h2>
             </div>
             <div className="flex items-center gap-2">
+              {invoice && (
+                <button
+                  onClick={() => downloadInvoicePDF(invoice)}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Descargar PDF
+                </button>
+              )}
+              {invoice?.clientPhone && (
+                <button
+                  onClick={() => openInvoiceWhatsApp(invoice)}
+                  className="flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors"
+                  style={{ backgroundColor: '#25D366' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1ebe57')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#25D366')}
+                  title={`Enviar factura por WhatsApp a ${invoice.clientPhone}`}
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  WhatsApp
+                </button>
+              )}
               <button
                 onClick={() => window.print()}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"

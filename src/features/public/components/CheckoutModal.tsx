@@ -106,7 +106,8 @@ export default function CheckoutModal({
         'Adjunto comprobante de transferencia.',
       ].join('\n');
 
-      window.open(`https://wa.me/?text=${encodeURIComponent(lines)}`, '_blank');
+      const waNumber = import.meta.env.VITE_TOPLINE_WA_NUMBER || '17866593427';
+      window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`, '_blank');
       toast.success('Envía el comprobante por WhatsApp para confirmar tu pedido');
       onSuccess();
     } catch (err: unknown) {
@@ -115,21 +116,6 @@ export default function CheckoutModal({
     } finally {
       setLoading(null);
     }
-  }, [orderId, items, total, onSuccess]);
-
-  // ── WhatsApp fallback ────────────────────────────────────────────────────────
-  const handleWhatsApp = useCallback(() => {
-    const lines = [
-      '*Pedido Top Line Tec*',
-      `Orden: ${orderId}`,
-      '',
-      ...items.map((p) => `• ${p.marca} ${p.modelo} — $${p.precio.toFixed(2)}`),
-      '',
-      `*Total: $${total.toFixed(2)}*`,
-    ].join('\n');
-
-    window.open(`https://wa.me/?text=${encodeURIComponent(lines)}`, '_blank');
-    onSuccess();
   }, [orderId, items, total, onSuccess]);
 
   return (
@@ -257,18 +243,18 @@ export default function CheckoutModal({
               Transferencia Bancaria / Zelle
             </button>
 
-            {/* WhatsApp fallback */}
-            <button
-              onClick={handleWhatsApp}
-              disabled={!!loading || isExpired}
-              className="w-full flex items-center justify-center gap-3 py-3 border-2 border-green-200 hover:border-green-300 hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed text-green-700 rounded-xl font-semibold transition-colors text-sm"
-            >
-              <MessageCircle className="w-4 h-4" />
-              Coordinar por WhatsApp
-            </button>
           </div>
 
-          <p className="text-xs text-gray-400 text-center mt-2">Más métodos de pago próximamente</p>
+          {/* Soporte */}
+          <a
+            href={`https://wa.me/${import.meta.env.VITE_TOPLINE_WA_NUMBER || '17866593427'}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-1.5 text-sm text-gray-400 hover:text-green-600 transition-colors mt-1"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            ¿Problemas? Escríbenos.
+          </a>
 
           {/* Security note */}
           <p className="text-xs text-center text-gray-400">

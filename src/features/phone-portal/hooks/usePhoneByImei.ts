@@ -5,8 +5,10 @@ import type { Phone } from '../../../types';
 
 export function buildPhoneQuery(raw: string): string | null {
   const digits = raw.trim().replace(/\D/g, '');
-  if (digits.length < 8) return null;
+  if (!digits) return null;
+  // Normalize GS1 16-digit barcode (leading "1" prefix)
   if (digits.length === 16 && digits[0] === '1') return digits.substring(1);
+  // Accept any length — Eduardo sometimes enters only partial IMEIs (4 digits)
   return digits;
 }
 

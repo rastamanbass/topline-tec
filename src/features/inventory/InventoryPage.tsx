@@ -2,6 +2,7 @@ import { Package, Plus, LayoutGrid, List, Loader2, FileSpreadsheet } from 'lucid
 import { useState } from 'react';
 import ImportInvoiceModal from '../supplier-invoices/components/ImportInvoiceModal';
 import SearchBar from './components/SearchBar';
+import ScanToSell from './components/ScanToSell';
 import Filters from './components/Filters';
 import PhoneTable from './components/PhoneTable';
 import CatalogView from './components/CatalogView';
@@ -112,6 +113,13 @@ export default function InventoryPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Scan to Sell — visible for roles that can sell */}
+        {['admin', 'gerente', 'vendedor'].includes(userRole || '') && (
+          <div className="mb-4">
+            <ScanToSell />
+          </div>
+        )}
+
         {/* Search and Filters */}
         <div className="mb-6 space-y-4">
           <SearchBar />

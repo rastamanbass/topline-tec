@@ -38,8 +38,18 @@ export const phoneSchema = z
     imei: z
       .string()
       .min(1, 'IMEI es requerido')
-      .regex(/^\d{15}$/, 'IMEI debe tener exactamente 15 dígitos numéricos')
-      .refine(luhn, 'IMEI inválido (falla verificación de dígito Luhn)'),
+      .refine((val) => {
+        const lines = val.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        return lines.length > 0;
+      }, 'Ingresa al menos un IMEI')
+      .refine((val) => {
+        const lines = val.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        return lines.every(l => /^\d{15}$/.test(l));
+      }, 'Cada IMEI debe tener exactamente 15 dígitos numéricos')
+      .refine((val) => {
+        const lines = val.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        return lines.every(l => luhn(l));
+      }, 'IMEI inválido (falla verificación de dígito Luhn)'),
     marca: z.string().min(1, 'Marca es requerida'),
     modelo: z.string().min(1, 'Modelo es requerido'),
     storage: z.string().optional(),

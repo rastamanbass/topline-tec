@@ -3,6 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
+import { getMessaging, type Messaging } from 'firebase/messaging';
 
 /**
  * Firebase Configuration
@@ -27,6 +28,10 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
+
+// Firebase Cloud Messaging (only in browser — not in SSR/service worker context)
+export const messaging: Messaging | null =
+  typeof window !== 'undefined' ? getMessaging(app) : null;
 
 // Export the app instance
 export default app;

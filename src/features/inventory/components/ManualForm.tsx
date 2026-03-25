@@ -13,6 +13,7 @@ import { db } from '../../../lib/firebase';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../../context';
 import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel, splitMarcaAndSupplier } from '../../../lib/phoneUtils';
+import { AlertTriangle } from 'lucide-react';
 
 const PHONE_STATUSES: PhoneStatus[] = [
   'En Bodega (USA)',
@@ -43,6 +44,7 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
   const createPhone = useCreatePhone();
   const updatePhone = useUpdatePhone();
   const { userRole } = useAuth();
+  const { batches } = useBatches();
 
   const {
     register,
@@ -165,6 +167,7 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
       reset();
     } catch (error) {
       console.error('Form submission error:', error);
+      toast.error('Error al guardar el teléfono. Intenta de nuevo.');
     }
   };
 
@@ -194,6 +197,24 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
           />
         )}
         {errors.imei && <p className="mt-1 text-sm text-red-600">{errors.imei.message}</p>}
+        {/* Short IMEI warning for Eduardo */}
+        {modalMode === 'create' && !errors.imei && (() => {
+          const lines = imeiValue ? imeiValue.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
+          const shortLines = lines.filter((l: string) => l.length > 0 && l.length < 15);
+          return shortLines.length > 0 ? (
+            <div className="mt-2 p-3 bg-amber-50 border border-amber-300 rounded-lg flex items-start gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-amber-800">
+                  Brother, por favor meter el numero de IMEI completo para un correcto registro
+                </p>
+                <p className="text-xs text-amber-600 mt-1">
+                  {shortLines.length} IMEI(s) con menos de 15 dígitos: {shortLines.map((l: string) => `"${l}"`).join(', ')}
+                </p>
+              </div>
+            </div>
+          ) : null;
+        })()}
       </div>
 
       {/* Marca and Modelo */}
@@ -283,7 +304,7 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
             autoComplete="off"
           />
           <datalist id="batches-list">
-            {useBatches().batches.map((b) => (
+            {batches.map((b) => (
               <option key={b.id} value={b.name} />
             ))}
           </datalist>

@@ -1,4 +1,4 @@
-import { runTransaction, doc, writeBatch } from 'firebase/firestore';
+import { runTransaction, doc } from 'firebase/firestore';
 import { db, auth } from '../../lib/firebase';
 import { phoneLabel } from '../../lib/phoneUtils';
 
@@ -36,7 +36,7 @@ export async function lockPhonesForPOS(phoneIds: string[]): Promise<void> {
         | null
         | undefined;
 
-      const reservationExpired = reservation && reservation.expiresAt < now;
+      const reservationExpired = reservation != null && reservation.expiresAt < now;
       const isMyReservation = reservation?.reservedBy === 'POS_SALE';
 
       const isAvailable =
@@ -47,6 +47,25 @@ export async function lockPhonesForPOS(phoneIds: string[]): Promise<void> {
         const modelo = (data.modelo as string) || '';
         const info = phoneLabel(marca, modelo) || phoneDoc.id;
         throw new Error(`"${info}" ya está reservado o no disponible.`);
+      }
+
+      // Guard B2B: aunque el teléfono aparezca "En Stock", si tiene una reserva B2B
+      // activa y no expirada (race condition de actualización de estado), no permitir
+      // que el POS lo bloquee encima.
+      const hasActiveB2BReservation =
+        reservation != null &&
+        reservation.reservedBy !== 'POS_SALE' &&
+        !reservationExpired;
+
+      if (hasActiveB2BReservation) {
+        const marca = (data.marca as string) || '';
+        const modelo = (data.modelo as string) || '';
+        const info = phoneLabel(marca, modelo) || phoneDoc.id;
+        const expireTime = new Date(reservation!.expiresAt).toLocaleTimeString('es-SV');
+        throw new Error(
+          `"${info}" está reservado por un comprador online hasta las ${expireTime}. ` +
+          `No se puede bloquear para venta en POS.`
+        );
       }
     }
 
@@ -67,16 +86,41 @@ export async function lockPhonesForPOS(phoneIds: string[]): Promise<void> {
 /**
  * Releases POS locks for the given phones.
  * Called when a POS checkout is cancelled without completing the sale.
+ *
+ * Seguridad: usa runTransaction individual por teléfono para verificar que la
+ * reserva sigue siendo de POS antes de borrarla. Esto previene que una
+ * cancelación de POS borre una reserva B2B válida que llegó después.
+ *
+ * Idempotente: llamar dos veces no causa problemas (si ya no hay reserva POS,
+ * simplemente no hace nada).
  */
 export async function unlockPhonesFromPOS(phoneIds: string[]): Promise<void> {
   if (phoneIds.length === 0) return;
 
-  const batch = writeBatch(db);
+  await Promise.all(
+    phoneIds.map(async (id) => {
+      const ref = doc(db, 'phones', id);
+      await runTransaction(db, async (transaction) => {
+        const snap = await transaction.get(ref);
+        if (!snap.exists()) return; // El teléfono ya no existe — no hay nada que hacer
 
-  for (const id of phoneIds) {
-    const ref = doc(db, 'phones', id);
-    batch.update(ref, { reservation: null });
-  }
+        const data = snap.data();
+        const reservation = data.reservation as
+          | { reservedBy: string; expiresAt: number }
+          | null
+          | undefined;
 
-  await batch.commit();
+        // Solo liberar si TODAVÍA es nuestra reserva POS.
+        // Si ya tiene una reserva B2B activa (llegó después de que iniciáramos el POS),
+        // NO tocarla — sería borrar una reserva de un cliente legítimo.
+        if (reservation?.reservedBy === 'POS_SALE') {
+          transaction.update(ref, {
+            reservation: null,
+            estado: 'En Stock (Disponible para Venta)',
+          });
+        }
+        // En cualquier otro caso (sin reserva, o reserva B2B): no hacer nada.
+      });
+    })
+  );
 }

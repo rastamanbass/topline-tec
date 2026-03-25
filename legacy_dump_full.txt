@@ -1,0 +1,100 @@
+1	"HEC 13 PRO MAX 1TB
+352114959064679"	En Tránsito (a El Salvador)	N/A	$0.00	$540.00	N/A	Editar Borrar Vender Historial
+2	"hec 16 256GB BACK RAJADO FRONT RAJADO ARO RAYADO
+351582376546364"	En Tránsito (a El Salvador)	N/A	$0.00	$650.00	N/A	Editar Borrar Vender Historial
+3	"HEC 15 PRO MAX 512GB BACK GLASS BROKEN
+359428798127973"	En Tránsito (a El Salvador)	N/A	$0.00	$750.00	N/A	Editar Borrar Vender Historial
+4	"HEC 13 PRO 256GB
+350753242792240"	En Tránsito (a El Salvador)	N/A	$0.00	$430.00	N/A	Editar Borrar Vender Historial
+5	"HEC 13 pro 128gb
+353165806490144"	En Tránsito (a El Salvador)	N/A	$0.00	$420.00	N/A	Editar Borrar Vender Historial
+6	"HEC 13 pro 128gb
+359052371072180"	En Tránsito (a El Salvador)	N/A	$0.00	$420.00	N/A	Editar Borrar Vender Historial
+7	"HEC 13 pro 128gb
+352203770171175"	En Tránsito (a El Salvador)	N/A	$0.00	$420.00	N/A	Editar Borrar Vender Historial
+8	"hec 14 PRO 128GB
+354001274412345"	En Tránsito (a El Salvador)	N/A	$0.00	$495.00	N/A	Editar Borrar Vender Historial
+9	"hec 14 PRO 128GB
+358073465592439"	En Tránsito (a El Salvador)	N/A	$0.00	$495.00	N/A	Editar Borrar Vender Historial
+10	"HEC 16 PLUS 256GB RAJADO PANTALLA TAPADERA
+351145642273757"	En Tránsito (a El Salvador)	N/A	$0.00	$745.00	N/A	Editar Borrar Vender Historial
+11	"hec 14 PRO MAX 256GB
+355901948604517"	En Tránsito (a El Salvador)	N/A	$0.00	$590.00	N/A	Editar Borrar Vender Historial
+12	"HEC 12 pro 512gb
+356682118222194"	En Tránsito (a El Salvador)	N/A	$0.00	$330.00	N/A	Editar Borrar Vender Historial
+13	"hec 17 PRO MAX 512GB
+359614544105724"	En Tránsito (a El Salvador)	N/A	$0.00	$1,450.00	N/A	Editar Borrar Vender Historial
+14	"hec 17 PRO MAX 512GB
+355450217510716"	En Tránsito (a El Salvador)	N/A	$0.00	$1,450.00	N/A	Editar Borrar Vender Historial
+15	"hec 17 PRO MAX 256GB
+358482492881816"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+16	"hec 17 PRO MAX 256GB
+356188164904297"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+17	"hec 17 PRO MAX 256GB
+357999600411906"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+18	"hec 17 PRO MAX 256GB
+351687740439335"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+19	"hec 17 PRO MAX 256GB
+358419941567224"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+20	"hec 17 PRO MAX 256GB
+351687749202452"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+21	"hec 17 PRO MAX 256GB
+357999605828146"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+22	"hec 17 PRO MAX 256GB
+350889866561626"	En Tránsito (a El Salvador)	N/A	$0.00	$1,230.00	N/A	Editar Borrar Vender Historial
+23	"hec 17 pro max 256gb open box
+357586346307538"	En Tránsito (a El Salvador)	N/A	$0.00	$1,325.00	N/A	Editar Borrar Vender Historial
+24	"hec 17 pro max 256gb open box
+352791394051815"	En Tránsito (a El Salvador)	N/A	$0.00	$1,325.00	N/A	Editar Borrar Vender Historial
+25	"HEC 17 AIR 256GB
+7317"	En Tránsito (a El Salvador)	N/A	$0.00	$780.00	N/A	Editar Borrar Vender Historial
+26	"hec s23 ultra 512gb
+8668"	En Tránsito (a El Salvador)	N/A	$0.00	$520.00	N/A	Editar Borrar Vender Historial
+27	"HEC 13 pro max 128gb
+352569482089735"	En Tránsito (a El Salvador)	N/A	$0.00	$480.00	N/A	Editar Borrar Vender Historial
+28	"hec 15 128GB
+8801"	En Tránsito (a El Salvador)	N/A	$0.00	$480.00	N/A	Editar Borrar Vender Historial
+29	"HEC 15 plus 128gb
+350914843695436"	En Tránsito (a El Salvador)	N/A	$0.00	$540.00	N/A	Editar Borrar Vender Historial
+30	"hec 15 PRO 128GB
+6530"	En Tránsito (a El Salvador)	N/A	$0.00	$550.00	N/A	Editar Borrar Vender Historial
+31	"hec 13 PRO MAX 512GB
+350566102753957"	En Tránsito (a El Salvador)	N/A	$0.00	$520.00	N/A	Editar Borrar Vender Historial
+32	"HEC 13 128gb
+357774332117026"	En Tránsito (a El Salvador)	N/A	$0.00	$330.00	N/A	Editar Borrar Vender Historial
+33	"hec 11 pro 256gb
+353247109985903"	En Tránsito (a El Salvador)	N/A	$0.00	$210.00	N/A	Editar Borrar Vender Historial
+34	"HEC 13 pro max 128gb
+352653446173064"	En Tránsito (a El Salvador)	N/A	$0.00	$480.00	N/A	Editar Borrar Vender Historial
+35	"hec 16 128GB
+355616957082617"	En Tránsito (a El Salvador)	N/A	$0.00	$650.00	N/A	Editar Borrar Vender Historial
+36	"HEC s23 plus 256gb
+351059817934400"	En Tránsito (a El Salvador)	N/A	$0.00	$350.00	N/A	Editar Borrar Vender Historial
+37	"hec s24 plus 256gb
+353520670550649"	En Tránsito (a El Salvador)	N/A	$0.00	$400.00	N/A	Editar Borrar Vender Historial
+38	"hec S22 ULTRA 128GB
+354214987221578"	En Tránsito (a El Salvador)	N/A	$0.00	$355.00	N/A	Editar Borrar Vender Historial
+39	"hec 14 PRO 128GB
+351284086960106"	En Tránsito (a El Salvador)	N/A	$0.00	$500.00	N/A	Editar Borrar Vender Historial
+40	"HEC 14 PRO MAX 128GB
+6852"	En Tránsito (a El Salvador)	N/A	$0.00	$570.00	N/A	Editar Borrar Vender Historial
+41	"HEC 14 PRO MAX 128GB
+0398"	En Tránsito (a El Salvador)	N/A	$0.00	$570.00	N/A	Editar Borrar Vender Historial
+42	"hec s22 256gb
+3938"	En Tránsito (a El Salvador)	N/A	$0.00	$220.00	N/A	Editar Borrar Vender Historial
+43	"hec 15 plus 128gb
+359760540476104"	En Tránsito (a El Salvador)	N/A	$0.00	$540.00	N/A	Editar Borrar Vender Historial
+44	"hec 15 plus 128gb
+354820297569355"	En Tránsito (a El Salvador)	N/A	$0.00	$540.00	N/A	Editar Borrar Vender Historial
+45	"hec 15 plus 128gb
+359081515612676"	En Tránsito (a El Salvador)	N/A	$0.00	$540.00	N/A	Editar Borrar Vender Historial
+46	"HEC s23 plus 256gb
+355802953127974"	En Tránsito (a El Salvador)	N/A	$0.00	$320.00	N/A	Editar Borrar Vender Historial
+47	"hec s23 ultra 512gb
+353138609063913"	En Tránsito (a El Salvador)	N/A	$0.00	$500.00	N/A	Editar Borrar Vender Historial
+48	"HEC 13 pro 128gb
+353851664809612"	En Tránsito (a El Salvador)	N/A	$0.00	$400.00	N/A	Editar Borrar Vender Historial
+49	"HEC 13 pro 128gb
+350367276042248"	En Tránsito (a El Salvador)	N/A	$0.00	$400.00	N/A	Editar Borrar Vender Historial
+50	"HEC 13 pro 128gb
+352668914913379"	En Tránsito (a El Salvador)	N/A	$0.00	$400.00	N/A	Editar Borrar Vender Historial

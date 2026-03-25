@@ -1,0 +1,432 @@
+[
+  {
+    "imei": "352114959064679",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro Max 1tb",
+    "precioVenta": 540,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.040Z",
+    "id": "a1z43hodd"
+  },
+  {
+    "imei": "351582376546364",
+    "marca": "Apple",
+    "modelo": "iPhone 16 256gb Back",
+    "precioVenta": 650,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "5d4nlrzvd"
+  },
+  {
+    "imei": "359428798127973",
+    "marca": "Apple",
+    "modelo": "iPhone 15 Pro Max 512gb",
+    "precioVenta": 750,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "2iiym2oh1"
+  },
+  {
+    "imei": "350753242792240",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro 256gb",
+    "precioVenta": 430,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "xvxwdn736"
+  },
+  {
+    "imei": "353165806490144",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro 128gb",
+    "precioVenta": 420,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "cx9wg9km4"
+  },
+  {
+    "imei": "359052371072180",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro 128gb",
+    "precioVenta": 420,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "gh6hfwm5m"
+  },
+  {
+    "imei": "352203770171175",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro 128gb",
+    "precioVenta": 420,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "fh9ttyv0k"
+  },
+  {
+    "imei": "354001274412345",
+    "marca": "Apple",
+    "modelo": "iPhone 14 Pro 128gb",
+    "precioVenta": 495,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "jxkelsl02"
+  },
+  {
+    "imei": "358073465592439",
+    "marca": "Apple",
+    "modelo": "iPhone 14 Pro 128gb",
+    "precioVenta": 495,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "fboix4hvm"
+  },
+  {
+    "imei": "351145642273757",
+    "marca": "Apple",
+    "modelo": "iPhone 16 Plus 256gb",
+    "precioVenta": 745,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "977uvjnjx"
+  },
+  {
+    "imei": "355901948604517",
+    "marca": "Apple",
+    "modelo": "iPhone 14 Pro Max 256gb",
+    "precioVenta": 590,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "jyqtc2af1"
+  },
+  {
+    "imei": "356682118222194",
+    "marca": "Apple",
+    "modelo": "iPhone 12 Pro 512gb",
+    "precioVenta": 330,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "ggjka67oy"
+  },
+  {
+    "imei": "359614544105724",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 512gb",
+    "precioVenta": 1450,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "ku1q920dn"
+  },
+  {
+    "imei": "355450217510716",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 512gb",
+    "precioVenta": 1450,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "r8r80vxpb"
+  },
+  {
+    "imei": "358482492881816",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "8xgkyz9ug"
+  },
+  {
+    "imei": "356188164904297",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "oi4dvvz4d"
+  },
+  {
+    "imei": "357999600411906",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "657vb2lok"
+  },
+  {
+    "imei": "351687740439335",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "kvp7e8jv5"
+  },
+  {
+    "imei": "358419941567224",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "8xb25x5vn"
+  },
+  {
+    "imei": "351687749202452",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "lc9afk0e9"
+  },
+  {
+    "imei": "357999605828146",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "eloqdg93q"
+  },
+  {
+    "imei": "350889866561626",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1230,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "q135fa5rr"
+  },
+  {
+    "imei": "357586346307538",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1325,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "cmv26w2bl"
+  },
+  {
+    "imei": "352791394051815",
+    "marca": "Apple",
+    "modelo": "iPhone 17 Pro Max 256gb",
+    "precioVenta": 1325,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "4yo0452y4"
+  },
+  {
+    "imei": "352569482089735",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro Max 128gb",
+    "precioVenta": 480,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "tdhowcccc"
+  },
+  {
+    "imei": "350914843695436",
+    "marca": "Apple",
+    "modelo": "iPhone 15 Plus 128gb",
+    "precioVenta": 540,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "in9gp3hp9"
+  },
+  {
+    "imei": "350566102753957",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro Max 512gb",
+    "precioVenta": 520,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "akkjbceur"
+  },
+  {
+    "imei": "357774332117026",
+    "marca": "Apple",
+    "modelo": "iPhone 13 128gb",
+    "precioVenta": 330,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "1nigqtsk5"
+  },
+  {
+    "imei": "353247109985903",
+    "marca": "Apple",
+    "modelo": "iPhone 11 Pro 256gb",
+    "precioVenta": 210,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "getvvgu5n"
+  },
+  {
+    "imei": "352653446173064",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro Max 128gb",
+    "precioVenta": 480,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "jxzx3v26p"
+  },
+  {
+    "imei": "355616957082617",
+    "marca": "Apple",
+    "modelo": "iPhone 16 128gb",
+    "precioVenta": 650,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "xzqtzne0a"
+  },
+  {
+    "imei": "351059817934400",
+    "marca": "Unknown",
+    "modelo": "Galaxy S23 Plus 256gb",
+    "precioVenta": 350,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "m5863s6x4"
+  },
+  {
+    "imei": "353520670550649",
+    "marca": "Unknown",
+    "modelo": "Galaxy S24 Plus 256gb",
+    "precioVenta": 400,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "uowcejmip"
+  },
+  {
+    "imei": "354214987221578",
+    "marca": "Unknown",
+    "modelo": "Galaxy S22 Ultra 128gb",
+    "precioVenta": 355,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "e058cogqj"
+  },
+  {
+    "imei": "351284086960106",
+    "marca": "Apple",
+    "modelo": "iPhone 14 Pro 128gb",
+    "precioVenta": 500,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "dpwniyyiw"
+  },
+  {
+    "imei": "359760540476104",
+    "marca": "Apple",
+    "modelo": "iPhone 15 Plus 128gb",
+    "precioVenta": 540,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "26wp5ie9j"
+  },
+  {
+    "imei": "354820297569355",
+    "marca": "Apple",
+    "modelo": "iPhone 15 Plus 128gb",
+    "precioVenta": 540,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "99ae7qlh9"
+  },
+  {
+    "imei": "359081515612676",
+    "marca": "Apple",
+    "modelo": "iPhone 15 Plus 128gb",
+    "precioVenta": 540,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "78go82ipt"
+  },
+  {
+    "imei": "355802953127974",
+    "marca": "Unknown",
+    "modelo": "Galaxy S23 Plus 256gb",
+    "precioVenta": 320,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "cauhcn6av"
+  },
+  {
+    "imei": "353138609063913",
+    "marca": "Unknown",
+    "modelo": "Galaxy S23 Ultra 512gb",
+    "precioVenta": 500,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "918780zti"
+  },
+  {
+    "imei": "353851664809612",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro 128gb",
+    "precioVenta": 400,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "017teb3io"
+  },
+  {
+    "imei": "350367276042248",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro 128gb",
+    "precioVenta": 400,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "vykjy6x5v"
+  },
+  {
+    "imei": "352668914913379",
+    "marca": "Apple",
+    "modelo": "iPhone 13 Pro 128gb",
+    "precioVenta": 400,
+    "costo": 0,
+    "estado": "En Tránsito (a El Salvador)",
+    "fechaIngreso": "2026-01-24T20:51:47.054Z",
+    "id": "1ll45nql4"
+  }
+]

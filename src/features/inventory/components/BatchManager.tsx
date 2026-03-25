@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useBatches } from '../hooks/useBatches';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X, Package } from 'lucide-react';
 
 export default function BatchManager({ onClose }: { onClose: () => void }) {
   const { batches, addBatch, removeBatch } = useBatches();
@@ -50,21 +50,29 @@ export default function BatchManager({ onClose }: { onClose: () => void }) {
           {batches.length === 0 && (
             <p className="text-center text-gray-500 py-4 text-sm">No hay lotes creados.</p>
           )}
-          {batches.map((batch) => (
-            <div
-              key={batch.id}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors"
-            >
-              <span className="font-medium text-gray-700">{batch.name}</span>
-              <button
-                onClick={() => removeBatch.mutate(batch.id)}
-                className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                title="Eliminar Lote"
+          {batches.map((batch) => {
+            const isFromPhones = batch.id.startsWith('phone-lote-');
+            return (
+              <div
+                key={batch.id}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
+                <div className="flex items-center gap-2 min-w-0">
+                  {isFromPhones && <Package className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+                  <span className="font-medium text-gray-700 truncate">{batch.name}</span>
+                </div>
+                {!isFromPhones && (
+                  <button
+                    onClick={() => removeBatch.mutate(batch.id)}
+                    className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                    title="Eliminar Lote"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

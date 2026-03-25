@@ -83,11 +83,31 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
     setScannedItems((prev) => [newItem, ...prev]);
 
     try {
-      const uniqueTac = imei.substring(0, 8);
+      // Normalize GS1 artifact: scanners may prepend '1' on 16-digit GS1-128 barcodes
+      const imeiDigits = imei.replace(/\D/g, '');
+      const normalizedImei = imeiDigits.length === 16 && imeiDigits[0] === '1' ? imeiDigits.slice(1) : imeiDigits;
+
+      // Warn Eduardo about short IMEIs
+      if (normalizedImei.length < 15) {
+        setScannedItems((prev) =>
+          prev.map((item) =>
+            item.tempId === tempId
+              ? { ...item, status: 'error' as const, theftStatus: 'SHORT_IMEI' }
+              : item
+          )
+        );
+        toast.error(
+          `IMEI incompleto: solo ${normalizedImei.length} dígitos. Brother, por favor meter el IMEI completo (15 dígitos).`,
+          { duration: 5000 }
+        );
+        return;
+      }
+
+      const uniqueTac = normalizedImei.substring(0, 8);
       let def = await getDeviceDefinition(uniqueTac);
 
       if (!def) {
-        const proxy = await fetchDeviceFromProxy(imei);
+        const proxy = await fetchDeviceFromProxy(normalizedImei);
         if (proxy) {
           def = {
             brand: proxy.brand,
@@ -126,7 +146,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                   storage:
                     (def as { brand: string; model: string; storage?: string; updatedAt: number })
                       .storage || item.storage,
-                  theftStatus: 'CLEAN', // Default since check is disabled
+                  theftStatus: 'UNKNOWN', // Not verified — no theft check API connected
                   status: 'success',
                 }
               : item
@@ -470,10 +490,10 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                       <div className="flex items-center justify-center h-8">
                         {item.theftStatus === 'UNKNOWN' ? (
                           <span
-                            className="px-2 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold border border-slate-200 animate-pulse"
-                            title="Verificando o API Limitada"
+                            className="px-2 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold border border-slate-200"
+                            title="No verificado — sin API de robo conectada"
                           >
-                            ...
+                            NO VERIF.
                           </span>
                         ) : item.theftStatus === 'CLEAN' ? (
                           <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold border border-emerald-200">
