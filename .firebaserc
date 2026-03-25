@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "topline-tec-v2"
+    "default": "inventario-a6aa3",
+    "staging": "topline-tec-v2"
   }
 }
