@@ -81,7 +81,7 @@ export default function StickerPrintView() {
           Imprimir {currentBatch.length} stickers
         </button>
 
-        <p className="text-xs text-gray-500">Papel 60×40mm · Sin márgenes</p>
+        <p className="text-xs text-gray-500">Papel 70×50mm · Sin márgenes</p>
       </div>
 
       {/* Sticker previews */}
@@ -94,7 +94,7 @@ export default function StickerPrintView() {
       <style>{`
         @media print {
           @page {
-            size: 60mm 40mm;
+            size: 70mm 50mm;
             margin: 0;
           }
 
@@ -153,7 +153,7 @@ export default function StickerPrintView() {
 
           /* Model text */
           .sticker-label > div:first-child > p {
-            font-size: 7vmin !important;
+            font-size: 8vmin !important;
             font-weight: bold !important;
             line-height: 1.1 !important;
             margin: 0 !important;
@@ -178,8 +178,8 @@ export default function StickerPrintView() {
 
           /* QR SVG — bigger for scanning */
           .sticker-label > div:nth-child(3) > svg {
-            width: 25vmin !important;
-            height: 25vmin !important;
+            width: 30vmin !important;
+            height: 30vmin !important;
           }
 
           /* Zone C: Barcode container — pushed to bottom with gap */
@@ -191,7 +191,7 @@ export default function StickerPrintView() {
 
           /* Barcode SVG — full width, taller */
           .sticker-label > div:nth-child(4) > svg {
-            width: 85% !important;
+            width: 90% !important;
             height: auto !important;
             max-height: 20vmin !important;
           }

@@ -83,7 +83,7 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
       {/* Zone B: QR code (left-aligned, with vertical separation) */}
       {!phone.seized && (
         <div style={{ marginTop: '6px', flexShrink: 0 }}>
-          <QRCodeSVG value={trackingUrl} size={100} level="H" style={{ display: 'block' }} />
+          <QRCodeSVG value={trackingUrl} size={120} level="H" style={{ display: 'block' }} />
         </div>
       )}
 

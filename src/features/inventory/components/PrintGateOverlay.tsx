@@ -78,7 +78,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
                 Imprimir {phones.length} Stickers
               </button>
               <p className="text-xs text-slate-400 text-center">
-                Papel 60×40mm · Margenes: ninguno · Escala: 100%
+                Papel 70×50mm · Margenes: ninguno · Escala: 100%
               </p>
               <button
                 onClick={onComplete}
@@ -119,7 +119,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
       <style>{`
         @media print {
           @page {
-            size: 60mm 40mm;
+            size: 70mm 50mm;
             margin: 0;
           }
 
@@ -184,7 +184,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
 
           /* Model text */
           .sticker-label > div:first-child > p {
-            font-size: 7vmin !important;
+            font-size: 8vmin !important;
             font-weight: bold !important;
             line-height: 1.1 !important;
             margin: 0 !important;
@@ -209,8 +209,8 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
 
           /* QR SVG */
           .sticker-label > div:nth-child(3) > svg {
-            width: 25vmin !important;
-            height: 25vmin !important;
+            width: 30vmin !important;
+            height: 30vmin !important;
           }
 
           /* Zone C: Barcode container */
@@ -222,7 +222,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
 
           /* Barcode SVG */
           .sticker-label > div:nth-child(4) > svg {
-            width: 85% !important;
+            width: 90% !important;
             height: auto !important;
             max-height: 20vmin !important;
           }
