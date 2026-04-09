@@ -1,28 +1,37 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   X,
   Check,
   AlertTriangle,
   ScanBarcode,
   Trash2,
-  Play,
+  CheckCircle,
   Settings,
   Box,
   DollarSign,
   Tag,
 } from 'lucide-react';
-import { useCreatePhone } from '../hooks/usePhones';
 import { fetchDeviceFromProxy } from '../services/proxyService';
 import { getDeviceDefinition, saveDeviceDefinition } from '../services/deviceService';
 import { deviceCatalog } from '../../../data/deviceCatalog';
 import toast from 'react-hot-toast';
 import { useBatches } from '../hooks/useBatches';
 import BatchManager from './BatchManager';
+import PrintGateOverlay from './PrintGateOverlay';
 import { useAuth } from '../../../context';
 import GlassCard from '../../../components/ui/GlassCard';
-import { splitMarcaAndSupplier } from '../../../lib/phoneUtils';
+import {
+  splitMarcaAndSupplier,
+  normalizeDisplayBrand,
+  normalizeStorage,
+  normalizeIPhoneModel,
+} from '../../../lib/phoneUtils';
+import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
+import { db, auth } from '../../../lib/firebase';
+import { useQueryClient } from '@tanstack/react-query';
 
-// ... interface update
+const PRINT_GATE_SIZE = 10;
+
 interface ScannedItem {
   tempId: string;
   imei: string;
@@ -33,6 +42,12 @@ interface ScannedItem {
   status: 'pending' | 'success' | 'unknown' | 'error';
   cost: number;
   price: number;
+  saved?: boolean; // true once saved to Firestore
+}
+
+interface SavedInCycleEntry {
+  imei: string;
+  firestoreId: string;
 }
 
 interface ScannerViewProps {
@@ -41,14 +56,18 @@ interface ScannerViewProps {
   onCancel?: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProps) {
   const { user, userRole } = useAuth();
   const { batches } = useBatches();
+  const queryClient = useQueryClient();
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
   const [inputBuffer, setInputBuffer] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const createPhone = useCreatePhone();
+
+  // Auto-save + print gate state
+  const [savedInCycle, setSavedInCycle] = useState<SavedInCycleEntry[]>([]);
+  const [showPrintGate, setShowPrintGate] = useState(false);
 
   // Batch Management
   const [showBatchManager, setShowBatchManager] = useState(false);
@@ -57,7 +76,102 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
   const [batchPrice, setBatchPrice] = useState<string>('');
 
   useEffect(() => {
-    inputRef.current?.focus();
+    if (!showPrintGate) {
+      inputRef.current?.focus();
+    }
+  }, [showPrintGate]);
+
+  // Save a single phone to Firestore (no toast — silent auto-save)
+  const savePhoneToFirestore = useCallback(
+    async (item: ScannedItem): Promise<string> => {
+      const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(item.brand, item.model);
+      const cost = batchCost ? parseFloat(batchCost) : item.cost;
+      const price = batchPrice ? parseFloat(batchPrice) : item.price;
+      const estado = userRole === 'admin' ? 'En Bodega (USA)' : 'En Stock (Disponible para Venta)';
+
+      // Save TAC definition (fire and forget)
+      if (item.imei && item.imei.length >= 8) {
+        const tac = item.imei.substring(0, 8);
+        saveDeviceDefinition(tac, finalMarca, item.model);
+      }
+
+      // Update price catalog (fire and forget)
+      if (price > 0 && item.model) {
+        const displayBrand = normalizeDisplayBrand(finalMarca);
+        const storageVal = normalizeStorage(item.storage);
+        const normalizedModel =
+          displayBrand === 'Apple'
+            ? normalizeIPhoneModel(item.model || '')
+            : item.model || 'Unknown';
+        const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
+          .replace(/\//g, '-')
+          .replace(/\s+/g, '-')
+          .toLowerCase();
+        setDoc(
+          doc(db, 'price_catalog', safeId),
+          {
+            brand: displayBrand,
+            model: item.model,
+            storage: storageVal,
+            averagePrice: price,
+            lastUpdated: new Date(),
+            source: 'auto',
+          },
+          { merge: true }
+        ).catch((err) => console.error('Failed to learn price', err));
+      }
+
+      const docRef = await addDoc(collection(db, 'phones'), {
+        imei: item.imei,
+        marca: finalMarca,
+        supplierCode: supplierCode,
+        modelo: item.model,
+        storage: item.storage,
+        costo: cost,
+        precioVenta: price,
+        lote: batchLot,
+        estado,
+        condition: 'Grade A',
+        fechaIngreso: new Date().toISOString(),
+        createdBy: auth.currentUser?.uid,
+        updatedAt: serverTimestamp(),
+        statusHistory: [
+          {
+            newStatus: estado,
+            date: new Date().toISOString(),
+            user: auth.currentUser?.email || 'unknown',
+            details: 'Telefono creado (auto-save)',
+          },
+        ],
+      });
+
+      // Invalidate queries so inventory list refreshes
+      queryClient.invalidateQueries({ queryKey: ['phones'] });
+      queryClient.invalidateQueries({ queryKey: ['phones-paginated'] });
+
+      return docRef.id;
+    },
+    [batchCost, batchPrice, batchLot, userRole, queryClient]
+  );
+
+  // Track a saved phone in the current cycle and check gate
+  const trackSavedPhone = useCallback((imei: string, firestoreId: string) => {
+    setSavedInCycle((prev) => {
+      const next = [...prev, { imei, firestoreId }];
+      if (next.length >= PRINT_GATE_SIZE) {
+        setShowPrintGate(true);
+      }
+      return next;
+    });
+  }, []);
+
+  // Called when user finishes printing and clicks "Continuar Escaneando"
+  const handlePrintGateComplete = useCallback(() => {
+    setSavedInCycle([]);
+    setShowPrintGate(false);
+    // Remove saved items from the scanned list (they're already in Firestore)
+    setScannedItems((prev) => prev.filter((item) => !item.saved));
+    setTimeout(() => inputRef.current?.focus(), 100);
   }, []);
 
   const processImei = async (imei: string) => {
@@ -85,7 +199,8 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
     try {
       // Normalize GS1 artifact: scanners may prepend '1' on 16-digit GS1-128 barcodes
       const imeiDigits = imei.replace(/\D/g, '');
-      const normalizedImei = imeiDigits.length === 16 && imeiDigits[0] === '1' ? imeiDigits.slice(1) : imeiDigits;
+      const normalizedImei =
+        imeiDigits.length === 16 && imeiDigits[0] === '1' ? imeiDigits.slice(1) : imeiDigits;
 
       // Warn Eduardo about short IMEIs
       if (normalizedImei.length < 15) {
@@ -136,22 +251,32 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
       }
 
       if (def) {
+        const resolvedItem: ScannedItem = {
+          ...newItem,
+          brand: def.brand,
+          model: def.model,
+          storage:
+            (def as { brand: string; model: string; storage?: string; updatedAt: number })
+              .storage || newItem.storage,
+          theftStatus: 'UNKNOWN',
+          status: 'success',
+        };
+
         setScannedItems((prev) =>
-          prev.map((item) =>
-            item.tempId === tempId
-              ? {
-                  ...item,
-                  brand: def!.brand,
-                  model: def!.model,
-                  storage:
-                    (def as { brand: string; model: string; storage?: string; updatedAt: number })
-                      .storage || item.storage,
-                  theftStatus: 'UNKNOWN', // Not verified — no theft check API connected
-                  status: 'success',
-                }
-              : item
-          )
+          prev.map((item) => (item.tempId === tempId ? { ...resolvedItem, saved: false } : item))
         );
+
+        // Auto-save to Firestore immediately
+        try {
+          const firestoreId = await savePhoneToFirestore(resolvedItem);
+          setScannedItems((prev) =>
+            prev.map((item) => (item.tempId === tempId ? { ...item, saved: true } : item))
+          );
+          trackSavedPhone(resolvedItem.imei, firestoreId);
+        } catch (saveErr) {
+          console.error('Auto-save failed:', saveErr);
+          toast.error(`Error guardando ${resolvedItem.imei}`);
+        }
       } else {
         setScannedItems((prev) =>
           prev.map((item) =>
@@ -219,40 +344,24 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
     toast.success('Precios aplicados a todo el lote');
   };
 
-  const handleSubmitAll = async () => {
-    const invalid = scannedItems.filter(
-      (i) => !i.brand || !i.model || i.price === undefined || i.price === null
-    );
-    if (invalid.length > 0) {
-      toast.error(`Faltan datos en ${invalid.length} teléfonos`);
+  // Manual save for 'unknown' items after user fills brand+model
+  const handleManualSave = async (tempId: string) => {
+    const item = scannedItems.find((i) => i.tempId === tempId);
+    if (!item) return;
+    if (!item.brand || !item.model) {
+      toast.error('Llena marca y modelo antes de guardar');
       return;
     }
 
-    setIsProcessing(true);
     try {
-      const promises = scannedItems.map((item) => {
-        const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(item.brand, item.model);
-        return createPhone.mutateAsync({
-          imei: item.imei,
-          marca: finalMarca,
-          supplierCode: supplierCode,
-          modelo: item.model,
-          storage: item.storage,
-          costo: item.cost,
-          precioVenta: item.price,
-          lote: batchLot,
-          estado: userRole === 'admin' ? 'En Bodega (USA)' : 'En Stock (Disponible para Venta)',
-          condition: 'Grade A',
-        });
-      });
-
-      await Promise.all(promises);
-      toast.success(`${scannedItems.length} teléfonos creados!`);
-      onSuccess();
-    } catch {
-      toast.error('Error al guardar algunos teléfonos');
-    } finally {
-      setIsProcessing(false);
+      const firestoreId = await savePhoneToFirestore(item);
+      setScannedItems((prev) =>
+        prev.map((i) => (i.tempId === tempId ? { ...i, saved: true, status: 'success' } : i))
+      );
+      trackSavedPhone(item.imei, firestoreId);
+    } catch (err) {
+      console.error('Manual save failed:', err);
+      toast.error(`Error guardando ${item.imei}`);
     }
   };
 
@@ -279,13 +388,14 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
               value={inputBuffer}
               onChange={(e) => setInputBuffer(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full bg-slate-800/50 border border-slate-600 text-white text-3xl p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono transition-all placeholder:text-slate-700"
-              placeholder="Escanea aquí..."
+              disabled={showPrintGate}
+              className="w-full bg-slate-800/50 border border-slate-600 text-white text-3xl p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono transition-all placeholder:text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              placeholder={showPrintGate ? 'Imprime stickers para continuar...' : 'Escanea aqui...'}
               autoComplete="off"
               autoFocus
             />
             <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono">
-              ENTER para procesar
+              {savedInCycle.length}/{PRINT_GATE_SIZE} en ciclo
             </div>
           </div>
         </GlassCard>
@@ -378,17 +488,21 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                   {/* Status Icon */}
                   <div
                     className={`mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                      item.status === 'success'
-                        ? 'bg-green-100 text-green-600'
-                        : item.status === 'unknown'
-                          ? 'bg-amber-100 text-amber-600'
-                          : item.status === 'pending'
-                            ? 'bg-blue-100 text-blue-600'
-                            : 'bg-red-100 text-red-600'
+                      item.saved
+                        ? 'bg-emerald-100 text-emerald-600'
+                        : item.status === 'success'
+                          ? 'bg-green-100 text-green-600'
+                          : item.status === 'unknown'
+                            ? 'bg-amber-100 text-amber-600'
+                            : item.status === 'pending'
+                              ? 'bg-blue-100 text-blue-600'
+                              : 'bg-red-100 text-red-600'
                     }`}
                   >
                     {item.status === 'pending' ? (
                       <span className="animate-spin">⏳</span>
+                    ) : item.saved ? (
+                      <CheckCircle className="w-4 h-4" />
                     ) : item.status === 'success' ? (
                       <Check className="w-4 h-4" />
                     ) : item.status === 'unknown' ? (
@@ -507,13 +621,25 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                       </div>
                     </div>
 
-                    <div className="md:col-span-1 flex justify-end">
-                      <button
-                        onClick={() => handleRemove(item.tempId)}
-                        className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <div className="md:col-span-1 flex justify-end gap-1">
+                      {/* Manual save button for 'unknown' items with brand+model filled */}
+                      {item.status === 'unknown' && item.brand && item.model && !item.saved && (
+                        <button
+                          onClick={() => handleManualSave(item.tempId)}
+                          className="p-2 text-green-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors"
+                          title="Guardar manualmente"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                        </button>
+                      )}
+                      {!item.saved && (
+                        <button
+                          onClick={() => handleRemove(item.tempId)}
+                          className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -523,25 +649,13 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
         )}
       </div>
 
-      {/* Bottom Floating Action Bar */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none flex justify-center z-30">
-        {scannedItems.length > 0 && (
-          <div className="pointer-events-auto shadow-2xl rounded-2xl overflow-hidden">
-            <button
-              onClick={handleSubmitAll}
-              disabled={isProcessing}
-              className="bg-slate-900 text-white px-8 py-4 font-bold text-lg flex items-center gap-3 hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
-            >
-              {isProcessing ? (
-                <span className="animate-spin">⏳</span>
-              ) : (
-                <Play className="w-5 h-5 fill-current" />
-              )}
-              Procesar {scannedItems.length} Dispositivos
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Print Gate Overlay */}
+      {showPrintGate && (
+        <PrintGateOverlay
+          imeis={savedInCycle.map((s) => s.imei)}
+          onComplete={handlePrintGateComplete}
+        />
+      )}
 
       <datalist id="brands-list-manual">
         {Array.from(new Set(deviceCatalog.map((d) => d.brand)))
