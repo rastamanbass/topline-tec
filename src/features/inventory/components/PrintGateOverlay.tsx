@@ -66,16 +66,24 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           </div>
         )}
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3">
           {!hasPrinted ? (
-            <button
-              onClick={handlePrint}
-              disabled={isLoading || phones.length === 0}
-              className="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center justify-center gap-2 text-lg disabled:opacity-50 transition-colors"
-            >
-              <Printer className="w-5 h-5" />
-              Imprimir {phones.length} Stickers
-            </button>
+            <>
+              <button
+                onClick={handlePrint}
+                disabled={isLoading || phones.length === 0}
+                className="w-full bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center justify-center gap-2 text-lg disabled:opacity-50 transition-colors"
+              >
+                <Printer className="w-5 h-5" />
+                Imprimir {phones.length} Stickers
+              </button>
+              <button
+                onClick={onComplete}
+                className="w-full text-slate-400 hover:text-slate-600 text-sm py-2 transition-colors"
+              >
+                Saltar impresion (imprimir despues desde lote)
+              </button>
+            </>
           ) : (
             <>
               <button

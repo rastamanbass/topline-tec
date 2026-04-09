@@ -132,7 +132,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
         lote: batchLot,
         estado,
         condition: 'Grade A',
-        fechaIngreso: serverTimestamp(),
+        fechaIngreso: new Date().toISOString(),
         createdBy: auth.currentUser?.uid,
         updatedAt: serverTimestamp(),
         statusHistory: [
