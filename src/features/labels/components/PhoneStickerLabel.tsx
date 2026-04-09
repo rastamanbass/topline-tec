@@ -31,12 +31,33 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
   }, [phone.imei, phone.seized]);
 
   return (
-    <div className="sticker-label bg-white font-sans text-black border-2 border-dashed border-gray-300 rounded-lg"
-      style={{ width: '100%', maxWidth: '420px', aspectRatio: '3/2', padding: '3%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}
+    <div
+      className="sticker-label bg-white font-sans text-black border-2 border-dashed border-gray-300 rounded-lg"
+      style={{
+        width: '100%',
+        maxWidth: '420px',
+        aspectRatio: '3/2',
+        padding: '3%',
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
+      }}
     >
       {/* Zone A: Text only (no codes) */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexShrink: 0 }}>
-        <p style={{ fontSize: '18px', fontWeight: 'bold', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0, flex: 1, minWidth: 0 }}>
+        <p
+          style={{
+            fontSize: '18px',
+            fontWeight: 'bold',
+            lineHeight: 1.1,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            margin: 0,
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
           {phone.modelo}
         </p>
         {phone.storage && (
@@ -45,7 +66,17 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
           </span>
         )}
       </div>
-      <p style={{ fontSize: '10px', color: '#999', margin: '2px 0 0', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <p
+        style={{
+          fontSize: '10px',
+          color: '#999',
+          margin: '2px 0 0',
+          lineHeight: 1.1,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
         {phone.lote}
       </p>
 
@@ -57,15 +88,33 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
       )}
 
       {/* Zone C: Barcode (full width, separated from QR) */}
-      <div style={{ textAlign: 'center', marginTop: 'auto', paddingTop: '6px' }}>
+      <div style={{ textAlign: 'center', marginTop: 'auto', paddingTop: '12px' }}>
         {phone.seized ? (
-          <div style={{ background: '#dc2626', color: 'white', fontWeight: 900, fontSize: '14px', padding: '2px 8px', borderRadius: '4px', display: 'inline-block' }}>
+          <div
+            style={{
+              background: '#dc2626',
+              color: 'white',
+              fontWeight: 900,
+              fontSize: '14px',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              display: 'inline-block',
+            }}
+          >
             INHABILITADO
           </div>
         ) : (
           <>
             <svg ref={barcodeRef} style={{ width: '100%', maxHeight: '45px' }} />
-            <p style={{ fontSize: '11px', letterSpacing: '0.15em', fontWeight: 'bold', margin: '2px 0 0', lineHeight: 1 }}>
+            <p
+              style={{
+                fontSize: '11px',
+                letterSpacing: '0.15em',
+                fontWeight: 'bold',
+                margin: '2px 0 0',
+                lineHeight: 1,
+              }}
+            >
               {formatImeiDisplay(phone.imei)}
             </p>
           </>
@@ -74,7 +123,15 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
 
       {/* Counter */}
       {index !== undefined && total !== undefined && (
-        <p style={{ fontSize: '8px', textAlign: 'center', color: '#aaa', margin: '1px 0 0', lineHeight: 1 }}>
+        <p
+          style={{
+            fontSize: '8px',
+            textAlign: 'center',
+            color: '#aaa',
+            margin: '1px 0 0',
+            lineHeight: 1,
+          }}
+        >
           {index + 1}/{total}
         </p>
       )}

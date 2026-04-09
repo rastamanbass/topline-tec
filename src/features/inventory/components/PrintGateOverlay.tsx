@@ -202,7 +202,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           /* Zone C: Barcode container */
           .sticker-label > div:nth-child(4) {
             margin-top: auto !important;
-            padding-top: 3vmin !important;
+            padding-top: 5vmin !important;
             text-align: center !important;
           }
 

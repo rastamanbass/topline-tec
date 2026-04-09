@@ -81,20 +81,13 @@ export default function StickerPrintView() {
           Imprimir {currentBatch.length} stickers
         </button>
 
-        <p className="text-xs text-gray-500">
-          Papel 60×40mm · Sin márgenes
-        </p>
+        <p className="text-xs text-gray-500">Papel 60×40mm · Sin márgenes</p>
       </div>
 
       {/* Sticker previews */}
       <div className="flex flex-col items-center gap-4 p-4 print-area">
         {currentBatch.map((phone, i) => (
-          <PhoneStickerLabel
-            key={phone.id}
-            phone={phone}
-            index={start + i}
-            total={phones.length}
-          />
+          <PhoneStickerLabel key={phone.id} phone={phone} index={start + i} total={phones.length} />
         ))}
       </div>
 
@@ -192,7 +185,7 @@ export default function StickerPrintView() {
           /* Zone C: Barcode container — pushed to bottom with gap */
           .sticker-label > div:nth-child(4) {
             margin-top: auto !important;
-            padding-top: 3vmin !important;
+            padding-top: 5vmin !important;
             text-align: center !important;
           }
 
