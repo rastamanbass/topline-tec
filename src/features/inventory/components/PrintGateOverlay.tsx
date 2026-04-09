@@ -77,6 +77,9 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
                 <Printer className="w-5 h-5" />
                 Imprimir {phones.length} Stickers
               </button>
+              <p className="text-xs text-slate-400 text-center">
+                Papel 60×40mm · Margenes: ninguno · Escala: 100%
+              </p>
               <button
                 onClick={onComplete}
                 className="w-full text-slate-400 hover:text-slate-600 text-sm py-2 transition-colors"
