@@ -105,8 +105,9 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
         </div>
       </div>
 
-      {/* Print-only area: sticker labels */}
-      <div className="print-area hidden">
+      {/* Print-only area: sticker labels - use absolute positioning off-screen instead of hidden,
+           because JsBarcode needs the SVG elements to be in the layout to render barcodes */}
+      <div className="print-area" style={{ position: 'absolute', left: '-9999px', top: 0 }}>
         {phones.map((phone, i) => (
           <PhoneStickerLabel key={phone.id} phone={phone} index={i} total={phones.length} />
         ))}
@@ -139,6 +140,8 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
 
           .print-area {
             display: block !important;
+            position: static !important;
+            left: auto !important;
             padding: 0 !important;
             margin: 0 !important;
             gap: 0 !important;
