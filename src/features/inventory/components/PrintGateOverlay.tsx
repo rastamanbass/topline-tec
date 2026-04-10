@@ -223,13 +223,13 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label > div:nth-child(3) > svg {
-            width: 13mm !important;
-            height: 13mm !important;
+            width: 9mm !important;
+            height: 9mm !important;
           }
 
           /* Zone C: Barcode */
           .sticker-label > div:nth-child(4) {
-            margin-top: 3mm !important;
+            margin-top: 0.5mm !important;
             padding: 0 !important;
             text-align: center !important;
             width: 100% !important;
@@ -238,7 +238,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           .sticker-label > div:nth-child(4) > svg {
             width: 95% !important;
             height: auto !important;
-            max-height: 6mm !important;
+            max-height: 5mm !important;
           }
 
           .sticker-label > div:nth-child(4) > p {
