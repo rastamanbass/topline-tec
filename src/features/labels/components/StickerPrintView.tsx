@@ -85,7 +85,7 @@ export default function StickerPrintView() {
       </div>
 
       {/* Sticker previews */}
-      <div className="flex flex-col items-center gap-4 p-4 print-area">
+      <div className="print-area">
         {currentBatch.map((phone, i) => (
           <PhoneStickerLabel key={phone.id} phone={phone} index={start + i} total={phones.length} />
         ))}
