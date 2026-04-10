@@ -81,7 +81,7 @@ export default function StickerPrintView() {
           Imprimir {currentBatch.length} stickers
         </button>
 
-        <p className="text-xs text-gray-500">Papel 50×70mm · Sin márgenes</p>
+        <p className="text-xs text-gray-500">Papel 70×50mm · Sin márgenes</p>
       </div>
 
       {/* Sticker previews */}
@@ -94,7 +94,7 @@ export default function StickerPrintView() {
       <style>{`
         @media print {
           @page {
-            size: 50mm 70mm;
+            size: 70mm 50mm;
             margin: 0;
           }
 
@@ -120,8 +120,8 @@ export default function StickerPrintView() {
           }
 
           .sticker-label {
-            width: 50mm !important;
-            height: 70mm !important;
+            width: 70mm !important;
+            height: 50mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
