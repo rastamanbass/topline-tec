@@ -78,7 +78,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
                 Imprimir {phones.length} Stickers
               </button>
               <p className="text-xs text-slate-400 text-center">
-                Papel 70×50mm · Margenes: ninguno · Escala: 100%
+                Papel 50×70mm · Margenes: ninguno · Escala: 100%
               </p>
               <button
                 onClick={onComplete}
@@ -119,7 +119,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
       <style>{`
         @media print {
           @page {
-            size: 70mm 50mm;
+            size: 50mm 70mm;
             margin: 0;
           }
 
@@ -151,8 +151,8 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label {
-            width: 70mm !important;
-            height: 50mm !important;
+            width: 50mm !important;
+            height: 70mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
