@@ -151,12 +151,12 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label {
-            width: 100% !important;
-            height: 100% !important;
+            width: 70mm !important;
+            height: 50mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
-            padding: 2vmin !important;
+            padding: 1.5mm !important;
             border: none !important;
             border-radius: 0 !important;
             box-sizing: border-box !important;
@@ -164,6 +164,8 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             flex-direction: column !important;
             justify-content: flex-start !important;
             overflow: hidden !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
             page-break-after: always !important;
             break-after: page !important;
           }
@@ -178,13 +180,13 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             display: flex !important;
             flex: none !important;
             align-items: baseline !important;
-            gap: 3vmin !important;
+            gap: 2mm !important;
             margin-bottom: 0 !important;
           }
 
           /* Model text */
           .sticker-label > div:first-child > p {
-            font-size: 8vmin !important;
+            font-size: 4mm !important;
             font-weight: bold !important;
             line-height: 1.1 !important;
             margin: 0 !important;
@@ -192,53 +194,55 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
 
           /* Storage text (inline span) */
           .sticker-label > div:first-child > span {
-            font-size: 5vmin !important;
+            font-size: 2.5mm !important;
           }
 
           /* Lote text (below model row) */
           .sticker-label > p:first-of-type {
-            font-size: 4vmin !important;
-            margin: 1vmin 0 0 !important;
+            font-size: 2mm !important;
+            margin: 0.5mm 0 0 !important;
           }
 
           /* Zone B: QR code container */
           .sticker-label > div:nth-child(3) {
-            margin-top: 2vmin !important;
+            margin-top: 1mm !important;
             flex: none !important;
+            display: flex !important;
+            justify-content: center !important;
           }
 
           /* QR SVG */
           .sticker-label > div:nth-child(3) > svg {
-            width: 30vmin !important;
-            height: 30vmin !important;
+            width: 18mm !important;
+            height: 18mm !important;
           }
 
           /* Zone C: Barcode container */
           .sticker-label > div:nth-child(4) {
             margin-top: auto !important;
-            padding-top: 5vmin !important;
+            padding-top: 1mm !important;
             text-align: center !important;
           }
 
           /* Barcode SVG */
           .sticker-label > div:nth-child(4) > svg {
-            width: 90% !important;
+            width: 95% !important;
             height: auto !important;
-            max-height: 20vmin !important;
+            max-height: 10mm !important;
           }
 
           /* IMEI text below barcode */
           .sticker-label > div:nth-child(4) > p {
-            font-size: 4vmin !important;
+            font-size: 2.2mm !important;
             font-weight: bold !important;
-            letter-spacing: 0.12em !important;
-            margin: 1vmin 0 0 !important;
+            letter-spacing: 0.08em !important;
+            margin: 0.3mm 0 0 !important;
             line-height: 1 !important;
           }
 
           /* Counter */
           .sticker-label > p:last-child {
-            font-size: 3vmin !important;
+            font-size: 1.5mm !important;
             margin: 0 !important;
             line-height: 1 !important;
           }
