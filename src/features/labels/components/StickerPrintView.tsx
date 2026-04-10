@@ -181,17 +181,9 @@ export default function StickerPrintView() {
             width: 100% !important;
           }
 
-          /* Zone B: QR code */
+          /* Zone B: QR code — hidden */
           .sticker-label > div:nth-child(3) {
-            margin: 0 !important;
-            padding: 0 !important;
-            display: flex !important;
-            justify-content: center !important;
-          }
-
-          .sticker-label > div:nth-child(3) > svg {
-            width: 9mm !important;
-            height: 9mm !important;
+            display: none !important;
           }
 
           /* Zone C: Barcode */
@@ -205,7 +197,7 @@ export default function StickerPrintView() {
           .sticker-label > div:nth-child(4) > svg {
             width: 95% !important;
             height: auto !important;
-            max-height: 5mm !important;
+            max-height: 10mm !important;
           }
 
           .sticker-label > div:nth-child(4) > p {
