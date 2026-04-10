@@ -78,7 +78,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
                 Imprimir {phones.length} Stickers
               </button>
               <p className="text-xs text-slate-400 text-center">
-                Papel 35×25mm · Margenes: ninguno · Escala: 100%
+                Papel 60×40mm · Margenes: ninguno · Escala: 100%
               </p>
               <button
                 onClick={onComplete}
@@ -119,7 +119,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
       <style>{`
         @media print {
           @page {
-            size: 35mm 25mm;
+            size: 60mm 40mm;
             margin: 0;
           }
 
@@ -144,7 +144,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           html, body {
             margin: 0 !important;
             padding: 0 !important;
-            width: 35mm !important;
+            width: 60mm !important;
           }
 
           .print-area {
@@ -154,12 +154,12 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             padding: 0 !important;
             margin: 0 !important;
             gap: 0 !important;
-            width: 35mm !important;
+            width: 60mm !important;
           }
 
           .sticker-label {
-            width: 35mm !important;
-            height: 25mm !important;
+            width: 60mm !important;
+            height: 40mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
@@ -168,7 +168,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             border-radius: 0 !important;
             box-sizing: border-box !important;
             display: grid !important;
-            grid-template-columns: 13mm 1fr !important;
+            grid-template-columns: 22mm 1fr !important;
             grid-template-rows: auto auto 1fr !important;
             grid-template-areas:
               "model model"
@@ -199,7 +199,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label > div:first-child > p {
-            font-size: 2.3mm !important;
+            font-size: 3.5mm !important;
             font-weight: bold !important;
             line-height: 1 !important;
             margin: 0 !important;
@@ -209,13 +209,13 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label > div:first-child > span {
-            font-size: 1.6mm !important;
+            font-size: 2.3mm !important;
           }
 
           /* Lote text */
           .sticker-label > p:first-of-type {
             grid-area: lote !important;
-            font-size: 1.4mm !important;
+            font-size: 2mm !important;
             margin: 0 !important;
             line-height: 1 !important;
             color: #666 !important;
@@ -235,8 +235,8 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label > div:nth-child(3) > svg {
-            width: 13mm !important;
-            height: 13mm !important;
+            width: 22mm !important;
+            height: 22mm !important;
           }
 
           /* Zone C: Barcode */
@@ -255,11 +255,11 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           .sticker-label > div:nth-child(4) > svg {
             width: 100% !important;
             height: auto !important;
-            max-height: 9mm !important;
+            max-height: 16mm !important;
           }
 
           .sticker-label > div:nth-child(4) > p {
-            font-size: 1.4mm !important;
+            font-size: 2mm !important;
             font-weight: bold !important;
             letter-spacing: 0.03em !important;
             margin: 0.2mm 0 0 !important;
