@@ -170,7 +170,8 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            justify-content: space-between !important;
+            justify-content: center !important;
+            gap: 0.3mm !important;
             overflow: hidden !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
@@ -230,7 +231,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           .sticker-label > div:nth-child(4) > svg {
             width: 95% !important;
             height: auto !important;
-            max-height: 10mm !important;
+            max-height: 20mm !important;
           }
 
           .sticker-label > div:nth-child(4) > p {
