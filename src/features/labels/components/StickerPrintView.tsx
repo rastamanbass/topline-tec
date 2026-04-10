@@ -196,7 +196,7 @@ export default function StickerPrintView() {
 
           /* Zone C: Barcode */
           .sticker-label > div:nth-child(4) {
-            margin: 0 !important;
+            margin-top: 3mm !important;
             padding: 0 !important;
             text-align: center !important;
             width: 100% !important;
