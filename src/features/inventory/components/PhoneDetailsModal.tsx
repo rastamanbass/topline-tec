@@ -4,6 +4,7 @@ import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { db } from '../../../lib/firebase';
+import { canViewCosts } from '../../../lib/permissions';
 import { useInventoryStore } from '../stores/inventoryStore';
 import { useAuth } from '../../../context';
 import { useDeletePhone } from '../hooks/usePhones';
@@ -45,7 +46,8 @@ function parseHistoryDate(date: unknown): Date {
 
 export default function PhoneDetailsModal() {
   const { isModalOpen, modalMode, selectedPhone, closeModal, openModal } = useInventoryStore();
-  const { userRole } = useAuth();
+  const { user, userRole } = useAuth();
+  const showCosts = canViewCosts(user?.email);
   const deletePhone = useDeletePhone();
   const queryClient = useQueryClient();
 
@@ -181,12 +183,14 @@ export default function PhoneDetailsModal() {
                 Información Financiera
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Costo</label>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {formatCurrency(selectedPhone.costo)}
-                  </p>
-                </div>
+                {showCosts && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Costo</label>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {formatCurrency(selectedPhone.costo)}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
                     Precio de Venta
@@ -195,23 +199,25 @@ export default function PhoneDetailsModal() {
                     {formatCurrency(selectedPhone.precioVenta)}
                   </p>
                 </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Margen</label>
-                  <p className="text-base font-medium text-blue-600">
-                    {formatCurrency(selectedPhone.precioVenta - selectedPhone.costo)}
-                    <span className="text-sm text-gray-600 ml-2">
-                      (
-                      {selectedPhone.costo > 0
-                        ? (
-                            ((selectedPhone.precioVenta - selectedPhone.costo) /
-                              selectedPhone.costo) *
-                            100
-                          ).toFixed(1)
-                        : '—'}
-                      %)
-                    </span>
-                  </p>
-                </div>
+                {showCosts && (
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Margen</label>
+                    <p className="text-base font-medium text-blue-600">
+                      {formatCurrency(selectedPhone.precioVenta - selectedPhone.costo)}
+                      <span className="text-sm text-gray-600 ml-2">
+                        (
+                        {selectedPhone.costo > 0
+                          ? (
+                              ((selectedPhone.precioVenta - selectedPhone.costo) /
+                                selectedPhone.costo) *
+                              100
+                            ).toFixed(1)
+                          : '—'}
+                        %)
+                      </span>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}

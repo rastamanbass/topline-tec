@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { usePhones } from '../inventory/hooks/usePhones';
+import { useAuth } from '../../context';
+import { canViewCosts } from '../../lib/permissions';
 import MetricCard from '../../components/ui/MetricCard';
 import GlassCard from '../../components/ui/GlassCard';
 import { DollarSign, Smartphone, Wrench, TrendingUp, AlertCircle } from 'lucide-react';
@@ -31,6 +33,8 @@ const STATIC_CHART_DATA = Array.from({ length: 10 }, (_, i) => {
 });
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const showCosts = canViewCosts(user?.email);
   const { data: phones = [] } = usePhones();
 
   // --- Derived Stats (Memoized for performance) ---
@@ -99,15 +103,17 @@ export default function Dashboard() {
           delay={0.1}
           chartData={stats.chartData.map((d) => ({ value: d.revenue }))}
         />
-        <MetricCard
-          title="Ganancia Neta"
-          value={`$${stats.grossProfit.toLocaleString()}`}
-          trend={stats.mockTrendProfit}
-          icon={<TrendingUp className="w-6 h-6" />}
-          color="emerald"
-          delay={0.2}
-          chartData={stats.chartData.map((d) => ({ value: d.profit }))}
-        />
+        {showCosts && (
+          <MetricCard
+            title="Ganancia Neta"
+            value={`$${stats.grossProfit.toLocaleString()}`}
+            trend={stats.mockTrendProfit}
+            icon={<TrendingUp className="w-6 h-6" />}
+            color="emerald"
+            delay={0.2}
+            chartData={stats.chartData.map((d) => ({ value: d.profit }))}
+          />
+        )}
         <MetricCard
           title="En Stock"
           value={stats.availableCount}

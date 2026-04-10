@@ -2,6 +2,7 @@ import { Edit2, Trash2, Eye, RefreshCw, Loader2, ShoppingCart } from 'lucide-rea
 import { useInventoryStore } from '../stores/inventoryStore';
 import { useSalesStore } from '../../sales/stores/salesStore';
 import { useAuth } from '../../../context';
+import { canViewCosts } from '../../../lib/permissions';
 import StatusBadgePro from '../../../components/ui/StatusBadgePro';
 import StatusChangeModal from './StatusChangeModal';
 import ConfirmModal from '../../../components/ConfirmModal';
@@ -20,7 +21,8 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
   const { openModal, selectedPhoneIds, toggleSelection, selectAll, clearSelection } =
     useInventoryStore();
   const { addToCart, openPaymentModal } = useSalesStore();
-  const { userRole } = useAuth();
+  const { user, userRole } = useAuth();
+  const showCosts = canViewCosts(user?.email);
   const deletePhone = useDeletePhone();
 
   // Status change modal state
@@ -148,9 +150,11 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
             <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
               Lote
             </th>
-            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Costo
-            </th>
+            {showCosts && (
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                Costo
+              </th>
+            )}
             <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
               Precio
             </th>
@@ -184,9 +188,11 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
                 {phone.lote}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {formatCurrency(phone.costo)}
-              </td>
+              {showCosts && (
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {formatCurrency(phone.costo)}
+                </td>
+              )}
               <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">
                 {phone.precioVenta === 0 || phone.precioVenta == null ? (
                   <span className="text-orange-500 font-medium text-sm">Sin precio</span>

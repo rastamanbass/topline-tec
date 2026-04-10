@@ -19,6 +19,7 @@ import { useBatches } from '../hooks/useBatches';
 import BatchManager from './BatchManager';
 import PrintGateOverlay from './PrintGateOverlay';
 import { useAuth } from '../../../context';
+import { canViewCosts } from '../../../lib/permissions';
 import GlassCard from '../../../components/ui/GlassCard';
 import {
   splitMarcaAndSupplier,
@@ -59,6 +60,7 @@ interface ScannerViewProps {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProps) {
   const { user, userRole } = useAuth();
+  const showCosts = canViewCosts(user?.email);
   const { batches } = useBatches();
   const queryClient = useQueryClient();
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
@@ -427,19 +429,21 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-slate-200">
-          <DollarSign className="w-4 h-4 text-slate-400" />
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Costo (Todos)</span>
-            <input
-              type="number"
-              value={batchCost}
-              onChange={(e) => setBatchCost(e.target.value)}
-              placeholder="0.00"
-              className="text-sm font-semibold text-slate-700 outline-none w-20 bg-transparent placeholder:text-slate-300"
-            />
+        {showCosts && (
+          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-slate-200">
+            <DollarSign className="w-4 h-4 text-slate-400" />
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Costo (Todos)</span>
+              <input
+                type="number"
+                value={batchCost}
+                onChange={(e) => setBatchCost(e.target.value)}
+                placeholder="0.00"
+                className="text-sm font-semibold text-slate-700 outline-none w-20 bg-transparent placeholder:text-slate-300"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-slate-200">
           <Tag className="w-4 h-4 text-slate-400" />
@@ -561,23 +565,25 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                       />
                     </div>
 
-                    <div className="md:col-span-2">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
-                        COSTO
-                      </p>
-                      <div className="flex items-center text-slate-500">
-                        <span className="text-xs mr-1">$</span>
-                        <input
-                          type="number"
-                          value={item.cost || ''}
-                          onChange={(e) =>
-                            handleUpdateItem(item.tempId, 'cost', parseFloat(e.target.value))
-                          }
-                          className="bg-transparent border-b border-slate-200 focus:border-primary-500 outline-none w-full font-mono text-sm"
-                          placeholder="0.00"
-                        />
+                    {showCosts && (
+                      <div className="md:col-span-2">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
+                          COSTO
+                        </p>
+                        <div className="flex items-center text-slate-500">
+                          <span className="text-xs mr-1">$</span>
+                          <input
+                            type="number"
+                            value={item.cost || ''}
+                            onChange={(e) =>
+                              handleUpdateItem(item.tempId, 'cost', parseFloat(e.target.value))
+                            }
+                            className="bg-transparent border-b border-slate-200 focus:border-primary-500 outline-none w-full font-mono text-sm"
+                            placeholder="0.00"
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="md:col-span-1">
                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">

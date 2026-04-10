@@ -13,6 +13,7 @@ import AccessoryForm from './components/AccessoryForm';
 import { useAuth } from '../../context';
 import ConfirmModal from '../../components/ConfirmModal';
 import { ACCESSORIES_MARGIN_THRESHOLDS } from '../../lib/constants';
+import { canViewCosts } from '../../lib/permissions';
 
 const fmt = (n: number) =>
   new Intl.NumberFormat('en-US', {
@@ -22,7 +23,8 @@ const fmt = (n: number) =>
   }).format(n);
 
 export default function AccessoriesPage() {
-  const { userRole } = useAuth();
+  const { user, userRole } = useAuth();
+  const showCosts = canViewCosts(user?.email);
   const { data: accessories = [], isLoading } = useAccessories();
   const createMut = useCreateAccessory();
   const updateMut = useUpdateAccessory();
@@ -182,9 +184,9 @@ export default function AccessoriesPage() {
                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase font-medium border-b border-gray-100">
                   <th className="text-left px-4 py-3">Producto</th>
                   <th className="text-left px-4 py-3">Categoría</th>
-                  <th className="text-right px-4 py-3">Costo</th>
+                  {showCosts && <th className="text-right px-4 py-3">Costo</th>}
                   <th className="text-right px-4 py-3">Precio</th>
-                  <th className="text-right px-4 py-3">Margen</th>
+                  {showCosts && <th className="text-right px-4 py-3">Margen</th>}
                   <th className="text-center px-4 py-3">Stock</th>
                   {canWrite && <th className="px-4 py-3"></th>}
                 </tr>
@@ -210,23 +212,27 @@ export default function AccessoriesPage() {
                           {acc.category}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-500">{fmt(acc.costPrice)}</td>
+                      {showCosts && (
+                        <td className="px-4 py-3 text-right text-gray-500">{fmt(acc.costPrice)}</td>
+                      )}
                       <td className="px-4 py-3 text-right font-bold text-gray-900">
                         {fmt(acc.salePrice)}
                       </td>
-                      <td className="px-4 py-3 text-right">
-                        <span
-                          className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            margin >= ACCESSORIES_MARGIN_THRESHOLDS.healthy
-                              ? 'bg-emerald-100 text-emerald-700'
-                              : margin >= ACCESSORIES_MARGIN_THRESHOLDS.acceptable
-                                ? 'bg-yellow-100 text-yellow-700'
-                                : 'bg-red-100 text-red-700'
-                          }`}
-                        >
-                          {margin.toFixed(0)}%
-                        </span>
-                      </td>
+                      {showCosts && (
+                        <td className="px-4 py-3 text-right">
+                          <span
+                            className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                              margin >= ACCESSORIES_MARGIN_THRESHOLDS.healthy
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : margin >= ACCESSORIES_MARGIN_THRESHOLDS.acceptable
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : 'bg-red-100 text-red-700'
+                            }`}
+                          >
+                            {margin.toFixed(0)}%
+                          </span>
+                        </td>
+                      )}
                       <td className="px-4 py-3 text-center">
                         <span
                           className={`text-sm font-bold ${

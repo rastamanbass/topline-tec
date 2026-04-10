@@ -12,6 +12,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../../context';
+import { canViewCosts } from '../../../lib/permissions';
 import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel, splitMarcaAndSupplier } from '../../../lib/phoneUtils';
 import { AlertTriangle } from 'lucide-react';
 
@@ -43,7 +44,8 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
   const { modalMode, selectedPhone } = useInventoryStore();
   const createPhone = useCreatePhone();
   const updatePhone = useUpdatePhone();
-  const { userRole } = useAuth();
+  const { user, userRole } = useAuth();
+  const showCosts = canViewCosts(user?.email);
   const { batches } = useBatches();
 
   const {
@@ -328,20 +330,22 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
 
       {/* Costo and Precio Venta */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="costo" className="block text-sm font-medium text-gray-700 mb-1">
-            Costo (USD) <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="costo"
-            type="number"
-            step="0.01"
-            {...register('costo', { valueAsNumber: true })}
-            className={`input-field ${errors.costo ? 'border-red-500' : ''}`}
-            placeholder="500.00"
-          />
-          {errors.costo && <p className="mt-1 text-sm text-red-600">{errors.costo.message}</p>}
-        </div>
+        {showCosts && (
+          <div>
+            <label htmlFor="costo" className="block text-sm font-medium text-gray-700 mb-1">
+              Costo (USD) <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="costo"
+              type="number"
+              step="0.01"
+              {...register('costo', { valueAsNumber: true })}
+              className={`input-field ${errors.costo ? 'border-red-500' : ''}`}
+              placeholder="500.00"
+            />
+            {errors.costo && <p className="mt-1 text-sm text-red-600">{errors.costo.message}</p>}
+          </div>
+        )}
 
         <div>
           <label htmlFor="precioVenta" className="block text-sm font-medium text-gray-700 mb-1">
