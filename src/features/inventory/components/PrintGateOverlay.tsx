@@ -119,7 +119,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
       <style>{`
         @media print {
           @page {
-            size: 40mm 60mm;
+            size: 20mm 30mm;
             margin: 0;
           }
 
@@ -144,7 +144,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           html, body {
             margin: 0 !important;
             padding: 0 !important;
-            width: 40mm !important;
+            width: 20mm !important;
           }
 
           .print-area {
@@ -154,12 +154,12 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             padding: 0 !important;
             margin: 0 !important;
             gap: 0 !important;
-            width: 40mm !important;
+            width: 20mm !important;
           }
 
           .sticker-label {
-            width: 40mm !important;
-            height: 60mm !important;
+            width: 20mm !important;
+            height: 30mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
@@ -194,19 +194,19 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label > div:first-child > p {
-            font-size: 3.5mm !important;
+            font-size: 1.8mm !important;
             font-weight: bold !important;
             line-height: 1 !important;
             margin: 0 !important;
           }
 
           .sticker-label > div:first-child > span {
-            font-size: 2.3mm !important;
+            font-size: 1.2mm !important;
           }
 
           /* Lote text */
           .sticker-label > p:first-of-type {
-            font-size: 2mm !important;
+            font-size: 1mm !important;
             margin: 0.5mm 0 0 !important;
             line-height: 1 !important;
             color: #666 !important;
@@ -223,8 +223,8 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           }
 
           .sticker-label > div:nth-child(3) > svg {
-            width: 26mm !important;
-            height: 26mm !important;
+            width: 13mm !important;
+            height: 13mm !important;
           }
 
           /* Zone C: Barcode */
@@ -238,11 +238,11 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           .sticker-label > div:nth-child(4) > svg {
             width: 95% !important;
             height: auto !important;
-            max-height: 12mm !important;
+            max-height: 6mm !important;
           }
 
           .sticker-label > div:nth-child(4) > p {
-            font-size: 2mm !important;
+            font-size: 1mm !important;
             font-weight: bold !important;
             letter-spacing: 0.05em !important;
             margin: 0.3mm 0 0 !important;
