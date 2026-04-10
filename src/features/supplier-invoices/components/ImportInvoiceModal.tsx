@@ -28,6 +28,7 @@ import { validateIMEI, coerceIMEI } from '../utils/imeiValidator';
 import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel, splitMarcaAndSupplier } from '../../../lib/phoneUtils';
 import { useSuppliers, useCreateSupplier } from '../hooks/useSuppliers';
 import { useImportSupplierInvoice } from '../hooks/useSupplierInvoices';
+import { useBatches } from '../../inventory/hooks/useBatches';
 import type { ParsedSheet } from '../utils/excelParser';
 import type { StandardField } from '../utils/columnDetector';
 
@@ -209,6 +210,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
   const { data: suppliers = [] } = useSuppliers();
   const createSupplier = useCreateSupplier();
   const importInvoice = useImportSupplierInvoice();
+  const { batches: existingBatches } = useBatches();
 
   // ── File handling ──────────────────────────────────────────────────────────
 
@@ -310,7 +312,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
       const numMatch = file.name.match(/\d{4,}/);
       const autoNumber = numMatch ? numMatch[0] : file.name.replace(/\.[^.]+$/, '');
       setInvoiceNumber(autoNumber);
-      setLoteName(`INV-${autoNumber} · ${supplierName}`);
+      // Only auto-fill lote if user hasn't typed one yet — don't overwrite their choice
+      setLoteName((prev) => (prev.trim() ? prev : `INV-${autoNumber} · ${supplierName}`));
 
       if (detection.fileType === 'excel' && detection.parsedSheet) {
         // Check if we need manual mapping
@@ -916,8 +919,18 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                       type="text"
                       value={loteName}
                       onChange={(e) => setLoteName(e.target.value)}
+                      list="existing-batches-import"
+                      placeholder="Escribe o elegi un lote existente"
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 outline-none bg-white"
                     />
+                    <datalist id="existing-batches-import">
+                      {existingBatches.map((b) => (
+                        <option key={b.id} value={b.name} />
+                      ))}
+                    </datalist>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Para AGREGAR a un lote existente, seleccionalo de la lista. Cuidado con espacios y mayusculas.
+                    </p>
                   </div>
 
                   <div>
