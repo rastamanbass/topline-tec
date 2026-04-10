@@ -94,7 +94,7 @@ export default function StickerPrintView() {
       <style>{`
         @media print {
           @page {
-            size: 20mm 30mm;
+            size: 30mm 20mm;
             margin: 0;
           }
 
@@ -115,7 +115,7 @@ export default function StickerPrintView() {
           html, body, .print-area {
             margin: 0 !important;
             padding: 0 !important;
-            width: 20mm !important;
+            width: 30mm !important;
             height: auto !important;
           }
 
@@ -125,8 +125,8 @@ export default function StickerPrintView() {
           }
 
           .sticker-label {
-            width: 20mm !important;
-            height: 30mm !important;
+            width: 30mm !important;
+            height: 20mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
