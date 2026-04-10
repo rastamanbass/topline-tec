@@ -27,7 +27,7 @@ import {
   normalizeStorage,
   normalizeIPhoneModel,
 } from '../../../lib/phoneUtils';
-import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -44,6 +44,8 @@ interface ScannedItem {
   cost: number;
   price: number;
   saved?: boolean; // true once saved to Firestore
+  firestoreId?: string; // Firestore doc ID once saved
+  syncing?: boolean; // true while pushing an update to Firestore
 }
 
 interface SavedInCycleEntry {
@@ -66,6 +68,9 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
   const [inputBuffer, setInputBuffer] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Debounce timers per item — prevents hammering Firestore on every keystroke
+  const updateTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   // Auto-save + print gate state
   const [savedInCycle, setSavedInCycle] = useState<SavedInCycleEntry[]>([]);
@@ -272,7 +277,9 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
         try {
           const firestoreId = await savePhoneToFirestore(resolvedItem);
           setScannedItems((prev) =>
-            prev.map((item) => (item.tempId === tempId ? { ...item, saved: true } : item))
+            prev.map((item) =>
+              item.tempId === tempId ? { ...item, saved: true, firestoreId } : item
+            )
           );
           trackSavedPhone(resolvedItem.imei, firestoreId);
         } catch (saveErr) {
@@ -318,31 +325,116 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
     setScannedItems((prev) => prev.filter((i) => i.tempId !== id));
   };
 
+  // Push a single field update to Firestore (debounced per item to avoid spam)
+  const pushUpdateToFirestore = useCallback(
+    (firestoreId: string, tempId: string, updates: Record<string, unknown>) => {
+      const existing = updateTimersRef.current.get(tempId);
+      if (existing) clearTimeout(existing);
+
+      const timer = setTimeout(async () => {
+        try {
+          setScannedItems((prev) =>
+            prev.map((i) => (i.tempId === tempId ? { ...i, syncing: true } : i))
+          );
+          await updateDoc(doc(db, 'phones', firestoreId), {
+            ...updates,
+            updatedAt: serverTimestamp(),
+          });
+          setScannedItems((prev) =>
+            prev.map((i) => (i.tempId === tempId ? { ...i, syncing: false } : i))
+          );
+          queryClient.invalidateQueries({ queryKey: ['phones'] });
+          queryClient.invalidateQueries({ queryKey: ['phones-paginated'] });
+        } catch (err) {
+          console.error('Failed to sync field update:', err);
+          setScannedItems((prev) =>
+            prev.map((i) => (i.tempId === tempId ? { ...i, syncing: false } : i))
+          );
+          toast.error('Error sincronizando cambio');
+        }
+      }, 600);
+
+      updateTimersRef.current.set(tempId, timer);
+    },
+    [queryClient]
+  );
+
   const handleUpdateItem = (id: string, field: keyof ScannedItem, value: string | number) => {
     setScannedItems((prev) => {
       const next = prev.map((item) => (item.tempId === id ? { ...item, [field]: value } : item));
 
-      // SMART LEARNING: If Brand+Model are filled, save to local DB
       const updatedItem = next.find((i) => i.tempId === id);
+
+      // SMART LEARNING: If Brand+Model are filled, save to local DB
       if (updatedItem && (field === 'brand' || field === 'model')) {
         if (updatedItem.brand && updatedItem.model && updatedItem.imei.length >= 8) {
           const tac = updatedItem.imei.substring(0, 8);
           saveDeviceDefinition(tac, updatedItem.brand, updatedItem.model);
         }
       }
+
+      // If already saved to Firestore, propagate the change there
+      if (updatedItem?.firestoreId) {
+        const firestoreField =
+          field === 'cost'
+            ? 'costo'
+            : field === 'price'
+              ? 'precioVenta'
+              : field === 'brand'
+                ? 'marca'
+                : field === 'model'
+                  ? 'modelo'
+                  : field === 'storage'
+                    ? 'storage'
+                    : null;
+
+        if (firestoreField) {
+          pushUpdateToFirestore(updatedItem.firestoreId, id, {
+            [firestoreField]: value,
+          });
+        }
+      }
+
       return next;
     });
   };
 
+  // Cleanup debounce timers on unmount
+  useEffect(() => {
+    const timers = updateTimersRef.current;
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+    };
+  }, []);
+
   const applyBatch = () => {
     if (!batchCost && !batchPrice) return;
-    setScannedItems((prev) =>
-      prev.map((item) => ({
+
+    const newCost = batchCost ? parseFloat(batchCost) : null;
+    const newPrice = batchPrice ? parseFloat(batchPrice) : null;
+
+    setScannedItems((prev) => {
+      const next = prev.map((item) => ({
         ...item,
-        cost: batchCost ? parseFloat(batchCost) : item.cost,
-        price: batchPrice ? parseFloat(batchPrice) : item.price,
-      }))
-    );
+        cost: newCost !== null ? newCost : item.cost,
+        price: newPrice !== null ? newPrice : item.price,
+      }));
+
+      // Push updates to Firestore for already-saved items
+      next.forEach((item) => {
+        if (item.firestoreId) {
+          const updates: Record<string, unknown> = {};
+          if (newCost !== null) updates.costo = newCost;
+          if (newPrice !== null) updates.precioVenta = newPrice;
+          if (Object.keys(updates).length > 0) {
+            pushUpdateToFirestore(item.firestoreId, item.tempId, updates);
+          }
+        }
+      });
+
+      return next;
+    });
+
     toast.success('Precios aplicados a todo el lote');
   };
 
@@ -358,7 +450,9 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
     try {
       const firestoreId = await savePhoneToFirestore(item);
       setScannedItems((prev) =>
-        prev.map((i) => (i.tempId === tempId ? { ...i, saved: true, status: 'success' } : i))
+        prev.map((i) =>
+          i.tempId === tempId ? { ...i, saved: true, status: 'success', firestoreId } : i
+        )
       );
       trackSavedPhone(item.imei, firestoreId);
     } catch (err) {
@@ -503,7 +597,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                               : 'bg-red-100 text-red-600'
                     }`}
                   >
-                    {item.status === 'pending' ? (
+                    {item.status === 'pending' || item.syncing ? (
                       <span className="animate-spin">⏳</span>
                     ) : item.saved ? (
                       <CheckCircle className="w-4 h-4" />
