@@ -78,7 +78,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
                 Imprimir {phones.length} Stickers
               </button>
               <p className="text-xs text-slate-400 text-center">
-                Papel 60×40mm · Margenes: ninguno · Escala: 100%
+                Papel 40×60mm · Margenes: ninguno · Escala: 100%
               </p>
               <button
                 onClick={onComplete}
@@ -119,7 +119,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
       <style>{`
         @media print {
           @page {
-            size: 60mm 40mm;
+            size: 40mm 60mm;
             margin: 0;
           }
 
@@ -144,7 +144,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           html, body {
             margin: 0 !important;
             padding: 0 !important;
-            width: 60mm !important;
+            width: 40mm !important;
           }
 
           .print-area {
@@ -154,28 +154,23 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             padding: 0 !important;
             margin: 0 !important;
             gap: 0 !important;
-            width: 60mm !important;
+            width: 40mm !important;
           }
 
           .sticker-label {
-            width: 60mm !important;
-            height: 40mm !important;
+            width: 40mm !important;
+            height: 60mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
-            padding: 0.5mm !important;
+            padding: 1mm !important;
             border: none !important;
             border-radius: 0 !important;
             box-sizing: border-box !important;
-            display: grid !important;
-            grid-template-columns: 22mm 1fr !important;
-            grid-template-rows: auto auto 1fr !important;
-            grid-template-areas:
-              "model model"
-              "lote lote"
-              "qr barcode" !important;
-            column-gap: 0.5mm !important;
-            row-gap: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
             overflow: hidden !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
@@ -190,22 +185,20 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
 
           /* Zone A: Model + Storage */
           .sticker-label > div:first-child {
-            grid-area: model !important;
             display: flex !important;
             align-items: baseline !important;
             gap: 1mm !important;
             margin: 0 !important;
-            min-width: 0 !important;
+            width: 100% !important;
+            justify-content: center !important;
           }
 
           .sticker-label > div:first-child > p {
             font-size: 3.5mm !important;
             font-weight: bold !important;
-            line-height: 1 !important;
+            line-height: 1.1 !important;
             margin: 0 !important;
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
+            text-align: center !important;
           }
 
           .sticker-label > div:first-child > span {
@@ -214,62 +207,55 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
 
           /* Lote text */
           .sticker-label > p:first-of-type {
-            grid-area: lote !important;
             font-size: 2mm !important;
-            margin: 0 !important;
+            margin: 0.5mm 0 0 !important;
             line-height: 1 !important;
             color: #666 !important;
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
+            text-align: center !important;
+            width: 100% !important;
           }
 
           /* Zone B: QR code */
           .sticker-label > div:nth-child(3) {
-            grid-area: qr !important;
-            margin: 0 !important;
+            margin: 1.5mm 0 0 !important;
             padding: 0 !important;
             display: flex !important;
-            align-items: center !important;
             justify-content: center !important;
           }
 
           .sticker-label > div:nth-child(3) > svg {
-            width: 22mm !important;
-            height: 22mm !important;
+            width: 26mm !important;
+            height: 26mm !important;
           }
 
           /* Zone C: Barcode */
           .sticker-label > div:nth-child(4) {
-            grid-area: barcode !important;
-            margin: 0 !important;
-            padding: 0 0 0 0.5mm !important;
+            margin-top: auto !important;
+            padding: 0 !important;
             text-align: center !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-width: 0 !important;
+            width: 100% !important;
           }
 
           .sticker-label > div:nth-child(4) > svg {
-            width: 100% !important;
+            width: 95% !important;
             height: auto !important;
-            max-height: 16mm !important;
+            max-height: 9mm !important;
           }
 
           .sticker-label > div:nth-child(4) > p {
             font-size: 2mm !important;
             font-weight: bold !important;
-            letter-spacing: 0.03em !important;
-            margin: 0.2mm 0 0 !important;
+            letter-spacing: 0.05em !important;
+            margin: 0.3mm 0 0 !important;
             line-height: 1 !important;
-            white-space: nowrap !important;
           }
 
-          /* Counter — hide on small stickers */
+          /* Counter */
           .sticker-label > p:last-child {
-            display: none !important;
+            font-size: 1.3mm !important;
+            margin: 0 !important;
+            line-height: 1 !important;
+            color: #aaa !important;
           }
         }
       `}</style>
