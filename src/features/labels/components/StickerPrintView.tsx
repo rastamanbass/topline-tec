@@ -112,10 +112,15 @@ export default function StickerPrintView() {
             display: none !important;
           }
 
+          html, body, .print-area {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 70mm !important;
+            height: auto !important;
+          }
+
           .print-area {
             display: block !important;
-            padding: 0 !important;
-            margin: 0 !important;
             gap: 0 !important;
           }
 

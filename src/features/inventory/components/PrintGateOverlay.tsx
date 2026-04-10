@@ -141,6 +141,12 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             display: none !important;
           }
 
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 70mm !important;
+          }
+
           .print-area {
             display: block !important;
             position: static !important;
@@ -148,6 +154,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
             padding: 0 !important;
             margin: 0 !important;
             gap: 0 !important;
+            width: 70mm !important;
           }
 
           .sticker-label {
