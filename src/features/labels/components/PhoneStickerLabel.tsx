@@ -19,10 +19,10 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
       try {
         JsBarcode(barcodeRef.current, phone.imei, {
           format: 'CODE128',
-          width: 2.5,
-          height: 55,
+          width: 4,
+          height: 100,
           displayValue: false,
-          margin: 2,
+          margin: 10,
         });
       } catch {
         /* invalid data fallback */
