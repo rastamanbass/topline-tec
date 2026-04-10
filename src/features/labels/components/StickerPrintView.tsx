@@ -81,7 +81,7 @@ export default function StickerPrintView() {
           Imprimir {currentBatch.length} stickers
         </button>
 
-        <p className="text-xs text-gray-500">Papel 40×60mm · Sin márgenes</p>
+        <p className="text-xs text-gray-500">Papel 60×40mm · Sin márgenes</p>
       </div>
 
       {/* Sticker previews */}
@@ -94,7 +94,7 @@ export default function StickerPrintView() {
       <style>{`
         @media print {
           @page {
-            size: 40mm 60mm;
+            size: 60mm 40mm;
             margin: 0;
           }
 
@@ -115,7 +115,7 @@ export default function StickerPrintView() {
           html, body, .print-area {
             margin: 0 !important;
             padding: 0 !important;
-            width: 40mm !important;
+            width: 60mm !important;
             height: auto !important;
           }
 
@@ -125,8 +125,8 @@ export default function StickerPrintView() {
           }
 
           .sticker-label {
-            width: 40mm !important;
-            height: 60mm !important;
+            width: 60mm !important;
+            height: 40mm !important;
             max-width: none !important;
             aspect-ratio: auto !important;
             margin: 0 !important;
@@ -134,11 +134,14 @@ export default function StickerPrintView() {
             border: none !important;
             border-radius: 0 !important;
             box-sizing: border-box !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-            column-gap: 0.5mm !important;
+            display: grid !important;
+            grid-template-columns: 22mm 1fr !important;
+            grid-template-rows: auto auto 1fr !important;
+            grid-template-areas:
+              "model model"
+              "lote lote"
+              "qr barcode" !important;
+            column-gap: 1mm !important;
             row-gap: 0 !important;
             overflow: hidden !important;
             page-break-inside: avoid !important;
@@ -154,77 +157,86 @@ export default function StickerPrintView() {
 
           /* Zone A: Model + Storage */
           .sticker-label > div:first-child {
+            grid-area: model !important;
             display: flex !important;
             align-items: baseline !important;
             gap: 1mm !important;
             margin: 0 !important;
-            width: 100% !important;
-            justify-content: center !important;
+            min-width: 0 !important;
           }
 
           .sticker-label > div:first-child > p {
-            font-size: 3.5mm !important;
+            font-size: 3mm !important;
             font-weight: bold !important;
-            line-height: 1.1 !important;
+            line-height: 1 !important;
             margin: 0 !important;
-            text-align: center !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
           }
 
           .sticker-label > div:first-child > span {
-            font-size: 2.3mm !important;
+            font-size: 2mm !important;
           }
 
           /* Lote text */
           .sticker-label > p:first-of-type {
-            font-size: 2mm !important;
-            margin: 0.5mm 0 0 !important;
+            grid-area: lote !important;
+            font-size: 1.8mm !important;
+            margin: 0.3mm 0 0 !important;
             line-height: 1 !important;
             color: #666 !important;
-            text-align: center !important;
-            width: 100% !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
           }
 
           /* Zone B: QR code */
           .sticker-label > div:nth-child(3) {
-            margin: 1.5mm 0 0 !important;
+            grid-area: qr !important;
+            margin: 0 !important;
             padding: 0 !important;
             display: flex !important;
+            align-items: center !important;
             justify-content: center !important;
           }
 
           .sticker-label > div:nth-child(3) > svg {
-            width: 26mm !important;
-            height: 26mm !important;
+            width: 22mm !important;
+            height: 22mm !important;
           }
 
           /* Zone C: Barcode */
           .sticker-label > div:nth-child(4) {
-            margin-top: auto !important;
-            padding: 0 !important;
+            grid-area: barcode !important;
+            margin: 0 !important;
+            padding: 0 0 0 0.5mm !important;
             text-align: center !important;
-            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 0 !important;
           }
 
           .sticker-label > div:nth-child(4) > svg {
-            width: 95% !important;
+            width: 100% !important;
             height: auto !important;
-            max-height: 9mm !important;
+            max-height: 16mm !important;
           }
 
           .sticker-label > div:nth-child(4) > p {
-            font-size: 2mm !important;
+            font-size: 1.8mm !important;
             font-weight: bold !important;
-            letter-spacing: 0.05em !important;
-            margin: 0.3mm 0 0 !important;
+            letter-spacing: 0.03em !important;
+            margin: 0.2mm 0 0 !important;
             line-height: 1 !important;
+            white-space: nowrap !important;
           }
 
           /* Counter */
           .sticker-label > p:last-child {
-            font-size: 1.3mm !important;
-            margin: 0 !important;
-            line-height: 1 !important;
-            color: #aaa !important;
+            display: none !important;
           }
         }
       `}</style>
