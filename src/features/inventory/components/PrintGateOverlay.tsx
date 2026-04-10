@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
-import PhoneStickerLabel from '../../labels/components/PhoneStickerLabel';
-import { Printer, ArrowRight, RotateCcw } from 'lucide-react';
+import { Printer, ArrowRight, RotateCcw, Download } from 'lucide-react';
+import { openStickersPDF, downloadStickersPDF } from '../../labels/utils/stickerPdfGenerator';
 import type { Phone } from '../../../types';
 
 interface PrintGateOverlayProps {
@@ -26,8 +26,15 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
   });
 
   const handlePrint = () => {
+    if (phones.length === 0) return;
+    openStickersPDF(phones);
     setHasPrinted(true);
-    window.print();
+  };
+
+  const handleDownload = () => {
+    if (phones.length === 0) return;
+    downloadStickersPDF(phones, `stickers-${Date.now()}.pdf`);
+    setHasPrinted(true);
   };
 
   return (
@@ -75,10 +82,18 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
                 className="w-full bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center justify-center gap-2 text-lg disabled:opacity-50 transition-colors"
               >
                 <Printer className="w-5 h-5" />
-                Imprimir {phones.length} Stickers
+                Abrir PDF para Imprimir
+              </button>
+              <button
+                onClick={handleDownload}
+                disabled={isLoading || phones.length === 0}
+                className="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2 rounded-xl font-semibold inline-flex items-center justify-center gap-2 disabled:opacity-50 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                Descargar PDF
               </button>
               <p className="text-xs text-slate-400 text-center">
-                Papel 40×60mm · Margenes: ninguno · Escala: 100%
+                PDF a 40×30mm. Imprimir desde Adobe/Jadens app con tamaño 40×30mm.
               </p>
               <button
                 onClick={onComplete}
@@ -107,148 +122,6 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
           )}
         </div>
       </div>
-
-      {/* Print-only area: sticker labels - use absolute positioning off-screen instead of hidden,
-           because JsBarcode needs the SVG elements to be in the layout to render barcodes */}
-      <div className="print-area" style={{ position: 'absolute', left: '-9999px', top: 0 }}>
-        {phones.map((phone, i) => (
-          <PhoneStickerLabel key={phone.id} phone={phone} index={i} total={phones.length} />
-        ))}
-      </div>
-
-      <style>{`
-        @media print {
-          @page {
-            size: 30mm 40mm;
-            margin: 0;
-          }
-
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-
-          html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-          }
-
-          .no-print, .no-print-overlay, nav, header, footer {
-            display: none !important;
-          }
-
-          .no-print-overlay > .no-print {
-            display: none !important;
-          }
-
-          html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 30mm !important;
-          }
-
-          .print-area {
-            display: block !important;
-            position: static !important;
-            left: auto !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            gap: 0 !important;
-            width: 30mm !important;
-          }
-
-          .sticker-label {
-            width: 30mm !important;
-            height: 40mm !important;
-            max-width: none !important;
-            aspect-ratio: auto !important;
-            margin: 0 !important;
-            padding: 2mm !important;
-            border: none !important;
-            border-radius: 0 !important;
-            box-sizing: border-box !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: flex-end !important;
-            padding-bottom: 2mm !important;
-            gap: 0.2mm !important;
-            overflow: hidden !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-            page-break-after: always !important;
-            break-after: page !important;
-          }
-
-          .sticker-label:last-child {
-            page-break-after: auto !important;
-            break-after: auto !important;
-          }
-
-          /* Zone A: Model + Storage */
-          .sticker-label > div:first-child {
-            display: flex !important;
-            align-items: baseline !important;
-            gap: 1mm !important;
-            margin: 0 !important;
-            width: 100% !important;
-            justify-content: center !important;
-          }
-
-          .sticker-label > div:first-child > p {
-            font-size: 3mm !important;
-            font-weight: bold !important;
-            line-height: 1 !important;
-            margin: 0 !important;
-          }
-
-          .sticker-label > div:first-child > span {
-            font-size: 2.4mm !important;
-          }
-
-          /* Lote text */
-          .sticker-label > p:first-of-type {
-            font-size: 2mm !important;
-            margin: 0.5mm 0 0 !important;
-            line-height: 1 !important;
-            color: #666 !important;
-            text-align: center !important;
-            width: 100% !important;
-          }
-
-          /* Zone B: QR code — hidden */
-          .sticker-label > div:nth-child(3) {
-            display: none !important;
-          }
-
-          /* Zone C: Barcode */
-          .sticker-label > div:nth-child(4) {
-            margin-top: 0.5mm !important;
-            padding: 0 !important;
-            text-align: center !important;
-            width: 100% !important;
-          }
-
-          .sticker-label > div:nth-child(4) > svg {
-            width: 95% !important;
-            height: auto !important;
-            max-height: 18mm !important;
-          }
-
-          .sticker-label > div:nth-child(4) > p {
-            font-size: 2mm !important;
-            font-weight: bold !important;
-            letter-spacing: 0.05em !important;
-            margin: 0.3mm 0 0 !important;
-            line-height: 1 !important;
-          }
-
-          /* Counter */
-          .sticker-label > p:last-child {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
