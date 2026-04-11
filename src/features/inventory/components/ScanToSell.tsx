@@ -2,6 +2,7 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import { collection, query, where, limit, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { useSalesStore } from '../../sales/stores/salesStore';
+import { useInventoryStore } from '../stores/inventoryStore';
 import { phoneLabel, normalizeDisplayBrand } from '../../../lib/phoneUtils';
 import toast from 'react-hot-toast';
 import { ScanBarcode, Camera, X, Loader2, Search, ShoppingCart, Package } from 'lucide-react';
@@ -49,10 +50,20 @@ export default function ScanToSell() {
   const [showResults, setShowResults] = useState(false);
   const [showBulkSale, setShowBulkSale] = useState(false);
   const { addToCart, openPaymentModal, cartItems } = useSalesStore();
+  const isInventoryModalOpen = useInventoryStore((s) => s.isModalOpen);
 
-  // Keep focus on the input so the scanner always works (only when camera is closed)
+  // When the "Nuevo Telefono" modal opens, blur the top-bar input so bluetooth
+  // gun scans go to the modal scanner instead of triggering a sale here.
   useEffect(() => {
-    if (cameraOpen || showResults) return;
+    if (isInventoryModalOpen && inputRef.current) {
+      inputRef.current.blur();
+    }
+  }, [isInventoryModalOpen]);
+
+  // Keep focus on the input so the scanner always works (only when camera is closed
+  // AND no dialog/modal is open AND the inventory "Nuevo Telefono" modal is closed)
+  useEffect(() => {
+    if (cameraOpen || showResults || isInventoryModalOpen) return;
     const interval = setInterval(() => {
       if (
         inputRef.current &&
@@ -63,7 +74,7 @@ export default function ScanToSell() {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [cameraOpen, showResults]);
+  }, [cameraOpen, showResults, isInventoryModalOpen]);
 
   const addPhoneToCart = useCallback(
     (phone: Phone) => {
@@ -278,10 +289,14 @@ export default function ScanToSell() {
             value={imeiInput}
             onChange={(e) => setImeiInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full bg-white border border-green-300 rounded-lg px-3 py-2 text-sm font-mono placeholder:text-gray-400 focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            placeholder="IMEI, QR, o buscar modelo (ej: A36, 13 128gb)..."
+            className={`w-full bg-white border border-green-300 rounded-lg px-3 py-2 text-sm font-mono placeholder:text-gray-400 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${isInventoryModalOpen ? 'opacity-40 cursor-not-allowed' : ''}`}
+            placeholder={
+              isInventoryModalOpen
+                ? 'Escaneando en modal de ingreso...'
+                : 'IMEI, QR, o buscar modelo (ej: A36, 13 128gb)...'
+            }
             autoComplete="off"
-            disabled={isSearching}
+            disabled={isSearching || isInventoryModalOpen}
           />
           {isSearching && (
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
