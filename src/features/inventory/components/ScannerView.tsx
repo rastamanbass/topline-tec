@@ -258,6 +258,10 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
       }
 
       if (def) {
+        // Apply current batchCost/batchPrice to the item so UI reflects what was saved
+        const appliedCost = batchCost ? parseFloat(batchCost) : newItem.cost;
+        const appliedPrice = batchPrice ? parseFloat(batchPrice) : newItem.price;
+
         const resolvedItem: ScannedItem = {
           ...newItem,
           brand: def.brand,
@@ -267,6 +271,8 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
               .storage || newItem.storage,
           theftStatus: 'UNKNOWN',
           status: 'success',
+          cost: appliedCost,
+          price: appliedPrice,
         };
 
         setScannedItems((prev) =>
