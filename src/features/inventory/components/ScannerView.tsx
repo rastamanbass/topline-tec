@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   X,
   Check,
@@ -62,7 +62,7 @@ interface ScannerViewProps {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProps) {
   const { user, userRole } = useAuth();
-  const showCosts = canViewCosts(user?.email);
+  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
   const { batches } = useBatches();
   const queryClient = useQueryClient();
   const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);

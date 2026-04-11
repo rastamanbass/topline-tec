@@ -6,7 +6,7 @@ import { canViewCosts } from '../../../lib/permissions';
 import StatusBadgePro from '../../../components/ui/StatusBadgePro';
 import StatusChangeModal from './StatusChangeModal';
 import ConfirmModal from '../../../components/ConfirmModal';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Phone } from '../../../types';
 import { useDeletePhone } from '../hooks/usePhones';
 import { phoneLabel } from '../../../lib/phoneUtils';
@@ -22,7 +22,7 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
     useInventoryStore();
   const { addToCart, openPaymentModal } = useSalesStore();
   const { user, userRole } = useAuth();
-  const showCosts = canViewCosts(user?.email);
+  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
   const deletePhone = useDeletePhone();
 
   // Status change modal state

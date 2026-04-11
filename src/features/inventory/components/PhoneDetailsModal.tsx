@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Edit2, Trash2, Calendar, DollarSign, Package, Clock, ShieldOff } from 'lucide-react';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
@@ -47,7 +48,7 @@ function parseHistoryDate(date: unknown): Date {
 export default function PhoneDetailsModal() {
   const { isModalOpen, modalMode, selectedPhone, closeModal, openModal } = useInventoryStore();
   const { user, userRole } = useAuth();
-  const showCosts = canViewCosts(user?.email);
+  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
   const deletePhone = useDeletePhone();
   const queryClient = useQueryClient();
 
@@ -175,8 +176,8 @@ export default function PhoneDetailsModal() {
             </div>
           </div>
 
-          {/* Financial Info — only for admin/gerente */}
-          {canSeeCost && (
+          {/* Financial Info — only for cost-viewer admins */}
+          {canSeeCost && showCosts && (
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                 <DollarSign className="w-4 h-4" />

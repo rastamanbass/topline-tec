@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '../../context';
 import { canViewCosts } from '../../lib/permissions';
 import {
@@ -44,7 +44,7 @@ const fmtDate = (d: Date) =>
 
 export default function DashboardPage() {
   const { user, userRole, signOut } = useAuth();
-  const showCosts = canViewCosts(user?.email);
+  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
 
   const handleSignOut = async () => {
     try {

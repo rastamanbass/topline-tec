@@ -34,7 +34,7 @@ const STATIC_CHART_DATA = Array.from({ length: 10 }, (_, i) => {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const showCosts = canViewCosts(user?.email);
+  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
   const { data: phones = [] } = usePhones();
 
   // --- Derived Stats (Memoized for performance) ---

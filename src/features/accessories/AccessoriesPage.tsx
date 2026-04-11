@@ -24,7 +24,7 @@ const fmt = (n: number) =>
 
 export default function AccessoriesPage() {
   const { user, userRole } = useAuth();
-  const showCosts = canViewCosts(user?.email);
+  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
   const { data: accessories = [], isLoading } = useAccessories();
   const createMut = useCreateAccessory();
   const updateMut = useUpdateAccessory();

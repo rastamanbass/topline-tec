@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { phoneSchema, type PhoneFormData } from '../validation/phoneSchema';
@@ -45,7 +45,7 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
   const createPhone = useCreatePhone();
   const updatePhone = useUpdatePhone();
   const { user, userRole } = useAuth();
-  const showCosts = canViewCosts(user?.email);
+  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
   const { batches } = useBatches();
 
   const {
