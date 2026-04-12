@@ -9,8 +9,8 @@ export interface StickerSize {
 }
 
 export const STICKER_SIZES: StickerSize[] = [
-  { width: 40, height: 30, label: '40×30mm' },
   { width: 50, height: 30, label: '50×30mm' },
+  { width: 40, height: 30, label: '40×30mm' },
   { width: 60, height: 40, label: '60×40mm' },
   { width: 50, height: 40, label: '50×40mm' },
   { width: 40, height: 20, label: '40×20mm' },
@@ -19,17 +19,11 @@ export const STICKER_SIZES: StickerSize[] = [
   { width: 80, height: 50, label: '80×50mm' },
 ];
 
-/**
- * Generate a PDF with one sticker per page at the exact physical label size.
- * Width/height in mm, landscape orientation (width > height).
- * Eduardo picks the size matching his roll, prints from Adobe/Jadens app.
- */
 export function generateStickersPDF(
   phones: Phone[],
-  width: number = 40,
+  width: number = 50,
   height: number = 30
 ): jsPDF {
-  // Ensure landscape — width >= height
   const w = Math.max(width, height);
   const h = Math.min(width, height);
 
@@ -50,68 +44,66 @@ export function generateStickersPDF(
 }
 
 function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
-  // Dynamic layout based on sticker size
-  // All sizes scaled proportionally to fit any label size
-
-  const padding = Math.max(1, height * 0.04);
+  const padding = Math.max(1, height * 0.05);
   const centerX = width / 2;
 
-  // Font sizes scale with label height
-  const modelFontSize = Math.max(6, height * 0.27);
-  const loteFontSize = Math.max(4, height * 0.17);
-  const imeiFontSize = Math.max(5, height * 0.2);
+  const modelFontSize = Math.max(7, height * 0.28);
+  const loteFontSize = Math.max(4, height * 0.15);
+  const imeiFontSize = Math.max(5, height * 0.18);
 
-  // Barcode takes ~60% of height, ~95% of width
-  const barcodeWidth = width * 0.95;
-  const barcodeHeight = height * 0.6;
-  const barcodeX = (width - barcodeWidth) / 2;
-
-  // 1. Model + storage (top)
+  // 1. Model + storage (top, bold)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(modelFontSize);
   const modelText = phone.storage ? `${phone.modelo} ${phone.storage}` : phone.modelo;
-  doc.text(modelText, centerX, padding + modelFontSize * 0.35, {
+  const modelY = padding + modelFontSize * 0.35;
+  doc.text(modelText, centerX, modelY, {
     align: 'center',
     maxWidth: width - 2,
   });
 
-  // 2. Lote (below model)
+  // 2. Lote / envio (below model)
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(loteFontSize);
-  doc.setTextColor(100);
-  doc.text(phone.lote || '', centerX, padding + modelFontSize * 0.35 + loteFontSize * 0.4, {
+  doc.setTextColor(80);
+  const loteY = modelY + loteFontSize * 0.5 + 0.5;
+  doc.text(phone.lote || '', centerX, loteY, {
     align: 'center',
     maxWidth: width - 2,
   });
   doc.setTextColor(0);
 
-  // 3. Barcode — maximum size for scanner reliability
+  // 3. Barcode — high-res CODE128 scaled to fill label width
+  const quietZone = 2;
+  const barcodeWidthMM = width - quietZone * 2;
   const barcodeDataUrl = generateBarcodeDataUrl(phone.imei);
   if (barcodeDataUrl) {
-    const barcodeY = padding + modelFontSize * 0.35 + loteFontSize * 0.4 + 0.5;
-    doc.addImage(barcodeDataUrl, 'PNG', barcodeX, barcodeY, barcodeWidth, barcodeHeight);
+    const barcodeTopY = loteY + 1;
+    const bottomReserve = padding + imeiFontSize * 0.35 + 0.5;
+    const barcodeHeightMM = height - barcodeTopY - bottomReserve;
+    const barcodeX = (width - barcodeWidthMM) / 2;
+
+    doc.addImage(barcodeDataUrl, 'PNG', barcodeX, barcodeTopY, barcodeWidthMM, barcodeHeightMM);
   }
 
-  // 4. IMEI text (below barcode, at bottom)
+  // 4. IMEI text (bottom)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(imeiFontSize);
   const imeiFormatted = formatImei(phone.imei);
-  doc.text(imeiFormatted, centerX, height - padding - 0.2, { align: 'center' });
+  doc.text(imeiFormatted, centerX, height - padding, { align: 'center' });
 }
 
 function generateBarcodeDataUrl(imei: string): string | null {
   try {
-    // Clean IMEI — only digits, no whitespace or symbols
     const cleanImei = imei.replace(/\D/g, '');
     if (cleanImei.length < 8) return null;
 
     const canvas = document.createElement('canvas');
     JsBarcode(canvas, cleanImei, {
       format: 'CODE128',
-      width: 6, // thick bars at high resolution
-      height: 180, // tall at high resolution
+      width: 5,
+      height: 120,
       displayValue: false,
-      margin: 20, // big quiet zone
+      margin: 0,
       background: '#ffffff',
       lineColor: '#000000',
     });
@@ -127,24 +119,17 @@ function formatImei(imei: string): string {
   return `${imei.slice(0, 2)} ${imei.slice(2, 8)} ${imei.slice(8, 14)} ${imei.slice(14)}`;
 }
 
-/**
- * Open the PDF in a new tab so Eduardo can print it from there
- * with full control over paper size in the system print dialog.
- */
-export function openStickersPDF(phones: Phone[], width: number = 40, height: number = 30): void {
+export function openStickersPDF(phones: Phone[], width: number = 50, height: number = 30): void {
   const doc = generateStickersPDF(phones, width, height);
   const blob = doc.output('blob');
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank');
 }
 
-/**
- * Download the PDF directly.
- */
 export function downloadStickersPDF(
   phones: Phone[],
   filename: string,
-  width: number = 40,
+  width: number = 50,
   height: number = 30
 ): void {
   const doc = generateStickersPDF(phones, width, height);

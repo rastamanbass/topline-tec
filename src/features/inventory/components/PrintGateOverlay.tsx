@@ -93,7 +93,7 @@ export default function PrintGateOverlay({ imeis, onComplete }: PrintGateOverlay
                 Descargar PDF
               </button>
               <p className="text-xs text-slate-400 text-center">
-                PDF a 40×30mm. Imprimir desde Adobe/Jadens app con tamaño 40×30mm.
+                PDF a 50×30mm. Imprimir desde Adobe/Jadens app con tamaño 50×30mm.
               </p>
               <button
                 onClick={onComplete}

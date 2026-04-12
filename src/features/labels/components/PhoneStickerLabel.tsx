@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
-import { buildTrackingUrl, formatImeiDisplay } from '../utils/stickerUtils';
+import { formatImeiDisplay } from '../utils/stickerUtils';
 import type { Phone } from '../../../types';
 
 interface Props {
@@ -12,7 +11,6 @@ interface Props {
 
 export default function PhoneStickerLabel({ phone, index, total }: Props) {
   const barcodeRef = useRef<SVGSVGElement>(null);
-  const trackingUrl = buildTrackingUrl(phone.imei);
 
   useEffect(() => {
     if (barcodeRef.current && !phone.seized) {
@@ -36,14 +34,14 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
       style={{
         width: '100%',
         maxWidth: '420px',
-        aspectRatio: '3/2',
+        aspectRatio: '5/3',
         padding: '3%',
         display: 'flex',
         flexDirection: 'column',
         boxSizing: 'border-box',
       }}
     >
-      {/* Zone A: Text only (no codes) */}
+      {/* Model + Storage */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexShrink: 0 }}>
         <p
           style={{
@@ -66,6 +64,8 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
           </span>
         )}
       </div>
+
+      {/* Lote / Envio */}
       <p
         style={{
           fontSize: '10px',
@@ -80,15 +80,8 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
         {phone.lote}
       </p>
 
-      {/* Zone B: QR code (left-aligned, with vertical separation) */}
-      {!phone.seized && (
-        <div style={{ marginTop: '6px', flexShrink: 0 }}>
-          <QRCodeSVG value={trackingUrl} size={120} level="H" style={{ display: 'block' }} />
-        </div>
-      )}
-
-      {/* Zone C: Barcode (full width, separated from QR) */}
-      <div style={{ textAlign: 'center', marginTop: 'auto', paddingTop: '12px' }}>
+      {/* Barcode + IMEI */}
+      <div style={{ textAlign: 'center', marginTop: 'auto', paddingTop: '4px' }}>
         {phone.seized ? (
           <div
             style={{
@@ -105,7 +98,7 @@ export default function PhoneStickerLabel({ phone, index, total }: Props) {
           </div>
         ) : (
           <>
-            <svg ref={barcodeRef} style={{ width: '100%', maxHeight: '45px' }} />
+            <svg ref={barcodeRef} style={{ width: '100%', maxHeight: '55px' }} />
             <p
               style={{
                 fontSize: '11px',
