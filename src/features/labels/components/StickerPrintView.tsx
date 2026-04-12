@@ -1,15 +1,11 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
-import { Printer, Download, FileText, Ruler } from 'lucide-react';
-import {
-  generateStickersPDF,
-  downloadStickersPDF,
-  openStickersPDF,
-  STICKER_SIZES,
-} from '../utils/stickerPdfGenerator';
+import { Printer, Download, Ruler } from 'lucide-react';
+import { downloadStickersPDF, openStickersPDF, STICKER_SIZES } from '../utils/stickerPdfGenerator';
+import PhoneStickerLabel from './PhoneStickerLabel';
 import type { Phone } from '../../../types';
 
 const SIZE_STORAGE_KEY = 'sticker-size-preference';
@@ -55,19 +51,6 @@ export default function StickerPrintView() {
     },
   });
 
-  const previewUrl = useMemo(() => {
-    if (phones.length === 0) return null;
-    const doc = generateStickersPDF(phones, width, height);
-    const blob = doc.output('blob');
-    return URL.createObjectURL(blob);
-  }, [phones, width, height]);
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
-
   if (isLoading) {
     return <div className="p-8 text-center text-gray-500">Cargando telefonos...</div>;
   }
@@ -77,6 +60,7 @@ export default function StickerPrintView() {
   }
 
   const currentSizeLabel = `${width}x${height}mm`;
+  const aspectRatio = `${Math.max(width, height)}/${Math.min(width, height)}`;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -172,22 +156,13 @@ export default function StickerPrintView() {
         </div>
       </div>
 
-      {previewUrl && (
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-3 border-b border-gray-200 flex items-center gap-2 text-sm font-semibold text-gray-600">
-              <FileText className="w-4 h-4" />
-              Vista previa del PDF · {currentSizeLabel}
-            </div>
-            <iframe
-              src={previewUrl}
-              title="PDF preview"
-              className="w-full"
-              style={{ height: '70vh', border: 'none' }}
-            />
+      <div className="max-w-2xl mx-auto p-4 space-y-3">
+        {phones.map((phone, i) => (
+          <div key={phone.id} style={{ aspectRatio }}>
+            <PhoneStickerLabel phone={phone} index={i} total={phones.length} />
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
