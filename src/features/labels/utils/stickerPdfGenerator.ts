@@ -38,15 +38,17 @@ export function generateStickersPDF(
     pageH = Math.max(width, height);
   }
 
+  const jsPdfOrientation = pageW >= pageH ? 'landscape' : 'portrait';
+
   const doc = new jsPDF({
     unit: 'mm',
     format: [pageW, pageH],
-    orientation: 'portrait',
+    orientation: jsPdfOrientation,
   });
 
   phones.forEach((phone, index) => {
     if (index > 0) {
-      doc.addPage([pageW, pageH], 'portrait');
+      doc.addPage([pageW, pageH], jsPdfOrientation);
     }
 
     drawSticker(doc, phone, pageW, pageH);
