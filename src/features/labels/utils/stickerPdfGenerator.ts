@@ -19,26 +19,37 @@ export const STICKER_SIZES: StickerSize[] = [
   { width: 80, height: 50, label: '80×50mm' },
 ];
 
+export type StickerOrientation = 'landscape' | 'portrait';
+
 export function generateStickersPDF(
   phones: Phone[],
   width: number = 50,
-  height: number = 30
+  height: number = 30,
+  orientation: StickerOrientation = 'landscape'
 ): jsPDF {
-  const w = Math.max(width, height);
-  const h = Math.min(width, height);
+  let pageW: number;
+  let pageH: number;
+
+  if (orientation === 'landscape') {
+    pageW = Math.max(width, height);
+    pageH = Math.min(width, height);
+  } else {
+    pageW = Math.min(width, height);
+    pageH = Math.max(width, height);
+  }
 
   const doc = new jsPDF({
-    orientation: 'landscape',
     unit: 'mm',
-    format: [h, w],
+    format: [pageW, pageH],
+    orientation: 'portrait',
   });
 
   phones.forEach((phone, index) => {
     if (index > 0) {
-      doc.addPage([h, w], 'landscape');
+      doc.addPage([pageW, pageH], 'portrait');
     }
 
-    drawSticker(doc, phone, w, h);
+    drawSticker(doc, phone, pageW, pageH);
   });
 
   return doc;
@@ -48,9 +59,9 @@ function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
   const padding = Math.max(1, height * 0.05);
   const centerX = width / 2;
 
-  const modelFontSize = Math.max(7, height * 0.28);
-  const loteFontSize = Math.max(4, height * 0.15);
-  const imeiFontSize = Math.max(5, height * 0.18);
+  const modelFontSize = Math.max(6, Math.min(10, height * 0.18));
+  const loteFontSize = Math.max(4, Math.min(7, height * 0.12));
+  const imeiFontSize = Math.max(5, Math.min(8, height * 0.14));
 
   // 1. Model + storage (top, bold)
   doc.setFont('helvetica', 'bold');
@@ -66,20 +77,20 @@ function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(loteFontSize);
   doc.setTextColor(80);
-  const loteY = modelY + loteFontSize * 0.5 + 0.5;
+  const loteY = modelY + loteFontSize * 0.4 + 0.5;
   doc.text(phone.lote || '', centerX, loteY, {
     align: 'center',
     maxWidth: width - 2,
   });
   doc.setTextColor(0);
 
-  // 3. Barcode — high-res CODE128 scaled to fill label width
+  // 3. Barcode — high-res CODE128 scaled to fill label
   const quietZone = 2;
   const barcodeWidthMM = width - quietZone * 2;
   const barcodeDataUrl = generateBarcodeDataUrl(phone.imei);
   if (barcodeDataUrl) {
-    const barcodeTopY = loteY + 1;
-    const bottomReserve = padding + imeiFontSize * 0.35 + 0.5;
+    const barcodeTopY = loteY + 0.8;
+    const bottomReserve = padding + imeiFontSize * 0.35 + 0.3;
     const barcodeHeightMM = height - barcodeTopY - bottomReserve;
     const barcodeX = (width - barcodeWidthMM) / 2;
 
@@ -120,8 +131,13 @@ function formatImei(imei: string): string {
   return `${imei.slice(0, 2)} ${imei.slice(2, 8)} ${imei.slice(8, 14)} ${imei.slice(14)}`;
 }
 
-export function openStickersPDF(phones: Phone[], width: number = 50, height: number = 30): void {
-  const doc = generateStickersPDF(phones, width, height);
+export function openStickersPDF(
+  phones: Phone[],
+  width: number = 50,
+  height: number = 30,
+  orientation: StickerOrientation = 'landscape'
+): void {
+  const doc = generateStickersPDF(phones, width, height, orientation);
   const blob = doc.output('blob');
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank');
@@ -131,8 +147,9 @@ export function downloadStickersPDF(
   phones: Phone[],
   filename: string,
   width: number = 50,
-  height: number = 30
+  height: number = 30,
+  orientation: StickerOrientation = 'landscape'
 ): void {
-  const doc = generateStickersPDF(phones, width, height);
+  const doc = generateStickersPDF(phones, width, height, orientation);
   doc.save(filename);
 }

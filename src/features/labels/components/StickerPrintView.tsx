@@ -3,17 +3,19 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
-import { Printer, Download, FileText, Ruler, Monitor } from 'lucide-react';
+import { Printer, Download, FileText, Ruler, Monitor, RotateCcw } from 'lucide-react';
 import {
   generateStickersPDF,
   downloadStickersPDF,
   openStickersPDF,
   STICKER_SIZES,
 } from '../utils/stickerPdfGenerator';
+import type { StickerOrientation } from '../utils/stickerPdfGenerator';
 import { renderThermalPreview } from '../utils/thermalPreview';
 import type { Phone } from '../../../types';
 
 const SIZE_STORAGE_KEY = 'sticker-size-preference';
+const ORIENTATION_STORAGE_KEY = 'sticker-orientation';
 const THERMAL_SCALE = 3;
 
 export default function StickerPrintView() {
@@ -21,7 +23,6 @@ export default function StickerPrintView() {
   const [thermalMode, setThermalMode] = useState(false);
   const thermalContainerRef = useRef<HTMLDivElement>(null);
 
-  // Load saved size preference or default to 50x30
   const [width, setWidth] = useState(() => {
     const saved = localStorage.getItem(SIZE_STORAGE_KEY);
     if (saved) {
@@ -38,10 +39,17 @@ export default function StickerPrintView() {
     }
     return 30;
   });
+  const [orientation, setOrientation] = useState<StickerOrientation>(() => {
+    return (localStorage.getItem(ORIENTATION_STORAGE_KEY) as StickerOrientation) || 'landscape';
+  });
 
   useEffect(() => {
     localStorage.setItem(SIZE_STORAGE_KEY, `${width}x${height}`);
   }, [width, height]);
+
+  useEffect(() => {
+    localStorage.setItem(ORIENTATION_STORAGE_KEY, orientation);
+  }, [orientation]);
 
   const { data: phones = [], isLoading } = useQuery({
     queryKey: ['sticker-phones', lote, imei],
@@ -62,10 +70,10 @@ export default function StickerPrintView() {
 
   const previewUrl = useMemo(() => {
     if (phones.length === 0 || thermalMode) return null;
-    const doc = generateStickersPDF(phones, width, height);
+    const doc = generateStickersPDF(phones, width, height, orientation);
     const blob = doc.output('blob');
     return URL.createObjectURL(blob);
-  }, [phones, width, height, thermalMode]);
+  }, [phones, width, height, orientation, thermalMode]);
 
   useEffect(() => {
     return () => {
@@ -79,8 +87,13 @@ export default function StickerPrintView() {
 
     container.innerHTML = '';
 
+    const previewW =
+      orientation === 'landscape' ? Math.max(width, height) : Math.min(width, height);
+    const previewH =
+      orientation === 'landscape' ? Math.min(width, height) : Math.max(width, height);
+
     phones.forEach((phone, i) => {
-      const canvas = renderThermalPreview(phone, width, height);
+      const canvas = renderThermalPreview(phone, previewW, previewH);
 
       const wrapper = document.createElement('div');
       wrapper.style.cssText = 'margin-bottom: 16px; text-align: center;';
@@ -106,7 +119,7 @@ export default function StickerPrintView() {
       ctx.drawImage(canvas, 0, 0, scaled.width, scaled.height);
 
       const info = document.createElement('p');
-      info.textContent = `${canvas.width}×${canvas.height}px @ 203 DPI = ${width}×${height}mm`;
+      info.textContent = `${canvas.width}x${canvas.height}px @ 203 DPI = ${previewW}x${previewH}mm (${orientation})`;
       info.style.cssText = 'font-size: 11px; color: #999; margin-top: 4px;';
 
       wrapper.appendChild(label);
@@ -114,7 +127,7 @@ export default function StickerPrintView() {
       wrapper.appendChild(info);
       container.appendChild(wrapper);
     });
-  }, [phones, width, height, thermalMode]);
+  }, [phones, width, height, orientation, thermalMode]);
 
   useEffect(() => {
     renderThermalPreviews();
@@ -138,7 +151,8 @@ export default function StickerPrintView() {
             <div className="text-center sm:text-left">
               <p className="text-lg font-bold text-gray-900">{lote || imei}</p>
               <p className="text-sm text-gray-500">
-                {phones.length} stickers · {currentSizeLabel}
+                {phones.length} stickers · {currentSizeLabel} ·{' '}
+                {orientation === 'landscape' ? 'Horizontal' : 'Vertical'}
               </p>
             </div>
 
@@ -152,10 +166,10 @@ export default function StickerPrintView() {
                 }`}
               >
                 <Monitor className="w-4 h-4" />
-                {thermalMode ? 'Vista Termica ON' : 'Vista Termica'}
+                {thermalMode ? 'Termica ON' : 'Termica'}
               </button>
               <button
-                onClick={() => openStickersPDF(phones, width, height)}
+                onClick={() => openStickersPDF(phones, width, height, orientation)}
                 className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl font-semibold inline-flex items-center gap-2"
               >
                 <Printer className="w-4 h-4" />
@@ -167,7 +181,8 @@ export default function StickerPrintView() {
                     phones,
                     `stickers-${lote || imei || 'export'}.pdf`,
                     width,
-                    height
+                    height,
+                    orientation
                   )
                 }
                 className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-xl font-semibold inline-flex items-center gap-2"
@@ -178,13 +193,22 @@ export default function StickerPrintView() {
             </div>
           </div>
 
-          {/* Size selector */}
+          {/* Size + orientation selector */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <Ruler className="w-4 h-4 text-amber-700" />
-              <p className="text-sm font-semibold text-amber-900">
-                Tamano de etiqueta (medi el rollo con regla)
-              </p>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Ruler className="w-4 h-4 text-amber-700" />
+                <p className="text-sm font-semibold text-amber-900">Tamano de etiqueta</p>
+              </div>
+              <button
+                onClick={() =>
+                  setOrientation(orientation === 'landscape' ? 'portrait' : 'landscape')
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-amber-300 text-amber-800 hover:bg-amber-100 transition-colors"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                {orientation === 'landscape' ? 'Horizontal' : 'Vertical'}
+              </button>
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-2">
@@ -233,7 +257,6 @@ export default function StickerPrintView() {
                 className="w-16 px-2 py-1 border border-amber-300 rounded text-center"
               />
               <span className="text-amber-900">mm</span>
-              <span className="text-amber-700 text-xs ml-2">(se guarda automaticamente)</span>
             </div>
           </div>
         </div>
@@ -244,7 +267,8 @@ export default function StickerPrintView() {
           <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
             <div className="p-3 border-b border-gray-200 flex items-center gap-2 text-sm font-semibold text-orange-700 bg-orange-50">
               <Monitor className="w-4 h-4" />
-              Emulador Termico · 203 DPI · {currentSizeLabel} · Escala {THERMAL_SCALE}x
+              Emulador Termico · 203 DPI · {currentSizeLabel} ·{' '}
+              {orientation === 'landscape' ? 'Horizontal' : 'Vertical'} · Escala {THERMAL_SCALE}x
             </div>
             <div className="p-4 text-center overflow-x-auto" ref={thermalContainerRef} />
             <div className="p-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
@@ -257,7 +281,8 @@ export default function StickerPrintView() {
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
               <div className="p-3 border-b border-gray-200 flex items-center gap-2 text-sm font-semibold text-gray-600">
                 <FileText className="w-4 h-4" />
-                Vista previa del PDF · {currentSizeLabel}
+                Vista previa del PDF · {currentSizeLabel} ·{' '}
+                {orientation === 'landscape' ? 'Horizontal' : 'Vertical'}
               </div>
               <iframe
                 src={previewUrl}
