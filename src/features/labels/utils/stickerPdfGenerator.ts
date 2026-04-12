@@ -19,7 +19,7 @@ export const STICKER_SIZES: StickerSize[] = [
   { width: 80, height: 50, label: '80×50mm' },
 ];
 
-export type StickerOrientation = 'landscape' | 'portrait';
+export type StickerOrientation = 'landscape' | 'portrait' | 'rotated';
 
 export function generateStickersPDF(
   phones: Phone[],
@@ -29,13 +29,18 @@ export function generateStickersPDF(
 ): jsPDF {
   let pageW: number;
   let pageH: number;
+  const contentW = Math.max(width, height);
+  const contentH = Math.min(width, height);
 
-  if (orientation === 'landscape') {
-    pageW = Math.max(width, height);
-    pageH = Math.min(width, height);
+  if (orientation === 'rotated') {
+    pageW = contentH;
+    pageH = contentW;
+  } else if (orientation === 'landscape') {
+    pageW = contentW;
+    pageH = contentH;
   } else {
-    pageW = Math.min(width, height);
-    pageH = Math.max(width, height);
+    pageW = contentH;
+    pageH = contentW;
   }
 
   const jsPdfOrientation = pageW >= pageH ? 'landscape' : 'portrait';
@@ -51,10 +56,110 @@ export function generateStickersPDF(
       doc.addPage([pageW, pageH], jsPdfOrientation);
     }
 
-    drawSticker(doc, phone, pageW, pageH);
+    if (orientation === 'rotated') {
+      drawStickerRotated(doc, phone, contentW, contentH, pageW, pageH);
+    } else {
+      drawSticker(doc, phone, pageW, pageH);
+    }
   });
 
   return doc;
+}
+
+function drawStickerRotated(
+  doc: jsPDF,
+  phone: Phone,
+  contentW: number,
+  contentH: number,
+  _pageW: number,
+  _pageH: number
+) {
+  // Render sticker content to a canvas, rotate 90° CW, embed as full-page image
+  const dpi = 203;
+  const canvasW = Math.round((contentW / 25.4) * dpi);
+  const canvasH = Math.round((contentH / 25.4) * dpi);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = canvasW;
+  canvas.height = canvasH;
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvasW, canvasH);
+  ctx.fillStyle = '#000000';
+  ctx.textAlign = 'center';
+
+  const paddingPx = Math.round((1.5 / 25.4) * dpi);
+  const centerX = canvasW / 2;
+
+  // Model
+  const modelSize = Math.round(canvasH * 0.14);
+  ctx.font = `bold ${modelSize}px Arial`;
+  const modelText = phone.storage ? `${phone.modelo} ${phone.storage}` : phone.modelo;
+  ctx.fillText(modelText, centerX, paddingPx + modelSize, canvasW - paddingPx * 2);
+
+  // Lote
+  const loteSize = Math.round(canvasH * 0.09);
+  ctx.font = `${loteSize}px Arial`;
+  ctx.fillStyle = '#555555';
+  ctx.fillText(
+    phone.lote || '',
+    centerX,
+    paddingPx + modelSize + loteSize + 4,
+    canvasW - paddingPx * 2
+  );
+  ctx.fillStyle = '#000000';
+
+  // Barcode
+  const barcodeDataUrl = generateBarcodeDataUrl(phone.imei);
+  if (barcodeDataUrl) {
+    const barcodeImg = new Image();
+    barcodeImg.src = barcodeDataUrl;
+
+    const barcodeTop = paddingPx + modelSize + loteSize + 10;
+    const imeiSize = Math.round(canvasH * 0.09);
+    const barcodeAvailH = canvasH - barcodeTop - paddingPx - imeiSize - 6;
+    const quietZonePx = Math.round((2 / 25.4) * dpi);
+
+    // Draw barcode from the data URL canvas
+    const barcodeCanvas = document.createElement('canvas');
+    const cleanImei = phone.imei.replace(/\D/g, '');
+    if (cleanImei.length >= 8) {
+      JsBarcode(barcodeCanvas, cleanImei, {
+        format: 'CODE128',
+        width: 2,
+        height: Math.round(barcodeAvailH * 0.9),
+        displayValue: false,
+        margin: 0,
+        background: '#ffffff',
+        lineColor: '#000000',
+      });
+      ctx.drawImage(
+        barcodeCanvas,
+        quietZonePx,
+        barcodeTop,
+        canvasW - quietZonePx * 2,
+        barcodeAvailH
+      );
+    }
+  }
+
+  // IMEI
+  const imeiSize = Math.round(canvasH * 0.09);
+  ctx.font = `bold ${imeiSize}px Arial`;
+  ctx.fillText(formatImei(phone.imei), centerX, canvasH - paddingPx, canvasW - paddingPx * 2);
+
+  // Rotate 90° CW: create rotated canvas (swap dimensions)
+  const rotatedCanvas = document.createElement('canvas');
+  rotatedCanvas.width = canvasH;
+  rotatedCanvas.height = canvasW;
+  const rctx = rotatedCanvas.getContext('2d')!;
+  rctx.translate(canvasH, 0);
+  rctx.rotate(Math.PI / 2);
+  rctx.drawImage(canvas, 0, 0);
+
+  // Embed rotated image filling entire portrait page
+  const rotatedDataUrl = rotatedCanvas.toDataURL('image/png');
+  doc.addImage(rotatedDataUrl, 'PNG', 0, 0, _pageW, _pageH);
 }
 
 function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
@@ -65,7 +170,6 @@ function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
   const loteFontSize = Math.max(4, Math.min(7, height * 0.12));
   const imeiFontSize = Math.max(5, Math.min(8, height * 0.14));
 
-  // 1. Model + storage (top, bold)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(modelFontSize);
   const modelText = phone.storage ? `${phone.modelo} ${phone.storage}` : phone.modelo;
@@ -75,7 +179,6 @@ function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
     maxWidth: width - 2,
   });
 
-  // 2. Lote / envio (below model)
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(loteFontSize);
   doc.setTextColor(80);
@@ -86,7 +189,6 @@ function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
   });
   doc.setTextColor(0);
 
-  // 3. Barcode — high-res CODE128 scaled to fill label
   const quietZone = 2;
   const barcodeWidthMM = width - quietZone * 2;
   const barcodeDataUrl = generateBarcodeDataUrl(phone.imei);
@@ -99,7 +201,6 @@ function drawSticker(doc: jsPDF, phone: Phone, width: number, height: number) {
     doc.addImage(barcodeDataUrl, 'PNG', barcodeX, barcodeTopY, barcodeWidthMM, barcodeHeightMM);
   }
 
-  // 4. IMEI text (bottom)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(imeiFontSize);
   const imeiFormatted = formatImei(phone.imei);

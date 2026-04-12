@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
-import { Printer, Download, FileText, Ruler, Monitor, RotateCcw } from 'lucide-react';
+import { Printer, Download, FileText, Ruler, Monitor } from 'lucide-react';
 import {
   generateStickersPDF,
   downloadStickersPDF,
@@ -152,7 +152,11 @@ export default function StickerPrintView() {
               <p className="text-lg font-bold text-gray-900">{lote || imei}</p>
               <p className="text-sm text-gray-500">
                 {phones.length} stickers · {currentSizeLabel} ·{' '}
-                {orientation === 'landscape' ? 'Horizontal' : 'Vertical'}
+                {
+                  { landscape: 'Horizontal', rotated: 'Rotado 90°', portrait: 'Vertical' }[
+                    orientation
+                  ]
+                }
               </p>
             </div>
 
@@ -200,15 +204,28 @@ export default function StickerPrintView() {
                 <Ruler className="w-4 h-4 text-amber-700" />
                 <p className="text-sm font-semibold text-amber-900">Tamano de etiqueta</p>
               </div>
-              <button
-                onClick={() =>
-                  setOrientation(orientation === 'landscape' ? 'portrait' : 'landscape')
-                }
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-amber-300 text-amber-800 hover:bg-amber-100 transition-colors"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                {orientation === 'landscape' ? 'Horizontal' : 'Vertical'}
-              </button>
+              <div className="flex gap-1">
+                {(['landscape', 'rotated', 'portrait'] as const).map((o) => {
+                  const labels = {
+                    landscape: 'Horizontal',
+                    rotated: 'Rotado 90°',
+                    portrait: 'Vertical',
+                  };
+                  return (
+                    <button
+                      key={o}
+                      onClick={() => setOrientation(o)}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                        orientation === o
+                          ? 'bg-amber-600 text-white'
+                          : 'bg-white border border-amber-300 text-amber-800 hover:bg-amber-100'
+                      }`}
+                    >
+                      {labels[o]}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-2">
@@ -268,7 +285,12 @@ export default function StickerPrintView() {
             <div className="p-3 border-b border-gray-200 flex items-center gap-2 text-sm font-semibold text-orange-700 bg-orange-50">
               <Monitor className="w-4 h-4" />
               Emulador Termico · 203 DPI · {currentSizeLabel} ·{' '}
-              {orientation === 'landscape' ? 'Horizontal' : 'Vertical'} · Escala {THERMAL_SCALE}x
+              {
+                { landscape: 'Horizontal', rotated: 'Rotado 90°', portrait: 'Vertical' }[
+                  orientation
+                ]
+              }{' '}
+              · Escala {THERMAL_SCALE}x
             </div>
             <div className="p-4 text-center overflow-x-auto" ref={thermalContainerRef} />
             <div className="p-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
@@ -282,7 +304,11 @@ export default function StickerPrintView() {
               <div className="p-3 border-b border-gray-200 flex items-center gap-2 text-sm font-semibold text-gray-600">
                 <FileText className="w-4 h-4" />
                 Vista previa del PDF · {currentSizeLabel} ·{' '}
-                {orientation === 'landscape' ? 'Horizontal' : 'Vertical'}
+                {
+                  { landscape: 'Horizontal', rotated: 'Rotado 90°', portrait: 'Vertical' }[
+                    orientation
+                  ]
+                }
               </div>
               <iframe
                 src={previewUrl}
