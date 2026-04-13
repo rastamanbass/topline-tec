@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
@@ -12,6 +12,8 @@ const SIZE_STORAGE_KEY = 'sticker-size-preference';
 
 export default function StickerPrintView() {
   const { lote, imei } = useParams<{ lote?: string; imei?: string }>();
+  const [searchParams] = useSearchParams();
+  const modeloFilter = searchParams.get('modelo');
 
   const [width, setWidth] = useState(() => {
     const saved = localStorage.getItem(SIZE_STORAGE_KEY);
@@ -35,7 +37,7 @@ export default function StickerPrintView() {
   }, [width, height]);
 
   const { data: phones = [], isLoading } = useQuery({
-    queryKey: ['sticker-phones', lote, imei],
+    queryKey: ['sticker-phones', lote, imei, modeloFilter],
     queryFn: async () => {
       if (imei) {
         const q = query(collection(db, 'phones'), where('imei', '==', imei));
@@ -43,7 +45,11 @@ export default function StickerPrintView() {
         return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Phone);
       }
       if (lote) {
-        const q = query(collection(db, 'phones'), where('lote', '==', lote));
+        const constraints = [where('lote', '==', lote)];
+        if (modeloFilter) {
+          constraints.push(where('modelo', '==', modeloFilter));
+        }
+        const q = query(collection(db, 'phones'), ...constraints);
         const snap = await getDocs(q);
         return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Phone);
       }
