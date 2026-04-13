@@ -41,6 +41,35 @@ const fmtDate = (d: Date) =>
     minute: '2-digit',
   }).format(d);
 
+function RepairCostCard({ repairCostImpact }: { repairCostImpact: number }) {
+  const { user } = useAuth();
+  if (!canViewCosts(user?.email)) return null;
+  return (
+    <div
+      className={`rounded-2xl border p-4 shadow-sm ${
+        repairCostImpact === 0
+          ? 'bg-emerald-50 border-emerald-100'
+          : 'bg-orange-50 border-orange-100'
+      }`}
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <Wrench
+          className={`w-4 h-4 ${repairCostImpact === 0 ? 'text-emerald-600' : 'text-orange-600'}`}
+        />
+        <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+          Costo reparaciones no cobradas
+        </span>
+      </div>
+      <p className="text-2xl font-bold text-gray-900">{fmt(repairCostImpact)}</p>
+      <p className="text-xs text-gray-500 mt-1">
+        {repairCostImpact === 0
+          ? 'Sin reparaciones pendientes de cobro ✓'
+          : 'Deducir de las ganancias del período'}
+      </p>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { user, userRole, signOut } = useAuth();
 
@@ -593,30 +622,7 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
           {/* Impacto reparaciones + Capital en tránsito */}
           <div className="space-y-4">
             {/* Repair cost impact */}
-            {canViewCosts(user?.email) && (
-              <div
-                className={`rounded-2xl border p-4 shadow-sm ${
-                  stats.repairCostImpact === 0
-                    ? 'bg-emerald-50 border-emerald-100'
-                    : 'bg-orange-50 border-orange-100'
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <Wrench
-                    className={`w-4 h-4 ${stats.repairCostImpact === 0 ? 'text-emerald-600' : 'text-orange-600'}`}
-                  />
-                  <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                    Costo reparaciones no cobradas
-                  </span>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">{fmt(stats.repairCostImpact)}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {stats.repairCostImpact === 0
-                    ? 'Sin reparaciones pendientes de cobro ✓'
-                    : 'Deducir de las ganancias del período'}
-                </p>
-              </div>
-            )}
+            <RepairCostCard repairCostImpact={stats.repairCostImpact} />
 
             {/* Pipeline de capital */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
