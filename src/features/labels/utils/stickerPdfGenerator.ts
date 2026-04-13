@@ -28,13 +28,14 @@ export function generateStickersPDF(
   const h = Math.min(width, height);
 
   const doc = new jsPDF({
+    orientation: 'landscape',
     unit: 'mm',
     format: [w, h],
   });
 
   phones.forEach((phone, index) => {
     if (index > 0) {
-      doc.addPage([w, h]);
+      doc.addPage([w, h], 'landscape');
     }
 
     drawSticker(doc, phone, w, h);
