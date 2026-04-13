@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../context';
 import { canViewCosts } from '../../lib/permissions';
 import {
@@ -41,10 +41,8 @@ const fmtDate = (d: Date) =>
     minute: '2-digit',
   }).format(d);
 
-
 export default function DashboardPage() {
   const { user, userRole, signOut } = useAuth();
-  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
 
   const handleSignOut = async () => {
     try {
@@ -56,9 +54,7 @@ export default function DashboardPage() {
     }
   };
 
-  const firstName = user?.displayName?.split(' ')[0]
-    || user?.email?.split('@')[0]
-    || 'usuario';
+  const firstName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || 'usuario';
 
   const isAdminOrGerente = ['admin', 'gerente'].includes(userRole || '');
   const isTaller = userRole === 'taller';
@@ -109,12 +105,8 @@ export default function DashboardPage() {
         {/* Greeting + period selector */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Hola, {firstName}
-            </h2>
-            {!isComprador && (
-              <p className="text-sm text-gray-500">{periodLabel[period]}</p>
-            )}
+            <h2 className="text-2xl font-bold text-gray-900">Hola, {firstName}</h2>
+            {!isComprador && <p className="text-sm text-gray-500">{periodLabel[period]}</p>}
           </div>
           {isAdminOrGerente && !isTaller && (
             <div className="flex bg-gray-100 rounded-xl p-1 gap-1 self-start">
@@ -149,27 +141,96 @@ export default function DashboardPage() {
             Módulos
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            <NavCard to="/inventory" icon={<Smartphone className="w-5 h-5 text-primary-600" />} bg="bg-primary-50" label="Inventario" sub="Teléfonos y stock" />
+            <NavCard
+              to="/inventory"
+              icon={<Smartphone className="w-5 h-5 text-primary-600" />}
+              bg="bg-primary-50"
+              label="Inventario"
+              sub="Teléfonos y stock"
+            />
             {!isComprador && (
-              <NavCard to="/clients" icon={<Users className="w-5 h-5 text-green-600" />} bg="bg-green-50" label="Clientes" sub="Directorio y créditos" />
+              <NavCard
+                to="/clients"
+                icon={<Users className="w-5 h-5 text-green-600" />}
+                bg="bg-green-50"
+                label="Clientes"
+                sub="Directorio y créditos"
+              />
             )}
             {!isComprador && (
-              <NavCard to="/taller" icon={<PenTool className="w-5 h-5 text-orange-600" />} bg="bg-orange-50" label="Taller" sub="Reparaciones" />
+              <NavCard
+                to="/taller"
+                icon={<PenTool className="w-5 h-5 text-orange-600" />}
+                bg="bg-orange-50"
+                label="Taller"
+                sub="Reparaciones"
+              />
             )}
             {!isComprador && (
-              <NavCard to="/accesorios" icon={<Package className="w-5 h-5 text-purple-600" />} bg="bg-purple-50" label="Accesorios" sub="Cables, cases" />
+              <NavCard
+                to="/accesorios"
+                icon={<Package className="w-5 h-5 text-purple-600" />}
+                bg="bg-purple-50"
+                label="Accesorios"
+                sub="Cables, cases"
+              />
             )}
-            <NavCard to="/catalog" icon={<BarChart2 className="w-5 h-5 text-emerald-600" />} bg="bg-emerald-50" label="Catálogo" sub="Precios y modelos" />
-            <NavCard to="/recepcion" icon={<PackageCheck className="w-5 h-5 text-teal-600" />} bg="bg-teal-50" label="Recepción" sub="Recibir envíos de USA" />
+            <NavCard
+              to="/catalog"
+              icon={<BarChart2 className="w-5 h-5 text-emerald-600" />}
+              bg="bg-emerald-50"
+              label="Catálogo"
+              sub="Precios y modelos"
+            />
+            <NavCard
+              to="/recepcion"
+              icon={<PackageCheck className="w-5 h-5 text-teal-600" />}
+              bg="bg-teal-50"
+              label="Recepción"
+              sub="Recibir envíos de USA"
+            />
             {isAdminOrGerente && (
-              <NavCard to="/insights" icon={<Activity className="w-5 h-5 text-rose-600" />} bg="bg-rose-50" label="Insights" sub="Cuellos de botella" highlight />
+              <NavCard
+                to="/insights"
+                icon={<Activity className="w-5 h-5 text-rose-600" />}
+                bg="bg-rose-50"
+                label="Insights"
+                sub="Cuellos de botella"
+                highlight
+              />
             )}
             {isAdminOrGerente && (
               <>
-                <NavCard to="/finanzas" icon={<TrendingUp className="w-5 h-5 text-emerald-700" />} bg="bg-emerald-50" label="Finanzas" sub="P&L y reportes" highlight />
-                <NavCard to="/ventas" icon={<ShoppingBag className="w-5 h-5 text-blue-600" />} bg="bg-blue-50" label="Ventas" sub="Historial" />
-                <NavCard to="/ordenes" icon={<ShoppingBag className="w-5 h-5 text-indigo-600" />} bg="bg-indigo-50" label="Ordenes" sub="Pedidos B2B online" highlight />
-                <NavCard to="/admin/usuarios" icon={<User className="w-5 h-5 text-gray-600" />} bg="bg-gray-100" label="Usuarios" sub="Compradores B2B" />
+                <NavCard
+                  to="/finanzas"
+                  icon={<TrendingUp className="w-5 h-5 text-emerald-700" />}
+                  bg="bg-emerald-50"
+                  label="Finanzas"
+                  sub="P&L y reportes"
+                  highlight
+                />
+                <NavCard
+                  to="/ventas"
+                  icon={<ShoppingBag className="w-5 h-5 text-blue-600" />}
+                  bg="bg-blue-50"
+                  label="Ventas"
+                  sub="Historial"
+                />
+                <NavCard
+                  to="/ordenes"
+                  icon={<ShoppingBag className="w-5 h-5 text-indigo-600" />}
+                  bg="bg-indigo-50"
+                  label="Ordenes"
+                  sub="Pedidos B2B online"
+                  highlight
+                />
+                <NavCard
+                  to="/admin/usuarios"
+                  icon={<User className="w-5 h-5 text-gray-600" />}
+                  bg="bg-gray-100"
+                  label="Usuarios"
+                  sub="Compradores B2B"
+                />
               </>
             )}
           </div>
@@ -199,9 +260,7 @@ function CompradorView() {
             {isLoading || !stats ? (
               <div className="h-8 w-16 bg-gray-200 rounded-lg animate-pulse mt-1" />
             ) : (
-              <p className="text-3xl font-bold text-gray-900 leading-none">
-                {stats.inStock}
-              </p>
+              <p className="text-3xl font-bold text-gray-900 leading-none">{stats.inStock}</p>
             )}
           </div>
         </div>
@@ -225,10 +284,7 @@ function CompradorView() {
             <p className="text-xs text-gray-400">Historial de ordenes</p>
           </div>
         </div>
-        <Link
-          to="/mis-pedidos"
-          className="text-sm font-semibold text-primary-600 hover:underline"
-        >
+        <Link to="/mis-pedidos" className="text-sm font-semibold text-primary-600 hover:underline">
           Ver todos →
         </Link>
       </div>
@@ -272,8 +328,8 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
             stats.monthRevenue === 0
               ? 'Sin ventas en el período'
               : stats.revenueChangePct !== null
-              ? `${stats.revenueChangePct >= 0 ? '+' : ''}${stats.revenueChangePct.toFixed(0)}% vs período ant.`
-              : `${stats.monthUnitsSold} unidades`
+                ? `${stats.revenueChangePct >= 0 ? '+' : ''}${stats.revenueChangePct.toFixed(0)}% vs período ant.`
+                : `${stats.monthUnitsSold} unidades`
           }
           trend={stats.monthRevenue === 0 ? undefined : stats.revenueChangePct}
           icon={<DollarSign className="w-5 h-5" />}
@@ -341,7 +397,10 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                     const isEmpty = m.revenue === 0;
                     return (
                       <div key={i} className="flex-1 flex flex-col items-center gap-1 min-w-0">
-                        <div className="w-full flex flex-col justify-end" style={{ height: '108px' }}>
+                        <div
+                          className="w-full flex flex-col justify-end"
+                          style={{ height: '108px' }}
+                        >
                           {isCurrentMonth && isEmpty ? (
                             // Current month with no data yet: dashed outline bar as placeholder
                             <div
@@ -352,14 +411,20 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                           ) : (
                             <div
                               className={`w-full rounded-t-sm transition-all ${
-                                isEmpty ? 'bg-gray-100' : isCurrentMonth ? 'bg-primary-400' : 'bg-primary-600'
+                                isEmpty
+                                  ? 'bg-gray-100'
+                                  : isCurrentMonth
+                                    ? 'bg-primary-400'
+                                    : 'bg-primary-600'
                               }`}
                               style={{ height: `${Math.max(heightPct, 4)}%` }}
                               title={`${m.month}: ${fmt(m.revenue)} · ${m.units} uds`}
                             />
                           )}
                         </div>
-                        <p className="text-xs text-gray-400 truncate w-full text-center">{m.month}</p>
+                        <p className="text-xs text-gray-400 truncate w-full text-center">
+                          {m.month}
+                        </p>
                         {isCurrentMonth && (
                           <p className="text-xs text-primary-300 truncate w-full text-center leading-tight">
                             parcial
@@ -381,7 +446,9 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
           {/* Precio promedio por equipo */}
           <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 shadow-sm text-blue-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium uppercase tracking-wide opacity-70">Precio prom. / equipo</span>
+              <span className="text-xs font-medium uppercase tracking-wide opacity-70">
+                Precio prom. / equipo
+              </span>
               <DollarSign className="w-4 h-4 opacity-60" />
             </div>
             <p className="text-3xl font-bold text-gray-900">{fmt(stats.avgRevenuePerUnit)}</p>
@@ -395,7 +462,9 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
           {/* Equipos en SV */}
           <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4 shadow-sm text-indigo-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium uppercase tracking-wide opacity-70">Equipos en SV</span>
+              <span className="text-xs font-medium uppercase tracking-wide opacity-70">
+                Equipos en SV
+              </span>
               <Smartphone className="w-4 h-4 opacity-60" />
             </div>
             <p className="text-3xl font-bold text-gray-900">{stats.inStock + stats.reserved}</p>
@@ -407,17 +476,21 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
           </div>
 
           {/* Días promedio para vender */}
-          <div className={`rounded-2xl border p-4 shadow-sm ${
-            stats.avgDaysToSell === 0
-              ? 'bg-gray-50 border-gray-100 text-gray-500'
-              : stats.avgDaysToSell <= 20
-              ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
-              : stats.avgDaysToSell <= 35
-              ? 'bg-amber-50 border-amber-100 text-amber-700'
-              : 'bg-red-50 border-red-100 text-red-700'
-          }`}>
+          <div
+            className={`rounded-2xl border p-4 shadow-sm ${
+              stats.avgDaysToSell === 0
+                ? 'bg-gray-50 border-gray-100 text-gray-500'
+                : stats.avgDaysToSell <= 20
+                  ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
+                  : stats.avgDaysToSell <= 35
+                    ? 'bg-amber-50 border-amber-100 text-amber-700'
+                    : 'bg-red-50 border-red-100 text-red-700'
+            }`}
+          >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium uppercase tracking-wide opacity-70">Días para vender</span>
+              <span className="text-xs font-medium uppercase tracking-wide opacity-70">
+                Días para vender
+              </span>
               <Timer className="w-4 h-4 opacity-60" />
             </div>
             <p className="text-3xl font-bold text-gray-900">
@@ -427,10 +500,10 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
               {stats.avgDaysToSell === 0
                 ? 'Sin ventas en el período'
                 : stats.avgDaysToSell <= 20
-                ? 'Rotación excelente ✓'
-                : stats.avgDaysToSell <= 35
-                ? 'Rotación normal'
-                : 'Rotación lenta — revisar precios'}
+                  ? 'Rotación excelente ✓'
+                  : stats.avgDaysToSell <= 35
+                    ? 'Rotación normal'
+                    : 'Rotación lenta — revisar precios'}
             </p>
           </div>
         </div>
@@ -441,7 +514,9 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="rounded-2xl border border-teal-100 bg-teal-50 p-4 shadow-sm col-span-2">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">Pipeline en tránsito</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">
+                Pipeline en tránsito
+              </span>
               <Package className="w-4 h-4 text-teal-600" />
             </div>
             <p className="text-2xl font-bold text-gray-900">{fmt(stats.projectedTransitRevenue)}</p>
@@ -451,15 +526,21 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
           </div>
           <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-violet-700">Sell-Through</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-violet-700">
+                Sell-Through
+              </span>
               <TrendingUp className="w-4 h-4 text-violet-600" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats.sellThroughRate?.toFixed(0) ?? '—'}%</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {stats.sellThroughRate?.toFixed(0) ?? '—'}%
+            </p>
             <p className="text-xs text-violet-600 mt-1">Del inventario total vendido</p>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-amber-700">En tránsito</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-amber-700">
+                En tránsito
+              </span>
               <Clock className="w-4 h-4 text-amber-600" />
             </div>
             <p className="text-2xl font-bold text-gray-900">{stats.inTransitTotal ?? '—'}</p>
@@ -490,12 +571,17 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900">{b.marca}</p>
                         <div className="mt-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full bg-primary-500" style={{ width: `${pct}%` }} />
+                          <div
+                            className="h-full rounded-full bg-primary-500"
+                            style={{ width: `${pct}%` }}
+                          />
                         </div>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-gray-900">{fmt(b.revenue)}</p>
-                        <p className="text-xs text-gray-400">{b.units} uds · {fmt(b.avgRevenue)} avg</p>
+                        <p className="text-xs text-gray-400">
+                          {b.units} uds · {fmt(b.avgRevenue)} avg
+                        </p>
                       </div>
                     </div>
                   );
@@ -507,28 +593,36 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
           {/* Impacto reparaciones + Capital en tránsito */}
           <div className="space-y-4">
             {/* Repair cost impact */}
-            {showCosts && <div className={`rounded-2xl border p-4 shadow-sm ${
-              stats.repairCostImpact === 0
-                ? 'bg-emerald-50 border-emerald-100'
-                : 'bg-orange-50 border-orange-100'
-            }`}>
-              <div className="flex items-center gap-2 mb-2">
-                <Wrench className={`w-4 h-4 ${stats.repairCostImpact === 0 ? 'text-emerald-600' : 'text-orange-600'}`} />
-                <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                  Costo reparaciones no cobradas
-                </span>
+            {canViewCosts(user?.email) && (
+              <div
+                className={`rounded-2xl border p-4 shadow-sm ${
+                  stats.repairCostImpact === 0
+                    ? 'bg-emerald-50 border-emerald-100'
+                    : 'bg-orange-50 border-orange-100'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Wrench
+                    className={`w-4 h-4 ${stats.repairCostImpact === 0 ? 'text-emerald-600' : 'text-orange-600'}`}
+                  />
+                  <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                    Costo reparaciones no cobradas
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">{fmt(stats.repairCostImpact)}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {stats.repairCostImpact === 0
+                    ? 'Sin reparaciones pendientes de cobro ✓'
+                    : 'Deducir de las ganancias del período'}
+                </p>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{fmt(stats.repairCostImpact)}</p>
-              <p className="text-xs text-gray-500 mt-1">
-                {stats.repairCostImpact === 0
-                  ? 'Sin reparaciones pendientes de cobro ✓'
-                  : 'Deducir de las ganancias del período'}
-              </p>
-            </div>}
+            )}
 
             {/* Pipeline de capital */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">Pipeline de equipos</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">
+                Pipeline de equipos
+              </p>
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="flex items-center gap-2 text-gray-600">
@@ -542,7 +636,9 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                     <span className="w-2 h-2 rounded-full bg-blue-400 shrink-0" />
                     En inventario SV
                   </span>
-                  <span className="font-bold text-gray-900">{stats.inStock + stats.reserved} uds</span>
+                  <span className="font-bold text-gray-900">
+                    {stats.inStock + stats.reserved} uds
+                  </span>
                 </div>
                 <div className="flex justify-between items-center text-sm border-t border-gray-100 pt-2 mt-1">
                   <span className="font-semibold text-gray-700">Total en pipeline</span>
@@ -557,72 +653,80 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
       )}
 
       {/* Top Lotes + Velocidad por Modelo */}
-      {isAdminOrGerente && (stats.topLoteRevenue?.length > 0 || stats.modelVelocity?.length > 0) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Top Lotes por Ingresos */}
-          {stats.topLoteRevenue && stats.topLoteRevenue.length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <h3 className="font-bold text-gray-900 text-sm">Top Lotes por Ingresos</h3>
-                <p className="text-xs text-gray-400">Envíos más rentables · {periodShort}</p>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {stats.topLoteRevenue.map((lote, i) => {
-                  const maxRev = stats.topLoteRevenue![0].revenue;
-                  const pct = maxRev > 0 ? (lote.revenue / maxRev) * 100 : 0;
-                  return (
-                    <div key={i} className="flex items-center gap-3 px-5 py-3">
-                      <span className="text-xs text-gray-400 w-4 font-bold">{i + 1}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-700 truncate">{lote.lote}</p>
-                        <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full bg-indigo-500" style={{ width: `${pct}%` }} />
+      {isAdminOrGerente &&
+        (stats.topLoteRevenue?.length > 0 || stats.modelVelocity?.length > 0) && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Top Lotes por Ingresos */}
+            {stats.topLoteRevenue && stats.topLoteRevenue.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-100">
+                  <h3 className="font-bold text-gray-900 text-sm">Top Lotes por Ingresos</h3>
+                  <p className="text-xs text-gray-400">Envíos más rentables · {periodShort}</p>
+                </div>
+                <div className="divide-y divide-gray-50">
+                  {stats.topLoteRevenue.map((lote, i) => {
+                    const maxRev = stats.topLoteRevenue![0].revenue;
+                    const pct = maxRev > 0 ? (lote.revenue / maxRev) * 100 : 0;
+                    return (
+                      <div key={i} className="flex items-center gap-3 px-5 py-3">
+                        <span className="text-xs text-gray-400 w-4 font-bold">{i + 1}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-gray-700 truncate">
+                            {lote.lote}
+                          </p>
+                          <div className="mt-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-indigo-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-sm font-bold text-gray-900">{fmt(lote.revenue)}</p>
+                          <p className="text-xs text-gray-400">{lote.units} uds</p>
                         </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-gray-900">{fmt(lote.revenue)}</p>
-                        <p className="text-xs text-gray-400">{lote.units} uds</p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Velocidad por modelo */}
-          {stats.modelVelocity && stats.modelVelocity.length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <h3 className="font-bold text-gray-900 text-sm">Velocidad de Venta</h3>
-                <p className="text-xs text-gray-400">Días promedio para vender por modelo</p>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {stats.modelVelocity.map((m, i) => {
-                  const color =
-                    m.avgDays <= 15
-                      ? 'text-emerald-600 bg-emerald-50'
-                      : m.avgDays <= 30
-                      ? 'text-amber-600 bg-amber-50'
-                      : 'text-red-600 bg-red-50';
-                  return (
-                    <div key={i} className="flex items-center gap-3 px-5 py-2.5">
-                      <span className="text-xs text-gray-400 w-4 font-bold">{i + 1}</span>
-                      <p className="flex-1 text-xs font-medium text-gray-700 truncate">{m.modelo}</p>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs text-gray-400">{m.units} uds</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${color}`}>
-                          {m.avgDays}d
-                        </span>
+            {/* Velocidad por modelo */}
+            {stats.modelVelocity && stats.modelVelocity.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-100">
+                  <h3 className="font-bold text-gray-900 text-sm">Velocidad de Venta</h3>
+                  <p className="text-xs text-gray-400">Días promedio para vender por modelo</p>
+                </div>
+                <div className="divide-y divide-gray-50">
+                  {stats.modelVelocity.map((m, i) => {
+                    const color =
+                      m.avgDays <= 15
+                        ? 'text-emerald-600 bg-emerald-50'
+                        : m.avgDays <= 30
+                          ? 'text-amber-600 bg-amber-50'
+                          : 'text-red-600 bg-red-50';
+                    return (
+                      <div key={i} className="flex items-center gap-3 px-5 py-2.5">
+                        <span className="text-xs text-gray-400 w-4 font-bold">{i + 1}</span>
+                        <p className="flex-1 text-xs font-medium text-gray-700 truncate">
+                          {m.modelo}
+                        </p>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-gray-400">{m.units} uds</span>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${color}`}>
+                            {m.avgDays}d
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
 
       {/* Bottom row: Top models + Recent activity */}
       {isAdminOrGerente && (
@@ -634,17 +738,12 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                 <h3 className="font-bold text-gray-900 text-sm">Top Modelos</h3>
                 <p className="text-xs text-gray-400">Por ingresos ({periodShort})</p>
               </div>
-              <Link
-                to="/finanzas"
-                className="text-xs text-primary-600 hover:underline font-medium"
-              >
+              <Link to="/finanzas" className="text-xs text-primary-600 hover:underline font-medium">
                 Ver más →
               </Link>
             </div>
             {stats.topModels.length === 0 ? (
-              <div className="p-8 text-center text-gray-400 text-sm">
-                Sin ventas en el período
-              </div>
+              <div className="p-8 text-center text-gray-400 text-sm">Sin ventas en el período</div>
             ) : (
               <div className="divide-y divide-gray-50">
                 {stats.topModels.map((m, i) => {
@@ -653,13 +752,9 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                   const pct = (m.revenue / maxRev) * 100;
                   return (
                     <div key={i} className="flex items-center gap-3 px-5 py-3">
-                      <span className="text-xs text-gray-400 w-4 font-bold">
-                        {i + 1}
-                      </span>
+                      <span className="text-xs text-gray-400 w-4 font-bold">{i + 1}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {m.modelo}
-                        </p>
+                        <p className="text-sm font-medium text-gray-900 truncate">{m.modelo}</p>
                         <div className="mt-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-primary-500 rounded-full"
@@ -668,9 +763,7 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-gray-900">
-                          {fmt(m.revenue)}
-                        </p>
+                        <p className="text-sm font-bold text-gray-900">{fmt(m.revenue)}</p>
                         <p className="text-xs text-gray-400">{m.count} uds</p>
                       </div>
                     </div>
@@ -687,17 +780,12 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                 <h3 className="font-bold text-gray-900 text-sm">Últimas ventas</h3>
                 <p className="text-xs text-gray-400">5 más recientes</p>
               </div>
-              <Link
-                to="/ventas"
-                className="text-xs text-primary-600 hover:underline font-medium"
-              >
+              <Link to="/ventas" className="text-xs text-primary-600 hover:underline font-medium">
                 Ver todas →
               </Link>
             </div>
             {stats.recentSales.length === 0 ? (
-              <div className="p-8 text-center text-gray-400 text-sm">
-                Sin ventas registradas
-              </div>
+              <div className="p-8 text-center text-gray-400 text-sm">Sin ventas registradas</div>
             ) : (
               <div className="divide-y divide-gray-50">
                 {stats.recentSales.map((sale) => (
@@ -706,9 +794,7 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
                       <Smartphone className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {sale.modelo}
-                      </p>
+                      <p className="text-sm font-medium text-gray-900 truncate">{sale.modelo}</p>
                       <p className="text-xs text-gray-400">{fmtDate(sale.fecha)}</p>
                     </div>
                     <p className="text-sm font-bold text-emerald-600 shrink-0">
@@ -788,9 +874,7 @@ function TallerView() {
           <AlertCircle className="w-4 h-4" />
           <span className="text-xs font-medium">Para gerencia</span>
         </div>
-        <p className="text-3xl font-bold text-indigo-900">
-          {stats.pendingManagementReception}
-        </p>
+        <p className="text-3xl font-bold text-indigo-900">{stats.pendingManagementReception}</p>
       </div>
       <div className="bg-gray-100 border border-gray-200 rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-2 text-gray-600">
@@ -825,24 +909,30 @@ function KpiCard({
   if (hidden) return null;
 
   const iconColors: Record<string, string> = {
-    blue:   'bg-blue-100 text-blue-600',
-    emerald:'bg-emerald-100 text-emerald-600',
+    blue: 'bg-blue-100 text-blue-600',
+    emerald: 'bg-emerald-100 text-emerald-600',
     purple: 'bg-purple-100 text-purple-600',
-    red:    'bg-red-100 text-red-600',
+    red: 'bg-red-100 text-red-600',
     orange: 'bg-orange-100 text-orange-600',
   };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${iconColors[color]}`}>
+        <div
+          className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${iconColors[color]}`}
+        >
           {icon}
         </div>
         {trend !== undefined && trend !== null && (
-          <span className={`flex items-center gap-0.5 text-xs font-semibold ${trend >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-            {trend >= 0
-              ? <ArrowUpRight className="w-3.5 h-3.5" />
-              : <ArrowDownRight className="w-3.5 h-3.5" />}
+          <span
+            className={`flex items-center gap-0.5 text-xs font-semibold ${trend >= 0 ? 'text-emerald-600' : 'text-red-500'}`}
+          >
+            {trend >= 0 ? (
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            ) : (
+              <ArrowDownRight className="w-3.5 h-3.5" />
+            )}
             {Math.abs(trend).toFixed(0)}%
           </span>
         )}
@@ -874,7 +964,9 @@ function NavCard({
       to={to}
       className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-all p-4 flex items-center gap-3 group ${highlight ? 'border-emerald-200' : 'border-gray-100'}`}
     >
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bg} group-hover:scale-110 transition-transform`}>
+      <div
+        className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bg} group-hover:scale-110 transition-transform`}
+      >
         {icon}
       </div>
       <div className="min-w-0">
