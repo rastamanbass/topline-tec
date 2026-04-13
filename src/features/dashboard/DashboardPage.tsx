@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../context';
 import { canViewCosts } from '../../lib/permissions';
 import {
@@ -44,7 +44,7 @@ const fmtDate = (d: Date) =>
 
 export default function DashboardPage() {
   const { user, userRole, signOut } = useAuth();
-  const showCosts = useMemo(() => canViewCosts(user?.email), [user?.email]);
+  const canSeeCosts = canViewCosts(user?.email);
 
   const handleSignOut = async () => {
     try {
@@ -507,7 +507,7 @@ function AdminView({ userRole, period }: { userRole: string; period: DashboardPe
           {/* Impacto reparaciones + Capital en tránsito */}
           <div className="space-y-4">
             {/* Repair cost impact */}
-            {showCosts && <div className={`rounded-2xl border p-4 shadow-sm ${
+            {canSeeCosts && <div className={`rounded-2xl border p-4 shadow-sm ${
               stats.repairCostImpact === 0
                 ? 'bg-emerald-50 border-emerald-100'
                 : 'bg-orange-50 border-orange-100'
