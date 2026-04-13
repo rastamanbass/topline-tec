@@ -1,6 +1,16 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Edit2, Trash2, Calendar, DollarSign, Package, Clock, ShieldOff } from 'lucide-react';
+import {
+  X,
+  Edit2,
+  Trash2,
+  Calendar,
+  DollarSign,
+  Package,
+  Clock,
+  ShieldOff,
+  Tag,
+} from 'lucide-react';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -337,6 +347,13 @@ export default function PhoneDetailsModal() {
                 {selectedPhone.seized ? 'Rehabilitar' : 'Inhabilitar (CECOT)'}
               </button>
             )}
+            <Link
+              to={`/labels/single/${selectedPhone.imei}`}
+              className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors flex items-center gap-2"
+            >
+              <Tag className="w-4 h-4" />
+              Sticker
+            </Link>
             {canEdit && (
               <button onClick={handleEdit} className="btn-primary flex items-center gap-2">
                 <Edit2 className="w-4 h-4" />
