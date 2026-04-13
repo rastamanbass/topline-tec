@@ -39,27 +39,36 @@ export const phoneSchema = z
       .string()
       .min(1, 'IMEI es requerido')
       .refine((val) => {
-        const lines = val.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const lines = val
+          .split('\n')
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0);
         return lines.length > 0;
       }, 'Ingresa al menos un IMEI')
       .refine((val) => {
-        const lines = val.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        return lines.every(l => /^\d{15}$/.test(l));
+        const lines = val
+          .split('\n')
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0);
+        return lines.every((l) => /^\d{15}$/.test(l));
       }, 'Cada IMEI debe tener exactamente 15 dígitos numéricos')
       .refine((val) => {
-        const lines = val.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        return lines.every(l => luhn(l));
+        const lines = val
+          .split('\n')
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0);
+        return lines.every((l) => luhn(l));
       }, 'IMEI inválido (falla verificación de dígito Luhn)'),
     marca: z.string().min(1, 'Marca es requerida'),
     modelo: z.string().min(1, 'Modelo es requerido'),
     storage: z.string().optional(),
     lote: z.string().min(1, 'Lote es requerido'),
-    costo: z.number().positive('Costo debe ser mayor a 0'),
-    precioVenta: z.number().positive('Precio de venta debe ser mayor a 0'),
+    costo: z.number().min(0, 'Costo no puede ser negativo'),
+    precioVenta: z.number().min(0, 'Precio de venta no puede ser negativo'),
     estado: z.enum(PHONE_STATUSES),
     condition: z.enum(['New', 'Open Box', 'Grade A', 'Grade B', 'Grade C']).optional(),
   })
-  .refine((data) => data.precioVenta >= data.costo, {
+  .refine((data) => data.precioVenta === 0 || data.precioVenta >= data.costo, {
     message: 'El precio de venta debe ser mayor o igual al costo',
     path: ['precioVenta'],
   });

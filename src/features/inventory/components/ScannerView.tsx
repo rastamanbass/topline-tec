@@ -27,7 +27,18 @@ import {
   normalizeStorage,
   normalizeIPhoneModel,
 } from '../../../lib/phoneUtils';
-import { collection, addDoc, serverTimestamp, doc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  doc,
+  setDoc,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+  limit as firestoreLimit,
+} from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -278,6 +289,28 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
         setScannedItems((prev) =>
           prev.map((item) => (item.tempId === tempId ? { ...resolvedItem, saved: false } : item))
         );
+
+        // Check Firestore for duplicate IMEI before saving
+        const dupeQuery = query(
+          collection(db, 'phones'),
+          where('imei', '==', normalizedImei),
+          firestoreLimit(1)
+        );
+        const dupeSnap = await getDocs(dupeQuery);
+        if (!dupeSnap.empty) {
+          setScannedItems((prev) =>
+            prev.map((item) =>
+              item.tempId === tempId
+                ? { ...item, status: 'error' as const, theftStatus: 'DUPLICATE_DB' }
+                : item
+            )
+          );
+          toast.error(`IMEI ${normalizedImei} ya existe en el sistema`, { duration: 5000 });
+          return;
+        }
+
+        // Use normalized IMEI for saving
+        resolvedItem.imei = normalizedImei;
 
         // Auto-save to Firestore immediately
         try {
