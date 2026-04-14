@@ -6,8 +6,9 @@
 <title>TP Miami - Invoice ENVIO 1 ABRIL 2026</title>
 <style>
   @media print {
-    body { margin: 0; }
+    body { margin: 0; background: white !important; }
     .no-print { display: none !important; }
+    .page { box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
     input, textarea { border: none !important; background: none !important; outline: none !important; }
     @page { size: letter; margin: 0.5in; }
   }
@@ -67,11 +68,12 @@
   .print-bar button { background: #0284c7; color: white; border: none; padding: 12px 30px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; }
   .print-bar button:hover { background: #0369a1; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
 <div class="print-bar no-print">
-  <button onclick="window.print()">Imprimir / Guardar PDF</button>
+  <button onclick="generateCleanPDF()">Guardar PDF</button>
 </div>
 
 <div class="page">
@@ -184,6 +186,47 @@ function calc() {
   document.getElementById('subtotal').textContent = fmt;
   document.getElementById('total').textContent = fmt;
   document.getElementById('grand').textContent = '$' + grand.toLocaleString('en-US');
+}
+
+function generateCleanPDF() {
+  const el = document.querySelector('.page');
+  // Bake input values into visible text for PDF
+  el.querySelectorAll('input').forEach(input => {
+    const span = document.createElement('span');
+    span.textContent = input.value || '';
+    span.style.cssText = input.style.cssText || '';
+    span.style.fontSize = '13px';
+    span.style.fontWeight = '400';
+    input.replaceWith(span);
+  });
+  el.querySelectorAll('textarea').forEach(ta => {
+    const div = document.createElement('div');
+    div.textContent = ta.value || '';
+    div.style.fontSize = '13px';
+    div.style.whiteSpace = 'pre-line';
+    ta.replaceWith(div);
+  });
+
+  const invNum = document.querySelector('.inv-number').textContent || 'invoice';
+
+  html2pdf().set({
+    margin: [12, 12, 12, 12],
+    filename: 'TP-Miami-' + invNum + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css'] },
+  }).from(el).toPdf().get('pdf').then(function(pdf) {
+    pdf.setProperties({
+      title: '',
+      subject: '',
+      author: '',
+      keywords: '',
+      creator: ''
+    });
+  }).save().then(function() {
+    location.reload();
+  });
 }
 </script>
 
