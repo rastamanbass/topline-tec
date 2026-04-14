@@ -87,7 +87,8 @@
     </div>
     <div class="header-right">
       <div class="inv-label">Invoice #</div>
-      <div class="inv-number" contenteditable="true">0000000</div>
+      <div class="inv-number" contenteditable="true" id="invNum">0000000</div>
+<script>document.getElementById('invNum').textContent=Math.floor(5400000+Math.random()*600000);</script>
     </div>
   </div>
   <div class="address-line">12555 Biscayne Blvd #1164, Miami, FL<br>33181, USA</div>
