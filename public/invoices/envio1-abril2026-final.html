@@ -12,7 +12,11 @@
     textarea { border: none !important; background: none !important; outline: none !important; resize: none !important; }
     tbody tr { break-inside: avoid; }
     .totals-section, .footer, .terms { break-inside: avoid; }
-    @page { size: letter; margin: 0.5in; }
+    @page { size: letter; margin: 0.5in 0.5in 0.6in 0.5in; }
+    @top-left { content: ''; }
+    @top-right { content: ''; }
+    @bottom-left { content: ''; }
+    @bottom-right { content: ''; }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #f5f5f5; }
@@ -56,7 +60,8 @@
 
 <div class="print-bar no-print">
   <button onclick="window.print()">Guardar PDF (Ctrl+P)</button>
-  <p style="font-size:12px;color:#666;margin-top:8px">En el dialogo de impresion: Destino = "Guardar como PDF", Margenes = Ninguno, Escala = 100%</p>
+  <p style="font-size:13px;color:#c00;margin-top:10px;font-weight:600">IMPORTANTE: En el dialogo de impresion:</p>
+  <p style="font-size:12px;color:#666;margin-top:4px">1. Destino = "Save as PDF"<br>2. More settings / Mas opciones<br>3. DESMARCAR "Headers and footers" (para que NO salga la URL)<br>4. Margins = None / Margenes = Ninguno</p>
 </div>
 
 <div class="page" id="invoice">
