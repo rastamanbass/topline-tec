@@ -45,9 +45,7 @@
   tbody td { padding: 8px 8px; font-size: 13px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
   tbody td.right { text-align: right; }
   tbody td.center { text-align: center; }
-  .price-cell { position: relative; }
-  .price-cell::before { content: '$'; position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #333; pointer-events: none; }
-  .price-cell input { font-family: inherit; font-size: 13px; border: 1px dashed #ccc; padding: 2px 6px 2px 18px; width: 90px; text-align: right; background: #fff; }
+  .price-cell input { font-family: inherit; font-size: 13px; border: 1px dashed #ccc; padding: 2px 6px; width: 80px; text-align: right; background: #fff; }
   tbody tr:hover { background: #fafafa; }
 
   /* Terms */
@@ -190,11 +188,11 @@ function calc() {
 
 function generateCleanPDF() {
   const el = document.querySelector('.page');
-  // Bake input values into visible text for PDF
+  // Bake input values into visible text with $ prefix
   el.querySelectorAll('input').forEach(input => {
     const span = document.createElement('span');
-    span.textContent = input.value || '';
-    span.style.cssText = input.style.cssText || '';
+    const val = parseFloat(input.value) || 0;
+    span.textContent = '$' + val.toLocaleString('en-US');
     span.style.fontSize = '13px';
     span.style.fontWeight = '400';
     input.replaceWith(span);
