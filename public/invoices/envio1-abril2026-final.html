@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP Miami Invoice</title>
+<style>
+  @media print {
+    body { margin: 0; background: white !important; }
+    .no-print { display: none !important; }
+    .page { box-shadow: none !important; margin: 0 !important; padding: 40px 50px !important; }
+    textarea { border: none !important; background: none !important; outline: none !important; resize: none !important; }
+    @page { size: letter; margin: 0.4in; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #f5f5f5; }
+  .page { max-width: 850px; margin: 20px auto; background: white; padding: 45px 50px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .header-left { font-size: 13px; color: #555; }
+  .header-center { text-align: center; }
+  .header-center img { width: 80px; height: 80px; }
+  .header-center .company-name { font-size: 13px; font-weight: 700; color: #0284c7; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .inv-label { font-size: 11px; color: #777; }
+  .header-right .inv-number { font-size: 26px; font-weight: 700; }
+  .address-line { text-align: center; font-size: 12px; font-weight: 600; color: #333; margin-bottom: 20px; }
+  .info-section { display: flex; justify-content: space-between; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px 20px; margin-bottom: 25px; }
+  .billing-block { flex: 1; }
+  .billing-block .label { font-size: 10px; color: #777; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+  .billing-block textarea { font-family: inherit; font-size: 12px; color: #333; width: 100%; border: 1px dashed #ccc; padding: 4px 6px; background: #fff; resize: vertical; height: 50px; }
+  .details-block { text-align: right; }
+  .details-block .detail-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 3px; }
+  .details-block .detail-item { font-size: 12px; color: #555; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  thead th { font-size: 10px; text-transform: uppercase; color: #555; font-weight: 600; padding: 8px 6px; text-align: left; border-bottom: 2px solid #e5e7eb; }
+  thead th.right { text-align: right; }
+  thead th.center { text-align: center; }
+  tbody td { padding: 7px 6px; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
+  tbody td.right { text-align: right; }
+  tbody td.center { text-align: center; }
+  .terms { font-size: 12px; font-weight: 700; color: #333; margin: 12px 0 25px; }
+  .totals-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; }
+  .totals-label { font-size: 18px; font-weight: 700; }
+  .totals-table { width: 260px; }
+  .totals-table .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+  .totals-table .row.grand { border-top: 2px solid #333; margin-top: 8px; padding-top: 10px; font-size: 16px; font-weight: 700; }
+  .footer { text-align: center; margin-top: 25px; padding-top: 10px; border-top: 1px solid #eee; font-size: 10px; color: #999; line-height: 1.8; }
+  .print-bar { text-align: center; margin: 20px auto; }
+  .print-bar button { background: #0284c7; color: white; border: none; padding: 12px 30px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; margin: 0 8px; }
+  .print-bar button:hover { background: #0369a1; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <button onclick="generateCleanPDF()">Guardar PDF</button>
+</div>
+
+<div class="page" id="invoice">
+  <div class="header">
+    <div class="header-left">
+      <div style="font-size:11px;color:#777">Invoice Date</div>
+      <div style="font-size:13px;font-weight:600" id="invDate">04/14/2026</div>
+    </div>
+    <div class="header-center">
+      <img src="tpmiami.png" alt="TP Miami">
+      <div class="company-name">TP Miami</div>
+    </div>
+    <div class="header-right">
+      <div class="inv-label">Invoice #</div>
+      <div class="inv-number" id="invNum">0</div>
+    </div>
+  </div>
+  <script>document.getElementById('invNum').textContent=Math.floor(5400000+Math.random()*600000);</script>
+  <div class="address-line">12555 Biscayne Blvd #1164, Miami, FL<br>33181, USA</div>
+
+  <div class="info-section">
+    <div class="billing-block">
+      <div class="label">Billing Address:</div>
+      <textarea id="billingAddr" placeholder="Nombre del comprador&#10;Direccion&#10;Ciudad, Pais"></textarea>
+    </div>
+    <div class="details-block">
+      <div class="detail-title">Details Order</div>
+      <div class="detail-item">Status:</div>
+      <div class="detail-item" style="font-weight:600">Shipped</div>
+      <div class="detail-item">Standard</div>
+      <div class="detail-item">Overnight</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Origin</th>
+        <th>Product Description</th>
+        <th class="right">Unit Price</th>
+        <th class="center">Quantity Ordered</th>
+        <th class="right">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>China</td><td>Refurbished iPhone 13 128GB</td><td class="right">$175</td><td class="center">28</td><td class="right">$4,900</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 Ultra 5G 128GB</td><td class="right">$200</td><td class="center">25</td><td class="right">$5,000</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S21 Ultra 5G 128GB</td><td class="right">$160</td><td class="center">20</td><td class="right">$3,200</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 Ultra 5G 256GB</td><td class="right">$215</td><td class="center">20</td><td class="right">$4,300</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 12 64GB</td><td class="right">$160</td><td class="center">19</td><td class="right">$3,040</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 14 128GB</td><td class="right">$180</td><td class="center">10</td><td class="right">$1,800</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 Ultra 5G 512GB</td><td class="right">$230</td><td class="center">10</td><td class="right">$2,300</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 5G 128GB</td><td class="right">$125</td><td class="center">10</td><td class="right">$1,250</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22+ 5G 128GB</td><td class="right">$160</td><td class="center">10</td><td class="right">$1,600</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro 256GB</td><td class="right">$250</td><td class="center">7</td><td class="right">$1,750</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 256GB</td><td class="right">$195</td><td class="center">5</td><td class="right">$975</td></tr>
+      <tr><td>China</td><td>New iPhone 16 Plus 128GB</td><td class="right">$500</td><td class="center">4</td><td class="right">$2,000</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 15 Pro Max 256GB</td><td class="right">$485</td><td class="center">2</td><td class="right">$970</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 14 Pro Max 128GB</td><td class="right">$350</td><td class="center">2</td><td class="right">$700</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 15 Pro 128GB</td><td class="right">$425</td><td class="center">2</td><td class="right">$850</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 16 128GB</td><td class="right">$400</td><td class="center">1</td><td class="right">$400</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 16 Pro Max 256GB</td><td class="right">$600</td><td class="center">1</td><td class="right">$600</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S24 128GB</td><td class="right">$230</td><td class="center">1</td><td class="right">$230</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S24+ 256GB</td><td class="right">$270</td><td class="center">1</td><td class="right">$270</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S25 Ultra Cracked</td><td class="right">$400</td><td class="center">1</td><td class="right">$400</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro 128GB</td><td class="right">$230</td><td class="center">1</td><td class="right">$230</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro Max 512GB</td><td class="right">$370</td><td class="center">1</td><td class="right">$370</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro Max 128GB</td><td class="right">$300</td><td class="center">1</td><td class="right">$300</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 14 Pro Max 256GB</td><td class="right">$375</td><td class="center">1</td><td class="right">$375</td></tr>
+    </tbody>
+  </table>
+
+  <div class="terms">FOB MIAMI &nbsp;&nbsp;&nbsp; TERMS: PREPAID</div>
+
+  <div class="totals-section">
+    <div class="totals-label">Total</div>
+    <div class="totals-table">
+      <div class="row"><span>Subtotal:</span><span>$37,810</span></div>
+      <div class="row"><span>Total</span><span>$37,810</span></div>
+      <div class="row grand"><span>Grand Total:</span><span>$37,810</span></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    TP Miami | +1(786) 712-4263 - tpmiami@gmail.com<br>
+    12555 Biscayne Blvd #1164, Miami, FL 33181, USA
+  </div>
+</div>
+
+<script>
+function generateCleanPDF() {
+  const el = document.getElementById('invoice');
+  const ta = document.getElementById('billingAddr');
+  const div = document.createElement('div');
+  div.textContent = ta.value || '';
+  div.style.fontSize = '12px';
+  div.style.whiteSpace = 'pre-line';
+  div.style.color = '#333';
+  ta.replaceWith(div);
+
+  const invNum = document.getElementById('invNum').textContent || 'invoice';
+
+  html2pdf().set({
+    margin: [10, 10, 10, 10],
+    filename: 'TP-Miami-' + invNum + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
+    pagebreak: { mode: ['css'] },
+  }).from(el).toPdf().get('pdf').then(function(pdf) {
+    pdf.setProperties({ title: '', subject: '', author: '', keywords: '', creator: '' });
+  }).save().then(function() {
+    location.reload();
+  });
+}
+</script>
+</body>
+</html>
