@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP Miami - Invoice ENVIO 1 ABRIL 2026</title>
+<style>
+  @media print {
+    body { margin: 0; }
+    .no-print { display: none !important; }
+    input, textarea { border: none !important; background: none !important; outline: none !important; }
+    @page { size: letter; margin: 0.5in; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #f5f5f5; }
+  .page { max-width: 850px; margin: 20px auto; background: white; padding: 50px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .header-left { font-size: 13px; color: #555; }
+  .header-center { text-align: center; }
+  .header-center img { width: 90px; height: 90px; }
+  .header-center .company-name { font-size: 14px; font-weight: 700; color: #0284c7; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .inv-label { font-size: 12px; color: #777; }
+  .header-right .inv-number { font-size: 28px; font-weight: 700; color: #1a1a1a; }
+  .address-line { text-align: center; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 30px; }
+
+  /* Billing + Details */
+  .info-section { display: flex; justify-content: space-between; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 20px; margin-bottom: 30px; }
+  .billing-block { flex: 1; }
+  .billing-block .label { font-size: 11px; color: #777; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+  .billing-block input, .billing-block textarea { font-family: inherit; font-size: 13px; color: #333; width: 100%; border: 1px dashed #ccc; padding: 3px 6px; background: #fff; }
+  .billing-block textarea { resize: vertical; height: 60px; }
+  .details-block { text-align: right; }
+  .details-block .detail-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px; }
+  .details-block .detail-item { font-size: 13px; color: #555; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  thead th { font-size: 11px; text-transform: uppercase; color: #555; font-weight: 600; padding: 10px 8px; text-align: left; border-bottom: 2px solid #e5e7eb; }
+  thead th.right { text-align: right; }
+  thead th.center { text-align: center; }
+  tbody td { padding: 14px 8px; font-size: 13px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  tbody td.right { text-align: right; }
+  tbody td.center { text-align: center; }
+  tbody td input { font-family: inherit; font-size: 13px; border: 1px dashed #ccc; padding: 2px 6px; width: 80px; text-align: right; background: #fff; }
+  tbody tr:hover { background: #fafafa; }
+
+  /* Terms */
+  .terms { font-size: 13px; font-weight: 700; color: #333; margin: 20px 0 40px; }
+
+  /* Totals */
+  .totals-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
+  .totals-label { font-size: 20px; font-weight: 700; color: #333; }
+  .totals-table { width: 280px; }
+  .totals-table .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+  .totals-table .row.grand { border-top: 2px solid #333; margin-top: 10px; padding-top: 12px; font-size: 18px; font-weight: 700; }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 40px; padding-top: 15px; border-top: 1px solid #eee; font-size: 11px; color: #999; line-height: 1.8; }
+
+  /* Print button */
+  .print-bar { text-align: center; margin: 20px auto; }
+  .print-bar button { background: #0284c7; color: white; border: none; padding: 12px 30px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; }
+  .print-bar button:hover { background: #0369a1; }
+</style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <button onclick="window.print()">Imprimir / Guardar PDF</button>
+</div>
+
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div style="font-size:12px;color:#777">Invoice Date</div>
+      <div style="font-size:14px;font-weight:600" contenteditable="true">04/13/2026</div>
+    </div>
+    <div class="header-center">
+      <img src="tpmiami.png" alt="TP Miami">
+      <div class="company-name">TP Miami</div>
+    </div>
+    <div class="header-right">
+      <div class="inv-label">Invoice #</div>
+      <div class="inv-number" contenteditable="true">0000000</div>
+    </div>
+  </div>
+  <div class="address-line">12555 Biscayne Blvd #1164, Miami, FL<br>33181, USA</div>
+
+  <!-- Billing + Details -->
+  <div class="info-section">
+    <div class="billing-block">
+      <div class="label">Billing Address:</div>
+      <textarea placeholder="Nombre del comprador&#10;Direccion&#10;Ciudad, Pais"></textarea>
+    </div>
+    <div class="details-block">
+      <div class="detail-title">Details Order</div>
+      <div class="detail-item">Status:</div>
+      <div class="detail-item" style="font-weight:600">Shipped</div>
+      <div class="detail-item">Standard</div>
+      <div class="detail-item">Overnight</div>
+    </div>
+  </div>
+
+  <!-- Items Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Origin</th>
+        <th>Product Description</th>
+        <th class="right">Unit Price</th>
+        <th class="center">Quantity<br>Ordered</th>
+        <th class="right">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody id="items">
+      <tr><td>China</td><td>Refurbished iPhone 13 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">28</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 Ultra 5G 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">25</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S21 Ultra 5G 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">20</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 Ultra 5G 256GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">20</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 12</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">17</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 14 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">10</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 Ultra 5G 512GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">10</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22 5G 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">10</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S22+ 5G 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">10</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro 256GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">7</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 256GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">5</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 16 Plus 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">3</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 15 Pro Max 256GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">2</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 14 Pro Max 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">2</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 15 Pro 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">2</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 12 64GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">2</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 16</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 16 Pro Max 256GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 16 Plus</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S24 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S24+ 256GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished Galaxy S25 Ultra</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro Max 512GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 13 Pro Max 128GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+      <tr><td>China</td><td>Refurbished iPhone 14 Pro Max 256GB</td><td class="right"><input type="number" value="0" onchange="calc()"></td><td class="center">1</td><td class="right subtotal">$0</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Terms -->
+  <div class="terms">FOB MIAMI &nbsp;&nbsp;&nbsp; TERMS: PREPAID</div>
+
+  <!-- Totals -->
+  <div class="totals-section">
+    <div class="totals-label">Total</div>
+    <div class="totals-table">
+      <div class="row"><span>Subtotal:</span><span id="subtotal">$0</span></div>
+      <div class="row"><span>Total</span><span id="total">$0</span></div>
+      <div class="row grand"><span>Grand Total:</span><span id="grand">$0</span></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    TP Miami | +1(786) 712-4263 - tpmiami@gmail.com<br>
+    12555 Biscayne Blvd #1164, Miami, FL 33181, USA<br><br>
+    <span id="pagecount">Page 1 of 1</span>
+  </div>
+</div>
+
+<script>
+function calc() {
+  let grand = 0;
+  document.querySelectorAll('#items tr').forEach(row => {
+    const input = row.querySelector('input');
+    const qty = parseInt(row.cells[3].textContent) || 0;
+    const price = parseFloat(input.value) || 0;
+    const sub = price * qty;
+    row.querySelector('.subtotal').textContent = '$' + sub.toLocaleString('en-US');
+    grand += sub;
+  });
+  const fmt = '$' + grand.toLocaleString('en-US');
+  document.getElementById('subtotal').textContent = fmt;
+  document.getElementById('total').textContent = fmt;
+  document.getElementById('grand').textContent = '$' + grand.toLocaleString('en-US');
+}
+</script>
+
+</body>
+</html>
