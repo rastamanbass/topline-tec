@@ -8,9 +8,11 @@
   @media print {
     body { margin: 0; background: white !important; }
     .no-print { display: none !important; }
-    .page { box-shadow: none !important; margin: 0 !important; padding: 40px 50px !important; }
+    .page { box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
     textarea { border: none !important; background: none !important; outline: none !important; resize: none !important; }
-    @page { size: letter; margin: 0.4in; }
+    tbody tr { break-inside: avoid; }
+    .totals-section, .footer, .terms { break-inside: avoid; }
+    @page { size: letter; margin: 0.5in; }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #f5f5f5; }
@@ -49,12 +51,12 @@
   .print-bar button { background: #0284c7; color: white; border: none; padding: 12px 30px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; margin: 0 8px; }
   .print-bar button:hover { background: #0369a1; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
 <div class="print-bar no-print">
-  <button onclick="generateCleanPDF()">Guardar PDF</button>
+  <button onclick="window.print()">Guardar PDF (Ctrl+P)</button>
+  <p style="font-size:12px;color:#666;margin-top:8px">En el dialogo de impresion: Destino = "Guardar como PDF", Margenes = Ninguno, Escala = 100%</p>
 </div>
 
 <div class="page" id="invoice">
@@ -144,32 +146,5 @@
   </div>
 </div>
 
-<script>
-function generateCleanPDF() {
-  const el = document.getElementById('invoice');
-  const ta = document.getElementById('billingAddr');
-  const div = document.createElement('div');
-  div.textContent = ta.value || '';
-  div.style.fontSize = '12px';
-  div.style.whiteSpace = 'pre-line';
-  div.style.color = '#333';
-  ta.replaceWith(div);
-
-  const invNum = document.getElementById('invNum').textContent || 'invoice';
-
-  html2pdf().set({
-    margin: [10, 10, 10, 10],
-    filename: 'TP-Miami-' + invNum + '.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
-    pagebreak: { mode: ['css'] },
-  }).from(el).toPdf().get('pdf').then(function(pdf) {
-    pdf.setProperties({ title: '', subject: '', author: '', keywords: '', creator: '' });
-  }).save().then(function() {
-    location.reload();
-  });
-}
-</script>
 </body>
 </html>
