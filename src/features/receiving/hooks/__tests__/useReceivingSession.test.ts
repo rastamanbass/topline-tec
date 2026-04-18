@@ -344,6 +344,12 @@ describe('Receiving — partial IMEI matching', () => {
 
       if (suffixMatches.length === 1) {
         const matched = suffixMatches[0];
+        // Mirror exact hook code: guard against double-registration when
+        // short IMEI was already scanned directly
+        if (processedImeis.has(matched.imei)) {
+          results.unshift({ imei, status: 'duplicate' });
+          return 'duplicate' as const;
+        }
         const info = [matched.marca, matched.modelo, matched.storage].filter(Boolean).join(' · ');
         // Mirror exact hook code: add the STORED (short) imei to processedImeis
         processedImeis.add(matched.imei);
@@ -395,15 +401,13 @@ describe('Receiving — partial IMEI matching', () => {
     expect(processScan('356371101234567')).toBe('not_found');
   });
 
-  // BUG: exact-then-partial double-registration
-  // Scenario: Eduardo stored the phone with a short IMEI (e.g. 12345678, 8 digits).
-  // 1. Eduardo scans the short IMEI directly → ok (exact match, short added to processedImeis).
-  // 2. Eduardo scans the same phone again using the full 15-digit barcode → suffix match fires because:
-  //    - exact match fails (long IMEI not in transitMap, only the short one is)
-  //    - processedImeis.has(longIMEI) is FALSE (only shortIMEI was added in step 1)
-  //    - suffix match succeeds → result is 'ok' again for the same phone
-  // Expected: 'duplicate'. Actual: 'ok' (phone counted twice, okCount inflated).
-  it('BUG: scanning short IMEI then full IMEI of same phone registers it twice as ok', () => {
+  // Regression test for BUG-003: exact-then-partial double-registration.
+  // Scenario: Eduardo stored the phone with a short IMEI (e.g. 14 digits).
+  // 1. Scans the short IMEI directly → ok (exact match, short added to processedImeis).
+  // 2. Scans the same phone again using the full 15-digit barcode → suffix match
+  //    would fire, but the guard detects the stored imei was already processed
+  //    and returns 'duplicate' instead of 'ok'.
+  it('BUG-003 regression: short IMEI then full IMEI of same phone is flagged as duplicate', () => {
     // shortImei must be >= 8 digits to pass the length guard, but shorter than full (15 digits)
     const shortImei = '56371101234567'; // 14 digits — stored in DB (Eduardo typed without first digit)
     const fullImei = '356371101234567'; // 15 digits — what the barcode scanner reads; ends with shortImei
@@ -416,12 +420,12 @@ describe('Receiving — partial IMEI matching', () => {
     expect(processScan(shortImei)).toBe('ok');
     expect(results).toHaveLength(1);
 
-    // Second scan: full 15-digit IMEI that ends with the short stored IMEI
-    // The phone was already received — this should be 'duplicate'
-    // BUG: it returns 'ok' and adds a second entry, inflating okCount
+    // Second scan: full 15-digit IMEI that ends with the short stored IMEI.
+    // The phone was already received — guard returns 'duplicate', no extra entry.
     const secondResult = processScan(fullImei);
-    expect(secondResult).toBe('duplicate'); // FAILS — actual is 'ok'
-    expect(results).toHaveLength(1); // FAILS — actual is 2
+    expect(secondResult).toBe('duplicate');
+    expect(results).toHaveLength(2); // original ok + new duplicate marker
+    expect(results[0]).toMatchObject({ imei: fullImei, status: 'duplicate' });
   });
 
   // BUG: partial-then-exact double-registration (reverse order)

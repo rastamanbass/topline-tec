@@ -154,9 +154,13 @@ export function useReceivingSession(selectedLote: string) {
 
       if (suffixMatches.length === 1) {
         const matched = suffixMatches[0];
-        const info = [matched.marca, matched.modelo, matched.storage]
-          .filter(Boolean)
-          .join(' · ');
+        // Guard against double-registration: if the stored short IMEI was
+        // already scanned directly, this longer scan refers to the same phone.
+        if (processedImeis.has(matched.imei)) {
+          setScannedResults((prev) => [{ imei, status: 'duplicate' }, ...prev]);
+          return 'duplicate' as const;
+        }
+        const info = [matched.marca, matched.modelo, matched.storage].filter(Boolean).join(' · ');
         // Track by the STORED imei so closeReceiving() can find it in transitMap
         processedImeis.add(matched.imei);
         setScannedResults((prev) => [
@@ -173,9 +177,7 @@ export function useReceivingSession(selectedLote: string) {
       }
 
       if (suffixMatches.length > 1) {
-        const names = suffixMatches
-          .map((p) => `${p.marca} ${p.modelo} (${p.imei})`)
-          .join(', ');
+        const names = suffixMatches.map((p) => `${p.marca} ${p.modelo} (${p.imei})`).join(', ');
         setScannedResults((prev) => [
           { imei, status: 'not_found', phoneInfo: `Ambiguo — múltiples coincidencias: ${names}` },
           ...prev,
