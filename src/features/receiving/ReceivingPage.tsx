@@ -338,7 +338,8 @@ export default function ReceivingPage() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    cameraOpen ? stopCamera() : startCamera();
+                    if (cameraOpen) stopCamera();
+                    else startCamera();
                   }}
                   className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     cameraOpen
@@ -366,7 +367,9 @@ export default function ReceivingPage() {
                 value={inputBuffer}
                 onChange={(e) => setInputBuffer(e.target.value)}
                 onKeyDown={handleKeyDown}
-                onBlur={refocusInput}
+                onBlur={(e) => {
+                  if (e.relatedTarget === null) refocusInput();
+                }}
                 className="w-full bg-slate-800 border border-slate-700 text-white text-2xl font-mono px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-600 tracking-widest"
                 placeholder="_ _ _ _ _ _ _ _ _ _ _ _ _ _ _"
                 autoComplete="off"
