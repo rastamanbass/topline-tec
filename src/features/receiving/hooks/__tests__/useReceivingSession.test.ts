@@ -43,7 +43,12 @@ describe('Receiving — processScan logic', () => {
     allLoteImeis: Map<string, { id: string; marca: string; modelo: string; estado: string }>
   ) {
     const processedImeis = new Set<string>();
-    const results: Array<{ imei: string; status: string; phoneInfo?: string; currentState?: string }> = [];
+    const results: Array<{
+      imei: string;
+      status: string;
+      phoneInfo?: string;
+      currentState?: string;
+    }> = [];
 
     function processScan(rawImei: string) {
       let imei = rawImei.trim().replace(/\D/g, '');
@@ -73,7 +78,12 @@ describe('Receiving — processScan logic', () => {
       const other = allLoteImeis.get(imei);
       if (other) {
         const info = `${other.marca} ${other.modelo}`;
-        results.unshift({ imei, status: 'wrong_state', phoneInfo: info, currentState: other.estado });
+        results.unshift({
+          imei,
+          status: 'wrong_state',
+          phoneInfo: info,
+          currentState: other.estado,
+        });
         return 'wrong_state' as const;
       }
 
@@ -89,14 +99,22 @@ describe('Receiving — processScan logic', () => {
 
   beforeEach(() => {
     transitMap = new Map([
-      ['356371101234567', { id: 'p1', marca: 'Apple', modelo: 'iPhone 15 Pro Max', storage: '256GB' }],
+      [
+        '356371101234567',
+        { id: 'p1', marca: 'Apple', modelo: 'iPhone 15 Pro Max', storage: '256GB' },
+      ],
       ['351059811234567', { id: 'p2', marca: 'Samsung', modelo: 'Galaxy S24', storage: '128GB' }],
       ['353568560170721', { id: 'p3', marca: 'Apple', modelo: 'iPhone 14', storage: '128GB' }],
     ]);
-    allLoteMap = new Map([
-      ...transitMap.entries(),
-      ['999888777666555', { id: 'p4', marca: 'Apple', modelo: 'iPhone 13', estado: 'Vendido' }],
-    ].map(([k, v]) => [k, { ...v, estado: (v as any).estado || 'En Tránsito (a El Salvador)' }]));
+    allLoteMap = new Map(
+      [
+        ...transitMap.entries(),
+        ['999888777666555', { id: 'p4', marca: 'Apple', modelo: 'iPhone 13', estado: 'Vendido' }],
+      ].map(([k, v]) => [
+        k,
+        { ...v, estado: (v as { estado?: string }).estado || 'En Tránsito (a El Salvador)' },
+      ])
+    );
   });
 
   // ── Input validation ──────────────────────────────────────────────────────
@@ -135,7 +153,7 @@ describe('Receiving — processScan logic', () => {
     });
 
     it('does NOT strip leading "1" from 15-digit IMEI', () => {
-      const { processScan, results } = createScanner(transitMap, allLoteMap);
+      const { processScan } = createScanner(transitMap, allLoteMap);
       // 15 digits starting with '1' — normal IMEI, should NOT strip
       const result = processScan('100000001234567');
       // This IMEI is not in transitMap, so it should be not_found (not stripped)
@@ -222,10 +240,18 @@ describe('Receiving — processScan logic', () => {
   describe('batch scanning (real-world simulation)', () => {
     it('processes 50 consecutive scans correctly', () => {
       // Build a transit map with 50 phones
-      const bigTransitMap = new Map<string, { id: string; marca: string; modelo: string; storage: string }>();
+      const bigTransitMap = new Map<
+        string,
+        { id: string; marca: string; modelo: string; storage: string }
+      >();
       for (let i = 0; i < 50; i++) {
         const imei = `35637110${String(i).padStart(7, '0')}`;
-        bigTransitMap.set(imei, { id: `p${i}`, marca: 'Apple', modelo: `iPhone ${i}`, storage: '128GB' });
+        bigTransitMap.set(imei, {
+          id: `p${i}`,
+          marca: 'Apple',
+          modelo: `iPhone ${i}`,
+          storage: '128GB',
+        });
       }
 
       const { processScan, processedImeis } = createScanner(bigTransitMap, new Map());
@@ -245,13 +271,172 @@ describe('Receiving — processScan logic', () => {
     it('mixed scan scenario: ok + duplicate + not_found', () => {
       const { processScan, results } = createScanner(transitMap, allLoteMap);
 
-      expect(processScan('356371101234567')).toBe('ok');       // known transit
+      expect(processScan('356371101234567')).toBe('ok'); // known transit
       expect(processScan('356371101234567')).toBe('duplicate'); // duplicate
       expect(processScan('000000000000000')).toBe('not_found'); // unknown
       expect(processScan('999888777666555')).toBe('wrong_state'); // wrong state
 
       expect(results).toHaveLength(4);
-      expect(results.map(r => r.status)).toEqual(['wrong_state', 'not_found', 'duplicate', 'ok']);
+      expect(results.map((r) => r.status)).toEqual(['wrong_state', 'not_found', 'duplicate', 'ok']);
     });
+  });
+});
+
+// ── Tests for partial IMEI matching logic ──────────────────────────────────
+// These tests replicate the FULL processScan algorithm including suffix matching.
+// The createScanner helper above intentionally omits suffix matching — these
+// tests use a separate helper that mirrors the actual hook code.
+
+describe('Receiving — partial IMEI matching', () => {
+  interface PhoneEntry {
+    id: string;
+    marca: string;
+    modelo: string;
+    storage?: string;
+    imei: string;
+  }
+
+  function createFullScanner(transitPhones: PhoneEntry[]) {
+    const transitMap = new Map<string, PhoneEntry>();
+    transitPhones.forEach((p) => transitMap.set(p.imei, p));
+
+    const processedImeis = new Set<string>();
+    const results: Array<{
+      imei: string;
+      status: string;
+      phoneId?: string;
+      phoneInfo?: string;
+      fullScannedImei?: string;
+    }> = [];
+
+    function processScan(rawInput: string) {
+      let imei = rawInput.trim().replace(/\D/g, '');
+      if (!imei || imei.length < 8) return 'ignored' as const;
+
+      // GS1 normalization
+      if (imei.length === 16 && imei[0] === '1') {
+        imei = imei.substring(1);
+      }
+
+      if (processedImeis.has(imei)) {
+        results.unshift({ imei, status: 'duplicate' });
+        return 'duplicate' as const;
+      }
+
+      processedImeis.add(imei);
+
+      const expected = transitMap.get(imei);
+      if (expected) {
+        const info = [expected.marca, expected.modelo, expected.storage]
+          .filter(Boolean)
+          .join(' · ');
+        results.unshift({ imei, status: 'ok', phoneId: expected.id, phoneInfo: info });
+        return 'ok' as const;
+      }
+
+      // Partial IMEI matching: suffix of scanned full IMEI matches a stored short IMEI
+      const suffixMatches: PhoneEntry[] = [];
+      transitMap.forEach((phone, storedImei) => {
+        if (storedImei.length < imei.length && imei.endsWith(storedImei)) {
+          suffixMatches.push(phone);
+        }
+      });
+
+      if (suffixMatches.length === 1) {
+        const matched = suffixMatches[0];
+        const info = [matched.marca, matched.modelo, matched.storage].filter(Boolean).join(' · ');
+        // Mirror exact hook code: add the STORED (short) imei to processedImeis
+        processedImeis.add(matched.imei);
+        results.unshift({
+          imei: matched.imei,
+          status: 'ok',
+          phoneId: matched.id,
+          phoneInfo: `${info} (IMEI parcial corregido)`,
+          fullScannedImei: imei,
+        });
+        return 'ok' as const;
+      }
+
+      if (suffixMatches.length > 1) {
+        const names = suffixMatches.map((p) => `${p.marca} ${p.modelo} (${p.imei})`).join(', ');
+        results.unshift({
+          imei,
+          status: 'not_found',
+          phoneInfo: `Ambiguo — múltiples coincidencias: ${names}`,
+        });
+        return 'not_found' as const;
+      }
+
+      results.unshift({ imei, status: 'not_found' });
+      return 'not_found' as const;
+    }
+
+    return { processScan, results, processedImeis };
+  }
+
+  it('matches a short stored IMEI when full scanned IMEI ends with it', () => {
+    const phones: PhoneEntry[] = [
+      { id: 'p1', imei: '1234567', marca: 'Apple', modelo: 'iPhone 14', storage: '128GB' },
+    ];
+    const { processScan, results } = createFullScanner(phones);
+    // Scan the full 15-digit IMEI that ends with the stored short one
+    expect(processScan('356371101234567')).toBe('ok');
+    expect(results[0].phoneInfo).toContain('IMEI parcial corregido');
+    expect(results[0].fullScannedImei).toBe('356371101234567');
+  });
+
+  it('returns not_found (ambiguous) when two phones share a suffix', () => {
+    const phones: PhoneEntry[] = [
+      { id: 'p1', imei: '234567', marca: 'Apple', modelo: 'iPhone 14' },
+      { id: 'p2', imei: '34567', marca: 'Samsung', modelo: 'Galaxy S24' },
+    ];
+    const { processScan } = createFullScanner(phones);
+    // '356371101234567' ends with both '234567' and '34567'
+    expect(processScan('356371101234567')).toBe('not_found');
+  });
+
+  // BUG: exact-then-partial double-registration
+  // Scenario: Eduardo stored the phone with a short IMEI (e.g. 12345678, 8 digits).
+  // 1. Eduardo scans the short IMEI directly → ok (exact match, short added to processedImeis).
+  // 2. Eduardo scans the same phone again using the full 15-digit barcode → suffix match fires because:
+  //    - exact match fails (long IMEI not in transitMap, only the short one is)
+  //    - processedImeis.has(longIMEI) is FALSE (only shortIMEI was added in step 1)
+  //    - suffix match succeeds → result is 'ok' again for the same phone
+  // Expected: 'duplicate'. Actual: 'ok' (phone counted twice, okCount inflated).
+  it('BUG: scanning short IMEI then full IMEI of same phone registers it twice as ok', () => {
+    // shortImei must be >= 8 digits to pass the length guard, but shorter than full (15 digits)
+    const shortImei = '56371101234567'; // 14 digits — stored in DB (Eduardo typed without first digit)
+    const fullImei = '356371101234567'; // 15 digits — what the barcode scanner reads; ends with shortImei
+    const phones: PhoneEntry[] = [
+      { id: 'p1', imei: shortImei, marca: 'Apple', modelo: 'iPhone 14', storage: '128GB' },
+    ];
+    const { processScan, results } = createFullScanner(phones);
+
+    // First scan: exact match on the short stored IMEI
+    expect(processScan(shortImei)).toBe('ok');
+    expect(results).toHaveLength(1);
+
+    // Second scan: full 15-digit IMEI that ends with the short stored IMEI
+    // The phone was already received — this should be 'duplicate'
+    // BUG: it returns 'ok' and adds a second entry, inflating okCount
+    const secondResult = processScan(fullImei);
+    expect(secondResult).toBe('duplicate'); // FAILS — actual is 'ok'
+    expect(results).toHaveLength(1); // FAILS — actual is 2
+  });
+
+  // BUG: partial-then-exact double-registration (reverse order)
+  // 1. Scans the full barcode → partial match → ok (adds BOTH longIMEI + shortIMEI to processedImeis).
+  // 2. Scans the short IMEI directly → processedImeis.has(shortIMEI) is true → duplicate. CORRECT.
+  // This direction works fine — adding it to document the asymmetry.
+  it('scanning full IMEI then short IMEI correctly returns duplicate', () => {
+    const shortImei = '56371101234567'; // 14 digits
+    const fullImei = '356371101234567'; // 15 digits, ends with shortImei
+    const phones: PhoneEntry[] = [
+      { id: 'p1', imei: shortImei, marca: 'Apple', modelo: 'iPhone 14', storage: '128GB' },
+    ];
+    const { processScan } = createFullScanner(phones);
+
+    expect(processScan(fullImei)).toBe('ok'); // partial match
+    expect(processScan(shortImei)).toBe('duplicate'); // short → already in set → correct
   });
 });
