@@ -7,7 +7,12 @@ interface SalesStore {
   addToCart: (item: PurchaseItem) => void;
   addBulkToCart: (items: PurchaseItem[]) => void;
   removeFromCart: (index: number) => void;
-  updateCartItemPrice: (index: number, newPrice: number, reason: string, approvedBy?: string) => void;
+  updateCartItemPrice: (
+    index: number,
+    newPrice: number,
+    reason: string,
+    approvedBy?: string
+  ) => void;
   clearCart: () => void;
 
   // Checkout State
@@ -39,8 +44,21 @@ interface SalesStore {
 
 export const useSalesStore = create<SalesStore>((set) => ({
   cartItems: [],
-  addToCart: (item) => set((state) => ({ cartItems: [...state.cartItems, item] })),
-  addBulkToCart: (items) => set((state) => ({ cartItems: [...state.cartItems, ...items] })),
+  addToCart: (item) =>
+    set((state) => {
+      if (item.phoneId && state.cartItems.some((i) => i.phoneId === item.phoneId)) {
+        return state;
+      }
+      return { cartItems: [...state.cartItems, item] };
+    }),
+  addBulkToCart: (items) =>
+    set((state) => {
+      const existingPhoneIds = new Set(
+        state.cartItems.map((i) => i.phoneId).filter(Boolean) as string[]
+      );
+      const deduped = items.filter((i) => !i.phoneId || !existingPhoneIds.has(i.phoneId));
+      return { cartItems: [...state.cartItems, ...deduped] };
+    }),
   removeFromCart: (index) =>
     set((state) => ({
       cartItems: state.cartItems.filter((_, i) => i !== index),

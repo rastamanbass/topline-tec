@@ -351,4 +351,53 @@ describe('SalesStore', () => {
       expect(state.cartItems).toHaveLength(0); // Cart is also cleared on reset
     });
   });
+
+  it('BUG: addToCart rejects duplicate phoneId (cart-only phones, accessories allowed to stack)', () => {
+    const store = useSalesStore.getState();
+    store.clearCart();
+    const phoneItem: PurchaseItem = {
+      phoneId: 'p1',
+      description: 'iPhone 14',
+      price: 800,
+      quantity: 1,
+      type: 'phone',
+    };
+    store.addToCart(phoneItem);
+    store.addToCart(phoneItem);
+    expect(useSalesStore.getState().cartItems).toHaveLength(1);
+  });
+
+  it('BUG: addBulkToCart dedupes phoneIds already in cart', () => {
+    const store = useSalesStore.getState();
+    store.clearCart();
+    store.addToCart({
+      phoneId: 'p1',
+      description: 'iPhone 14',
+      price: 800,
+      quantity: 1,
+      type: 'phone',
+    });
+    store.addBulkToCart([
+      { phoneId: 'p1', description: 'iPhone 14', price: 800, quantity: 1, type: 'phone' },
+      { phoneId: 'p2', description: 'Galaxy S24', price: 900, quantity: 1, type: 'phone' },
+    ]);
+    const items = useSalesStore.getState().cartItems;
+    expect(items).toHaveLength(2);
+    expect(items.map((i) => i.phoneId)).toEqual(['p1', 'p2']);
+  });
+
+  it('addToCart with accessoryId allows stacking (qty editable downstream)', () => {
+    const store = useSalesStore.getState();
+    store.clearCart();
+    const acc: PurchaseItem = {
+      accessoryId: 'a1',
+      description: 'Cargador',
+      price: 10,
+      quantity: 1,
+      type: 'accessory',
+    };
+    store.addToCart(acc);
+    store.addToCart(acc);
+    expect(useSalesStore.getState().cartItems).toHaveLength(2);
+  });
 });
