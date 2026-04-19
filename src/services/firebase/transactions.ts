@@ -146,6 +146,36 @@ export const executeSaleTransaction = async (saleData: SaleData, allPhones: Phon
         }
       }
 
+      // Read accessories being SOLD and validate stock BEFORE any writes.
+      // Firestore transactions require all reads before all writes — this must stay
+      // in the reads phase. Aggregate quantities per accessory in case the same
+      // accessoryId appears in multiple line items.
+      const accessoryQtyRequested = new Map<string, number>();
+      for (const item of saleData.items) {
+        if (item.accessoryId) {
+          accessoryQtyRequested.set(
+            item.accessoryId,
+            (accessoryQtyRequested.get(item.accessoryId) || 0) + item.quantity
+          );
+        }
+      }
+
+      for (const [accessoryId, qtyRequested] of accessoryQtyRequested) {
+        const accRef = doc(db, 'accessories', accessoryId);
+        const accSnap = await transaction.get(accRef);
+        if (!accSnap.exists()) {
+          throw new Error(`Accesorio ${accessoryId} no existe`);
+        }
+        const accData = accSnap.data() as Record<string, unknown>;
+        const currentQty = Number(accData.cantidad ?? 0);
+        const displayName = (accData.nombre as string) || accessoryId;
+        if (currentQty < qtyRequested) {
+          throw new Error(
+            `Stock insuficiente para ${displayName}: hay ${currentQty}, se requieren ${qtyRequested}`
+          );
+        }
+      }
+
       // Atomic availability check — prevents double-selling
       for (const item of saleData.items) {
         if (item.phoneId) {
