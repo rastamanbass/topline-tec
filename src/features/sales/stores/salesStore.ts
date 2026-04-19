@@ -53,10 +53,17 @@ export const useSalesStore = create<SalesStore>((set) => ({
     }),
   addBulkToCart: (items) =>
     set((state) => {
-      const existingPhoneIds = new Set(
-        state.cartItems.map((i) => i.phoneId).filter(Boolean) as string[]
+      const seen = new Set(
+        state.cartItems.map((i) => i.phoneId).filter((id): id is string => Boolean(id))
       );
-      const deduped = items.filter((i) => !i.phoneId || !existingPhoneIds.has(i.phoneId));
+      const deduped: typeof items = [];
+      for (const i of items) {
+        if (i.phoneId) {
+          if (seen.has(i.phoneId)) continue;
+          seen.add(i.phoneId);
+        }
+        deduped.push(i);
+      }
       return { cartItems: [...state.cartItems, ...deduped] };
     }),
   removeFromCart: (index) =>

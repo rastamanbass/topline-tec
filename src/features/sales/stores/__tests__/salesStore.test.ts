@@ -386,6 +386,19 @@ describe('SalesStore', () => {
     expect(items.map((i) => i.phoneId)).toEqual(['p1', 'p2']);
   });
 
+  it('BUG: addBulkToCart dedupes duplicates within the incoming items array itself', () => {
+    const store = useSalesStore.getState();
+    store.clearCart();
+    store.addBulkToCart([
+      { phoneId: 'p1', description: 'iPhone 14', type: 'phone', price: 800, quantity: 1 },
+      { phoneId: 'p1', description: 'iPhone 14', type: 'phone', price: 800, quantity: 1 },
+      { phoneId: 'p2', description: 'Galaxy S24', type: 'phone', price: 900, quantity: 1 },
+    ]);
+    const items = useSalesStore.getState().cartItems;
+    expect(items).toHaveLength(2);
+    expect(items.map((i) => i.phoneId)).toEqual(['p1', 'p2']);
+  });
+
   it('addToCart with accessoryId allows stacking (qty editable downstream)', () => {
     const store = useSalesStore.getState();
     store.clearCart();
