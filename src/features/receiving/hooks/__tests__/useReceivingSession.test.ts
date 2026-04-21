@@ -1,4 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // ── Mock Firebase + hooks before importing ─────────────────────────────────
 
@@ -442,5 +446,19 @@ describe('Receiving — partial IMEI matching', () => {
 
     expect(processScan(fullImei)).toBe('ok'); // partial match
     expect(processScan(shortImei)).toBe('duplicate'); // short → already in set → correct
+  });
+});
+
+describe('closeReceiving — concurrent statusHistory preservation', () => {
+  it('BUG: must use runTransaction and arrayUnion, not writeBatch with literal array', () => {
+    const source = readFileSync(resolve(__dirname, '../useReceivingSession.ts'), 'utf8');
+    const closeBody = source.slice(
+      source.indexOf('const closeReceiving'),
+      source.indexOf('const reset')
+    );
+    expect(closeBody).toContain('runTransaction');
+    expect(closeBody).toContain('arrayUnion');
+    expect(closeBody).not.toMatch(/writeBatch\s*\(/);
+    expect(closeBody).not.toMatch(/statusHistory:\s*\[\s*\.\.\.history/);
   });
 });
