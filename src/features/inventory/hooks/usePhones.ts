@@ -124,8 +124,18 @@ export function usePhones(filters: PhoneFilters = {}) {
   });
 }
 
-// Create new phone — uses IMEI as deterministic doc id to enforce uniqueness.
-// Pre-checks existence via getDoc; Firestore enforces doc-id uniqueness at write.
+/**
+ * Create a new phone, using the IMEI as the Firestore document ID for deduplication.
+ * Rejects the mutation when a doc with this IMEI already exists.
+ *
+ * NOTE: The pre-check + setDoc pattern is read-then-write and has a small TOCTOU
+ * window under concurrent browser sessions — two writers can both pass the
+ * existence check and the second will silently overwrite. Firestore rules
+ * (`allow create: if !exists(...)`) or `runTransaction` close the window fully;
+ * track as follow-up in the Week 1 plan. In practice for a team of 5 this is
+ * acceptable because the original bug (addDoc auto-ID) created ORPHAN duplicate
+ * docs — last-write-wins is strictly less broken.
+ */
 export async function createPhoneOrFail(
   phone: Omit<Phone, 'id' | 'fechaIngreso' | 'statusHistory'>
 ): Promise<string> {
@@ -139,11 +149,30 @@ export async function createPhoneOrFail(
     throw new Error(`IMEI ${phone.imei} ya existe (duplicate)`);
   }
 
+  const payload = {
+    ...phone,
+    fechaIngreso: serverTimestamp(),
+    createdBy: auth.currentUser?.uid,
+    updatedAt: serverTimestamp(),
+    statusHistory: [
+      {
+        newStatus: phone.estado,
+        date: new Date().toISOString(),
+        user: auth.currentUser?.email || 'unknown',
+        details: 'Teléfono creado',
+      },
+    ],
+  };
+
+  await setDoc(phoneRef, payload);
+
+  // Side effects run AFTER the main write succeeds — avoid polluting price_catalog
+  // and TAC definitions if the phone create fails (rules, network, etc).
+
   // Save TAC definition (fire and forget)
-  if (phone.imei.length >= 8) {
-    const tac = phone.imei.substring(0, 8);
-    saveDeviceDefinition(tac, phone.marca, phone.modelo);
-  }
+  const tac = phone.imei.substring(0, 8);
+  saveDeviceDefinition(tac, phone.marca, phone.modelo);
+
   // Update price catalog (fire and forget)
   if (phone.precioVenta > 0 && phone.modelo) {
     const displayBrand = normalizeDisplayBrand(phone.marca);
@@ -169,21 +198,6 @@ export async function createPhoneOrFail(
       { merge: true }
     ).catch((err) => console.error('Failed to learn price', err));
   }
-
-  await setDoc(phoneRef, {
-    ...phone,
-    fechaIngreso: serverTimestamp(),
-    createdBy: auth.currentUser?.uid,
-    updatedAt: serverTimestamp(),
-    statusHistory: [
-      {
-        newStatus: phone.estado,
-        date: new Date().toISOString(),
-        user: auth.currentUser?.email || 'unknown',
-        details: 'Teléfono creado',
-      },
-    ],
-  });
 
   return phone.imei;
 }
