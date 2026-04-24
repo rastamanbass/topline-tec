@@ -60,20 +60,14 @@ export default function ScanToSell() {
     }
   }, [isInventoryModalOpen]);
 
-  // Keep focus on the input so the scanner always works (only when camera is closed
-  // AND no dialog/modal is open AND the inventory "Nuevo Telefono" modal is closed)
-  useEffect(() => {
+  // Keep focus on the input so the Bluetooth HID scanner works without interrupting
+  // user interactions. Strategy: refocus only when the blur has no related target
+  // (pistol fires keys to the void). A click on another control sets relatedTarget
+  // and we respect the user's intent. Guarded against open camera / modals / dialogs.
+  const refocusInput = useCallback(() => {
     if (cameraOpen || showResults || isInventoryModalOpen) return;
-    const interval = setInterval(() => {
-      if (
-        inputRef.current &&
-        document.activeElement !== inputRef.current &&
-        !document.querySelector('[role="dialog"]')
-      ) {
-        inputRef.current.focus();
-      }
-    }, 1000);
-    return () => clearInterval(interval);
+    if (document.querySelector('[role="dialog"]')) return;
+    inputRef.current?.focus();
   }, [cameraOpen, showResults, isInventoryModalOpen]);
 
   const addPhoneToCart = useCallback(
@@ -289,6 +283,9 @@ export default function ScanToSell() {
             value={imeiInput}
             onChange={(e) => setImeiInput(e.target.value)}
             onKeyDown={handleKeyDown}
+            onBlur={(e) => {
+              if (e.relatedTarget === null) refocusInput();
+            }}
             className={`w-full bg-white border border-green-300 rounded-lg px-3 py-2 text-sm font-mono placeholder:text-gray-400 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${isInventoryModalOpen ? 'opacity-40 cursor-not-allowed' : ''}`}
             placeholder={
               isInventoryModalOpen
