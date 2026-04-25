@@ -7,7 +7,6 @@ interface PhoneGroup {
   marca: string;
   modelo: string;
   almacenamiento?: string;
-  condicion: string;
   precio: number;
   count: number;
   phones: Phone[];
