@@ -7,7 +7,8 @@ import {
   doc,
   addDoc,
   serverTimestamp,
-  writeBatch,
+  runTransaction,
+  arrayUnion,
 } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import type { Phone } from '../../../types';
@@ -218,36 +219,41 @@ export function useReceivingSession(selectedLote: string) {
 
     setIsClosing(true);
     try {
-      const batch = writeBatch(db);
       const userEmail = auth.currentUser?.email || 'unknown';
       const now = new Date();
 
-      okResults.forEach((r) => {
-        if (!r.phoneId) return;
-        const phoneRef = doc(db, 'phones', r.phoneId);
-        const phone = transitMap.get(r.imei);
-        const history = phone?.statusHistory || [];
-        const updateData: Record<string, unknown> = {
-          estado: 'En Stock (Disponible para Venta)',
-          updatedAt: serverTimestamp(),
-          statusHistory: [
-            ...history,
-            {
-              newStatus: 'En Stock (Disponible para Venta)',
-              date: now,
-              user: userEmail,
-              details: `Recibido – lote ${selectedLote}`,
-            },
-          ],
-        };
-        // Fix short IMEIs: if we matched a partial IMEI, update to the full scanned IMEI
-        if (r.fullScannedImei && r.fullScannedImei !== r.imei) {
-          updateData.imei = r.fullScannedImei;
-        }
-        batch.update(phoneRef, updateData);
-      });
+      await runTransaction(db, async (txn) => {
+        // Phase 1: read all phone docs fresh (transactions require reads-first)
+        const reads = await Promise.all(
+          okResults
+            .filter((r) => r.phoneId)
+            .map(async (r) => {
+              const ref = doc(db, 'phones', r.phoneId!);
+              const snap = await txn.get(ref);
+              return { r, ref, snap };
+            })
+        );
 
-      await batch.commit();
+        // Phase 2: write each with arrayUnion on statusHistory
+        for (const { r, ref, snap } of reads) {
+          if (!snap.exists()) continue; // skip: phone deleted mid-session
+          const historyEntry = {
+            newStatus: 'En Stock (Disponible para Venta)',
+            date: now,
+            user: userEmail,
+            details: `Recibido – lote ${selectedLote}`,
+          };
+          const updateData: Record<string, unknown> = {
+            estado: 'En Stock (Disponible para Venta)',
+            updatedAt: serverTimestamp(),
+            statusHistory: arrayUnion(historyEntry),
+          };
+          if (r.fullScannedImei && r.fullScannedImei !== r.imei) {
+            updateData.imei = r.fullScannedImei;
+          }
+          txn.update(ref, updateData);
+        }
+      });
 
       const missingImeis = transitPhones
         .filter((p) => !okResults.find((r) => r.imei === p.imei))

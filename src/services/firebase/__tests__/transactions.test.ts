@@ -416,10 +416,18 @@ describe('executeSaleTransaction (Stress Logic)', () => {
   describe('accessory sale', () => {
     it('decrements accessory quantity on sale', async () => {
       const mockTransaction = {
-        get: vi.fn().mockResolvedValue({
-          exists: () => true,
-          data: () => ({ name: 'Client', creditAmount: 0 }),
-        }),
+        get: vi
+          .fn()
+          .mockResolvedValueOnce({
+            // Client
+            exists: () => true,
+            data: () => ({ name: 'Client', creditAmount: 0 }),
+          })
+          .mockResolvedValueOnce({
+            // Accessory — sufficient stock
+            exists: () => true,
+            data: () => ({ cantidad: 10, nombre: 'iPhone 15 Case' }),
+          }),
         update: vi.fn(),
         set: vi.fn(),
       };
@@ -450,6 +458,52 @@ describe('executeSaleTransaction (Stress Logic)', () => {
 
       // Should decrement accessory quantity
       expect(mockTransaction.update).toHaveBeenCalled();
+    });
+
+    it('BUG: rejects sale when accessory stock insufficient (transaction.get + guard)', async () => {
+      const mockTransaction = {
+        get: vi
+          .fn()
+          .mockResolvedValueOnce({
+            // Client
+            exists: () => true,
+            data: () => ({ name: 'Walk-in', creditAmount: 0 }),
+          })
+          .mockResolvedValueOnce({
+            // Accessory — only 1 in stock but trying to sell 5
+            exists: () => true,
+            data: () => ({ cantidad: 1, nombre: 'Cargador' }),
+          }),
+        update: vi.fn(),
+        set: vi.fn(),
+      };
+
+      mockRunTransaction.mockImplementation(
+        async (_db: unknown, callback: (...args: unknown[]) => unknown) => callback(mockTransaction)
+      );
+
+      const saleData: SaleData = {
+        items: [
+          {
+            accessoryId: 'a1',
+            description: 'Cargador',
+            price: 10,
+            quantity: 5,
+            type: 'accessory',
+          },
+        ],
+        totalAmount: 50,
+        paymentMethod: 'Efectivo',
+        clientId: 'client-oversell',
+        amountPaidWithCredit: 0,
+        amountPaidWithWorkshopDebt: 0,
+      };
+
+      const result = await executeSaleTransaction(saleData, []);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toMatch(/stock insuficiente|cantidad/i);
+      expect(mockTransaction.update).not.toHaveBeenCalled();
     });
   });
 

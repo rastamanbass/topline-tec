@@ -7,10 +7,10 @@ import {
   orderBy,
   limit,
   startAfter,
-  addDoc,
   updateDoc,
   deleteDoc,
   doc,
+  getDoc,
   setDoc,
   arrayUnion,
   serverTimestamp,
@@ -124,59 +124,89 @@ export function usePhones(filters: PhoneFilters = {}) {
   });
 }
 
-// Create new phone
+/**
+ * Create a new phone, using the IMEI as the Firestore document ID for deduplication.
+ * Rejects the mutation when a doc with this IMEI already exists.
+ *
+ * NOTE: The pre-check + setDoc pattern is read-then-write and has a small TOCTOU
+ * window under concurrent browser sessions — two writers can both pass the
+ * existence check and the second will silently overwrite. Firestore rules
+ * (`allow create: if !exists(...)`) or `runTransaction` close the window fully;
+ * track as follow-up in the Week 1 plan. In practice for a team of 5 this is
+ * acceptable because the original bug (addDoc auto-ID) created ORPHAN duplicate
+ * docs — last-write-wins is strictly less broken.
+ */
+export async function createPhoneOrFail(
+  phone: Omit<Phone, 'id' | 'fechaIngreso' | 'statusHistory'>
+): Promise<string> {
+  if (!phone.imei || phone.imei.length < 8) {
+    throw new Error('IMEI inválido (mínimo 8 dígitos)');
+  }
+
+  const phoneRef = doc(db, 'phones', phone.imei);
+  const existing = await getDoc(phoneRef);
+  if (existing.exists()) {
+    throw new Error(`IMEI ${phone.imei} ya existe (duplicate)`);
+  }
+
+  const payload = {
+    ...phone,
+    fechaIngreso: serverTimestamp(),
+    createdBy: auth.currentUser?.uid,
+    updatedAt: serverTimestamp(),
+    statusHistory: [
+      {
+        newStatus: phone.estado,
+        date: new Date().toISOString(),
+        user: auth.currentUser?.email || 'unknown',
+        details: 'Teléfono creado',
+      },
+    ],
+  };
+
+  await setDoc(phoneRef, payload);
+
+  // Side effects run AFTER the main write succeeds — avoid polluting price_catalog
+  // and TAC definitions if the phone create fails (rules, network, etc).
+
+  // Save TAC definition (fire and forget)
+  const tac = phone.imei.substring(0, 8);
+  saveDeviceDefinition(tac, phone.marca, phone.modelo);
+
+  // Update price catalog (fire and forget)
+  if (phone.precioVenta > 0 && phone.modelo) {
+    const displayBrand = normalizeDisplayBrand(phone.marca);
+    const storageVal = normalizeStorage(phone.storage);
+    const normalizedModel =
+      displayBrand === 'Apple'
+        ? normalizeIPhoneModel(phone.modelo || '')
+        : phone.modelo || 'Unknown';
+    const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
+      .replace(/\//g, '-')
+      .replace(/\s+/g, '-')
+      .toLowerCase();
+    setDoc(
+      doc(db, 'price_catalog', safeId),
+      {
+        brand: displayBrand,
+        model: phone.modelo,
+        storage: storageVal,
+        averagePrice: phone.precioVenta,
+        lastUpdated: new Date(),
+        source: 'auto',
+      },
+      { merge: true }
+    ).catch((err) => console.error('Failed to learn price', err));
+  }
+
+  return phone.imei;
+}
+
 export function useCreatePhone() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (phone: Omit<Phone, 'id' | 'fechaIngreso' | 'statusHistory'>) => {
-      // Save TAC definition (fire and forget)
-      if (phone.imei && phone.imei.length >= 8) {
-        const tac = phone.imei.substring(0, 8);
-        saveDeviceDefinition(tac, phone.marca, phone.modelo);
-      }
-      // Update price catalog (fire and forget)
-      if (phone.precioVenta > 0 && phone.modelo) {
-        const displayBrand = normalizeDisplayBrand(phone.marca);
-        const storageVal = normalizeStorage(phone.storage);
-        const normalizedModel =
-          displayBrand === 'Apple'
-            ? normalizeIPhoneModel(phone.modelo || '')
-            : phone.modelo || 'Unknown';
-        const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
-          .replace(/\//g, '-')
-          .replace(/\s+/g, '-')
-          .toLowerCase();
-        setDoc(
-          doc(db, 'price_catalog', safeId),
-          {
-            brand: displayBrand,
-            model: phone.modelo,
-            storage: storageVal,
-            averagePrice: phone.precioVenta,
-            lastUpdated: new Date(),
-            source: 'auto',
-          },
-          { merge: true }
-        ).catch((err) => console.error('Failed to learn price', err));
-      }
-
-      const docRef = await addDoc(collection(db, 'phones'), {
-        ...phone,
-        fechaIngreso: serverTimestamp(),
-        createdBy: auth.currentUser?.uid,
-        updatedAt: serverTimestamp(),
-        statusHistory: [
-          {
-            newStatus: phone.estado,
-            date: new Date().toISOString(),
-            user: auth.currentUser?.email || 'unknown',
-            details: 'Teléfono creado',
-          },
-        ],
-      });
-      return docRef.id;
-    },
+    mutationFn: createPhoneOrFail,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['phones'] });
       queryClient.invalidateQueries({ queryKey: ['phones-paginated'] });

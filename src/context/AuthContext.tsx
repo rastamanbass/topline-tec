@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   type User,
   signInWithEmailAndPassword,
@@ -68,7 +68,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setUser(authUser);
           } else {
             // User document doesn't exist in Firestore — deny access
-            console.error('User document not found in Firestore. Access denied for uid:', firebaseUser.uid);
+            console.error(
+              'User document not found in Firestore. Access denied for uid:',
+              firebaseUser.uid
+            );
             setUser(null);
             setUserRole(null);
           }
@@ -88,7 +91,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   // Sign in function
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       // onAuthStateChanged will handle the rest
@@ -96,25 +99,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Sign in error:', error);
       throw error;
     }
-  };
+  }, []);
 
   // Sign out function
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       await firebaseSignOut(auth);
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;
     }
-  };
+  }, []);
 
-  const value: AuthContextType = {
-    user,
-    userRole,
-    loading,
-    signIn,
-    signOut,
-  };
+  const value: AuthContextType = useMemo(
+    () => ({ user, userRole, loading, signIn, signOut }),
+    [user, userRole, loading, signIn, signOut]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
