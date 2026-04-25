@@ -49,27 +49,15 @@ export default function GroupedPhoneCard({
     return 'from-gray-50 to-gray-100 text-gray-700';
   };
 
-  const getConditionColor = (c: string) => {
-    switch (c) {
-      case 'New': return 'bg-purple-100 text-purple-700 border-purple-200';
-      case 'Open Box': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'Grade A': return 'bg-green-100 text-green-700 border-green-200';
-      case 'Grade B': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Grade C': return 'bg-gray-100 text-gray-700 border-gray-200';
-      default: return 'bg-gray-100 text-gray-700';
-    }
-  };
-
   // Find first phone available (not reserved by someone else)
   const availablePhone = group.phones.find(
     (p) => !p.reservation || p.reservation.reservedBy === sessionId
   );
-  const myReservations = group.phones.filter(
-    (p) => p.reservation?.reservedBy === sessionId
-  );
+  const myReservations = group.phones.filter((p) => p.reservation?.reservedBy === sessionId);
   const isReservedByMe = myReservations.length > 0;
-  const allReservedByOther =
-    group.phones.every((p) => p.reservation && p.reservation.reservedBy !== sessionId);
+  const allReservedByOther = group.phones.every(
+    (p) => p.reservation && p.reservation.reservedBy !== sessionId
+  );
   const brandStyle = getBrandColor(group.marca);
   const processing = isProcessing && group.phones.some((p) => p.id === isProcessing);
 
@@ -84,7 +72,9 @@ export default function GroupedPhoneCard({
     }
   };
 
-  const disponibles = group.phones.filter((p) => !p.reservation || p.reservation.reservedBy === sessionId).length;
+  const disponibles = group.phones.filter(
+    (p) => !p.reservation || p.reservation.reservedBy === sessionId
+  ).length;
 
   return (
     <div
@@ -132,14 +122,12 @@ export default function GroupedPhoneCard({
           </h3>
 
           <div className="flex items-center gap-2 mt-3 flex-wrap">
-            <span className={`text-xs font-bold px-2.5 py-1 rounded-md border ${getConditionColor(group.condicion)}`}>
-              {group.condicion}
-            </span>
-
             {/* Stock count badge */}
-            <span className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
-              disponibles > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
-            }`}>
+            <span
+              className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                disponibles > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
+              }`}
+            >
               <Package className="w-3 h-3" />
               {disponibles > 0 ? `${disponibles} disponibles` : 'Sin stock'}
             </span>
@@ -149,19 +137,29 @@ export default function GroupedPhoneCard({
         <div className="mt-auto pt-2 flex items-end justify-between border-t border-gray-50">
           <div className="flex flex-col">
             <span className="text-xs text-gray-400 font-medium mb-0.5">Precio</span>
-            <span className={`text-2xl font-bold ${allReservedByOther ? 'text-gray-400' : 'text-gray-900'}`}>
-              {group.precio > 0 ? formatCurrency(group.precio) : <span className="text-orange-500 text-base font-medium">Sin precio</span>}
+            <span
+              className={`text-2xl font-bold ${allReservedByOther ? 'text-gray-400' : 'text-gray-900'}`}
+            >
+              {group.precio > 0 ? (
+                formatCurrency(group.precio)
+              ) : (
+                <span className="text-orange-500 text-base font-medium">Sin precio</span>
+              )}
             </span>
           </div>
 
-          <div className={`
+          <div
+            className={`
             w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm
-            ${isReservedByMe
-              ? 'bg-green-500 text-white scale-110 shadow-green-200'
-              : allReservedByOther
-              ? 'bg-gray-200 text-gray-400'
-              : 'bg-primary-50 text-primary-600 group-hover:bg-primary-600 group-hover:text-white'}
-          `}>
+            ${
+              isReservedByMe
+                ? 'bg-green-500 text-white scale-110 shadow-green-200'
+                : allReservedByOther
+                  ? 'bg-gray-200 text-gray-400'
+                  : 'bg-primary-50 text-primary-600 group-hover:bg-primary-600 group-hover:text-white'
+            }
+          `}
+          >
             {isReservedByMe ? (
               <CheckCircle2 className="w-6 h-6" />
             ) : allReservedByOther ? (

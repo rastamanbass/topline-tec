@@ -1,14 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, CreditCard, Loader2, AlertTriangle, Clock, MessageCircle, Building2, ArrowLeft } from 'lucide-react';
+import {
+  X,
+  CreditCard,
+  Loader2,
+  AlertTriangle,
+  Clock,
+  MessageCircle,
+  Building2,
+  ArrowLeft,
+} from 'lucide-react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import app from '../../../lib/firebase';
 import toast from 'react-hot-toast';
-import {
-  doc,
-  updateDoc,
-  serverTimestamp,
-} from 'firebase/firestore';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 
 interface CheckoutItem {
@@ -99,7 +104,10 @@ export default function CheckoutModal({
         `Orden: ${orderId}`,
         '',
         '*Equipos:*',
-        ...items.map((p) => `• ${p.marca} ${p.modelo}${p.storage ? ` ${p.storage}` : ''} — $${p.precio.toFixed(2)}`),
+        ...items.map(
+          (p) =>
+            `• ${p.marca} ${p.modelo}${p.storage ? ` ${p.storage}` : ''} — $${p.precio.toFixed(2)}`
+        ),
         '',
         `*Total a transferir: $${total.toFixed(2)}*`,
         '',
@@ -125,9 +133,7 @@ export default function CheckoutModal({
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Confirmar Pedido</h2>
-            <p className="text-xs text-gray-400 font-mono">
-              #{orderId.slice(0, 8).toUpperCase()}
-            </p>
+            <p className="text-xs text-gray-400 font-mono">#{orderId.slice(0, 8).toUpperCase()}</p>
           </div>
           <div className="flex items-center gap-3">
             {!isExpired && (
@@ -156,12 +162,13 @@ export default function CheckoutModal({
             <div className="flex flex-col gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
-                <span>
-                  La reserva expiró. Regresa al catálogo y vuelve a apartar los equipos.
-                </span>
+                <span>La reserva expiró. Regresa al catálogo y vuelve a apartar los equipos.</span>
               </div>
               <button
-                onClick={() => { onClose(); navigate('/catalogo'); }}
+                onClick={() => {
+                  onClose();
+                  navigate('/catalogo');
+                }}
                 className="flex items-center justify-center gap-2 w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -182,9 +189,7 @@ export default function CheckoutModal({
                     {item.marca} {item.modelo}
                     {item.storage ? ` · ${item.storage}` : ''}
                   </p>
-                  <p className="text-xs text-gray-400">
-                    {item.condition ? `${item.condition} · ` : ''}IMEI: {item.imei}
-                  </p>
+                  <p className="text-xs text-gray-400">IMEI: {item.imei}</p>
                 </div>
                 <p className="text-sm font-bold text-gray-900 shrink-0">
                   ${item.precio.toFixed(2)}
@@ -242,7 +247,6 @@ export default function CheckoutModal({
               )}
               Transferencia Bancaria / Zelle
             </button>
-
           </div>
 
           {/* Soporte */}

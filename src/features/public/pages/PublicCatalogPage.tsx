@@ -14,7 +14,6 @@ export default function PublicCatalogPage() {
   const [search, setSearch] = useState('');
   // State for filters
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
-  const [selectedCondition, setSelectedCondition] = useState<string>('all');
 
   // Extract brands
   const brands = useMemo(() => {
@@ -29,12 +28,9 @@ export default function PublicCatalogPage() {
     return phones.filter((p) => {
       const matchesSearch = `${p.marca} ${p.modelo}`.toLowerCase().includes(search.toLowerCase());
       const matchesBrand = selectedBrand === 'all' || p.marca === selectedBrand;
-      const matchesCondition =
-        selectedCondition === 'all' || (p.condition || 'Grade A') === selectedCondition;
-
-      return matchesSearch && matchesBrand && matchesCondition;
+      return matchesSearch && matchesBrand;
     });
-  }, [phones, search, selectedBrand, selectedCondition]);
+  }, [phones, search, selectedBrand]);
 
   // Agrupar por modelo para el catálogo
   const groupedPhones = useMemo(() => {
@@ -45,7 +41,6 @@ export default function PublicCatalogPage() {
         marca: string;
         modelo: string;
         almacenamiento?: string;
-        condicion: string;
         precio: number;
         count: number;
         phones: Phone[];
@@ -53,7 +48,10 @@ export default function PublicCatalogPage() {
     >();
 
     filteredPhones.forEach((phone) => {
-      const key = `${phone.marca}||${phone.modelo}||${phone.storage || ''}||${phone.condition || 'Grade A'}`;
+      // Agrupar por modelo + storage + precio. Si dos teléfonos comparten todo
+      // pero tienen condiciones distintas, se ven como un solo grupo (no se
+      // expone condición al cliente). Si difieren en precio, quedan separados.
+      const key = `${phone.marca}||${phone.modelo}||${phone.storage || ''}||${phone.precioVenta}`;
       if (groups.has(key)) {
         const g = groups.get(key)!;
         g.count++;
@@ -64,7 +62,6 @@ export default function PublicCatalogPage() {
           marca: phone.marca,
           modelo: phone.modelo,
           almacenamiento: phone.storage,
-          condicion: phone.condition || 'Grade A',
           precio: phone.precioVenta,
           count: 1,
           phones: [phone],
@@ -139,34 +136,6 @@ export default function PublicCatalogPage() {
                   }`}
                 >
                   {brand}
-                </button>
-              ))}
-            </div>
-
-            {/* Condition Filter */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-              <span className="text-sm font-semibold text-gray-700 min-w-fit">Condición:</span>
-              <button
-                onClick={() => setSelectedCondition('all')}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border ${
-                  selectedCondition === 'all'
-                    ? 'bg-gray-800 text-white border-gray-800'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                }`}
-              >
-                Todas
-              </button>
-              {['New', 'Open Box', 'Grade A', 'Grade B', 'Grade C'].map((cond) => (
-                <button
-                  key={cond}
-                  onClick={() => setSelectedCondition(cond)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border ${
-                    selectedCondition === cond
-                      ? 'bg-gray-800 text-white border-gray-800'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  {cond}
                 </button>
               ))}
             </div>

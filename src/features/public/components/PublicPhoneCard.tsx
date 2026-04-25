@@ -42,23 +42,6 @@ export default function PublicPhoneCard({
 
   const brandStyle = getBrandColor(phone.marca);
 
-  const getConditionColor = (c: string) => {
-    switch (c) {
-      case 'New':
-        return 'bg-purple-100 text-purple-700 border-purple-200';
-      case 'Open Box':
-        return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'Grade A':
-        return 'bg-green-100 text-green-700 border-green-200';
-      case 'Grade B':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Grade C':
-        return 'bg-gray-100 text-gray-700 border-gray-200';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
-
   return (
     <div
       onClick={() => !isReservedByOther && !isProcessing && onToggle()}
@@ -107,20 +90,6 @@ export default function PublicPhoneCard({
           <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-primary-600 transition-colors">
             {phone.modelo}
           </h3>
-
-          {/* Condition Badge (Replaces IMEI/Lote) */}
-          <div className="flex items-center gap-2 mt-3">
-            <span
-              className={`text-xs font-bold px-2.5 py-1 rounded-md border ${getConditionColor(phone.condition || 'Grade A')}`}
-            >
-              {phone.condition || 'Grade A'}
-            </span>
-
-            {/* Warranty Hint based on Condition */}
-            <span className="text-[10px] text-gray-400 font-medium">
-              {phone.condition === 'New' ? '1 Año Garantía' : '30 Días Garantía'}
-            </span>
-          </div>
         </div>
 
         <div className="mt-auto pt-2 flex items-end justify-between border-t border-gray-50 mt-2">
