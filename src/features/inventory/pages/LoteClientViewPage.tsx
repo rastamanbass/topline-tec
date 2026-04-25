@@ -31,22 +31,20 @@ export default function LoteClientViewPage() {
 
   // ── Available: group by model ──────────────────────────────────────────────
   const availableGroups = useMemo(() => {
-    const inStock = phones.filter(
-      (p) => p.estado === 'En Stock (Disponible para Venta)'
-    );
+    const inStock = phones.filter((p) => p.estado === 'En Stock (Disponible para Venta)');
     const map = new Map<
       string,
-      { label: string; storage?: string; condition?: string; count: number; precio: number }
+      { label: string; storage?: string; count: number; precio: number }
     >();
     inStock.forEach((p) => {
-      const key = `${p.marca}|${p.modelo}|${p.storage ?? ''}|${p.condition ?? ''}`;
+      // Agrupar por modelo + storage + precio. Condition NO se expone al cliente.
+      const key = `${p.marca}|${p.modelo}|${p.storage ?? ''}|${p.precioVenta}`;
       if (map.has(key)) {
         map.get(key)!.count++;
       } else {
         map.set(key, {
           label: phoneLabel(p.marca, p.modelo),
           storage: p.storage,
-          condition: p.condition,
           count: 1,
           precio: p.precioVenta,
         });
@@ -58,10 +56,7 @@ export default function LoteClientViewPage() {
   // ── Workshop phones ────────────────────────────────────────────────────────
   const workshopGroups = useMemo(() => {
     const ws = phones.filter((p) => TALLER_STATES.includes(p.estado));
-    const map = new Map<
-      string,
-      { label: string; estado: string; count: number }
-    >();
+    const map = new Map<string, { label: string; estado: string; count: number }>();
     ws.forEach((p) => {
       const key = `${p.marca}|${p.modelo}|${p.estado}`;
       if (map.has(key)) {
@@ -156,21 +151,16 @@ export default function LoteClientViewPage() {
         <div className="max-w-4xl mx-auto px-6 py-4 print:py-2">
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <span>
-              <strong className="text-gray-900 text-base">{totalAvailable}</strong>{' '}
-              equipo{totalAvailable !== 1 ? 's' : ''} disponible{totalAvailable !== 1 ? 's' : ''}
+              <strong className="text-gray-900 text-base">{totalAvailable}</strong> equipo
+              {totalAvailable !== 1 ? 's' : ''} disponible{totalAvailable !== 1 ? 's' : ''}
             </span>
             {prices.length > 0 && (
               <span>
-                Desde{' '}
-                <strong className="text-emerald-700">
-                  ${minPrice.toLocaleString()}
-                </strong>
+                Desde <strong className="text-emerald-700">${minPrice.toLocaleString()}</strong>
                 {maxPrice > minPrice && (
                   <>
-                    {' '}hasta{' '}
-                    <strong className="text-emerald-700">
-                      ${maxPrice.toLocaleString()}
-                    </strong>
+                    {' '}
+                    hasta <strong className="text-emerald-700">${maxPrice.toLocaleString()}</strong>
                   </>
                 )}
               </span>
@@ -180,7 +170,6 @@ export default function LoteClientViewPage() {
       )}
 
       <main className="max-w-4xl mx-auto px-6 pb-12 space-y-6 print:space-y-4">
-
         {/* ── Disponibles para Venta ── */}
         {availableGroups.length > 0 && (
           <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden print:border-gray-200 print:shadow-none print:rounded-none">
@@ -200,7 +189,6 @@ export default function LoteClientViewPage() {
               <thead>
                 <tr className="text-xs text-gray-400 uppercase tracking-wide border-b border-gray-50">
                   <th className="text-left px-6 py-3 font-semibold">Modelo</th>
-                  <th className="text-left px-4 py-3 font-semibold hidden sm:table-cell">Condición</th>
                   <th className="text-center px-4 py-3 font-semibold">Cant.</th>
                   <th className="text-right px-6 py-3 font-semibold">Precio</th>
                 </tr>
@@ -213,18 +201,7 @@ export default function LoteClientViewPage() {
                   >
                     <td className="px-6 py-3.5">
                       <span className="font-semibold text-gray-900">{g.label}</span>
-                      {g.storage && (
-                        <span className="ml-2 text-xs text-gray-400">{g.storage}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3.5 hidden sm:table-cell">
-                      {g.condition ? (
-                        <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                          {g.condition}
-                        </span>
-                      ) : (
-                        <span className="text-gray-300">—</span>
-                      )}
+                      {g.storage && <span className="ml-2 text-xs text-gray-400">{g.storage}</span>}
                     </td>
                     <td className="px-4 py-3.5 text-center">
                       <span className="inline-flex items-center justify-center w-8 h-8 bg-emerald-50 text-emerald-700 font-bold text-sm rounded-lg">
@@ -252,9 +229,7 @@ export default function LoteClientViewPage() {
           <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden print:border-gray-200 print:shadow-none print:rounded-none">
             <div className="px-6 py-4 border-b border-gray-50 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-amber-400" />
-              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-                Apartados
-              </h2>
+              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Apartados</h2>
               <span className="ml-auto text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                 {reservedGroups.reduce((s, g) => s + g.count, 0)} equipos
               </span>
@@ -338,7 +313,11 @@ export default function LoteClientViewPage() {
         {/* Footer */}
         <p className="text-xs text-gray-300 text-center pt-2 print:text-gray-500">
           Top Line Tec · Precios sujetos a cambio sin previo aviso ·{' '}
-          {new Date().toLocaleDateString('es-SV', { day: '2-digit', month: 'long', year: 'numeric' })}
+          {new Date().toLocaleDateString('es-SV', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          })}
         </p>
       </main>
     </div>
