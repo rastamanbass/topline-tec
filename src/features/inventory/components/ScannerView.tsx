@@ -105,7 +105,9 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
       const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(item.brand, item.model);
       const cost = batchCost ? parseFloat(batchCost) : item.cost;
       const price = batchPrice ? parseFloat(batchPrice) : item.price;
-      const estado = userRole === 'admin' ? 'En Bodega (USA)' : 'En Stock (Disponible para Venta)';
+      // Admins → En Tránsito (Marta ve realtime). Otros roles → En Stock directo.
+      const estado =
+        userRole === 'admin' ? 'En Tránsito (a El Salvador)' : 'En Stock (Disponible para Venta)';
 
       // Save TAC definition (fire and forget)
       if (item.imei && item.imei.length >= 8) {

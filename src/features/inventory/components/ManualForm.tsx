@@ -13,7 +13,12 @@ import { db } from '../../../lib/firebase';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../../context';
 import { canViewCosts } from '../../../lib/permissions';
-import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel, splitMarcaAndSupplier } from '../../../lib/phoneUtils';
+import {
+  normalizeDisplayBrand,
+  normalizeStorage,
+  normalizeIPhoneModel,
+  splitMarcaAndSupplier,
+} from '../../../lib/phoneUtils';
 import { AlertTriangle } from 'lucide-react';
 
 const PHONE_STATUSES: PhoneStatus[] = [
@@ -65,7 +70,10 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
       storage: '',
       costo: 0,
       precioVenta: 0,
-      estado: userRole === 'admin' ? 'En Bodega (USA)' : 'En Stock (Disponible para Venta)',
+      // Admins (Eduardo) cargan teléfonos en camino → directo a En Tránsito.
+      // Marta los ve en /receiving en tiempo real (onSnapshot) y los recibe a Stock.
+      estado:
+        userRole === 'admin' ? 'En Tránsito (a El Salvador)' : 'En Stock (Disponible para Venta)',
     },
   });
 
@@ -106,9 +114,8 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
       if (modalMode === 'create' && wBrand && wModel) {
         const displayBrand = normalizeDisplayBrand(wBrand);
         const storageVal = normalizeStorage(wStorage);
-        const normalizedModel = displayBrand === 'Apple'
-          ? normalizeIPhoneModel(wModel || '')
-          : (wModel || 'Unknown');
+        const normalizedModel =
+          displayBrand === 'Apple' ? normalizeIPhoneModel(wModel || '') : wModel || 'Unknown';
         const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
           .replace(/\//g, '-')
           .replace(/\s+/g, '-')
@@ -200,23 +207,31 @@ export default function ManualForm({ onCancel, onSuccess }: ManualFormProps) {
         )}
         {errors.imei && <p className="mt-1 text-sm text-red-600">{errors.imei.message}</p>}
         {/* Short IMEI warning for Eduardo */}
-        {modalMode === 'create' && !errors.imei && (() => {
-          const lines = imeiValue ? imeiValue.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0) : [];
-          const shortLines = lines.filter((l: string) => l.length > 0 && l.length < 15);
-          return shortLines.length > 0 ? (
-            <div className="mt-2 p-3 bg-amber-50 border border-amber-300 rounded-lg flex items-start gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-semibold text-amber-800">
-                  Brother, por favor meter el numero de IMEI completo para un correcto registro
-                </p>
-                <p className="text-xs text-amber-600 mt-1">
-                  {shortLines.length} IMEI(s) con menos de 15 dígitos: {shortLines.map((l: string) => `"${l}"`).join(', ')}
-                </p>
+        {modalMode === 'create' &&
+          !errors.imei &&
+          (() => {
+            const lines = imeiValue
+              ? imeiValue
+                  .split('\n')
+                  .map((l: string) => l.trim())
+                  .filter((l: string) => l.length > 0)
+              : [];
+            const shortLines = lines.filter((l: string) => l.length > 0 && l.length < 15);
+            return shortLines.length > 0 ? (
+              <div className="mt-2 p-3 bg-amber-50 border border-amber-300 rounded-lg flex items-start gap-2">
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-amber-800">
+                    Brother, por favor meter el numero de IMEI completo para un correcto registro
+                  </p>
+                  <p className="text-xs text-amber-600 mt-1">
+                    {shortLines.length} IMEI(s) con menos de 15 dígitos:{' '}
+                    {shortLines.map((l: string) => `"${l}"`).join(', ')}
+                  </p>
+                </div>
               </div>
-            </div>
-          ) : null;
-        })()}
+            ) : null;
+          })()}
       </div>
 
       {/* Marca and Modelo */}
