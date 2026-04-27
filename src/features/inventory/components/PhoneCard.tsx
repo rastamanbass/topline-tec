@@ -212,6 +212,19 @@ export default function PhoneCard({
             <span className="opacity-70">Lote</span>
             <span className="font-medium text-gray-700">{phone.lote || '-'}</span>
           </div>
+          <div className="flex justify-between col-span-2 border-t border-gray-200 pt-1 mt-0.5">
+            <span className="opacity-70">Proveedor</span>
+            {phone.supplierCode ? (
+              <span
+                className="text-[10px] font-bold px-1.5 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide"
+                title={`Proveedor: ${phone.supplierCode}`}
+              >
+                {phone.supplierCode}
+              </span>
+            ) : (
+              <span className="text-gray-400">—</span>
+            )}
+          </div>
         </div>
       </div>
     </div>
