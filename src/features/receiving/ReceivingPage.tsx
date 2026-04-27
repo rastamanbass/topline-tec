@@ -80,7 +80,26 @@ export default function ReceivingPage() {
     missingImeis: string[];
   } | null>(null);
 
-  const { lotesWithCount, isLoading: lotesLoading } = useTransitLotes();
+  const { lotesWithCount, isLoading: lotesLoading, totalPhones } = useTransitLotes();
+
+  // Toast cuando llegan nuevos teléfonos en tránsito (uploads de Eduardo).
+  // Skip primer render (initial load) y cuando la página de receiving está cerrando.
+  const prevTotalRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (lotesLoading) return;
+    if (prevTotalRef.current === null) {
+      prevTotalRef.current = totalPhones;
+      return;
+    }
+    const diff = totalPhones - prevTotalRef.current;
+    if (diff > 0 && document.visibilityState === 'visible') {
+      toast(`${diff} teléfono${diff === 1 ? '' : 's'} nuevo${diff === 1 ? '' : 's'} llegó`, {
+        icon: '📦',
+        duration: 4000,
+      });
+    }
+    prevTotalRef.current = totalPhones;
+  }, [totalPhones, lotesLoading]);
   const {
     expectedCount,
     okCount,
