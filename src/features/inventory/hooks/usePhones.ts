@@ -37,6 +37,7 @@ export interface PhoneFilters {
 }
 
 const PAGE_SIZE = 200;
+export const SEARCH_CAP = 1000; // Inventario activo cap durante search global
 
 // Convert Firestore Timestamp | Date | string to Date (handles legacy string dates from prod)
 const convertTimestamp = (timestamp: Timestamp | Date | string | unknown): Date => {
@@ -73,12 +74,28 @@ const applyClientSearch = (phones: Phone[], searchQuery?: string): Phone[] => {
 };
 
 // ── PAGINATED (for Inventory page) ────────────────────────────────────────────
-// Uses useInfiniteQuery with cursor pagination. Loads 50 phones at a time.
-// Composite indexes already exist for (lote, fechaIngreso) and (estado, fechaIngreso).
+// Modo normal: cursor pagination de PAGE_SIZE (200). Modo search: query global
+// hasta SEARCH_CAP (1000) para que el filtro client-side cubra TODO el inventario
+// activo, no solo la página actual. Old "Vendido" phones siguen accesibles vía
+// SalesHistoryPage.
 export function usePhonesPaginated(filters: PhoneFilters = {}) {
+  const isSearching = !!filters.searchQuery && filters.searchQuery.trim().length > 0;
+
   return useInfiniteQuery({
-    queryKey: ['phones-paginated', filters],
+    queryKey: ['phones-paginated', filters, isSearching],
     queryFn: async ({ pageParam }) => {
+      // Search mode: una sola llamada con cap más alto, filtra client-side.
+      if (isSearching) {
+        const constraints: QueryConstraint[] = [orderBy('fechaIngreso', 'desc'), limit(SEARCH_CAP)];
+        if (filters.lot) constraints.unshift(where('lote', '==', filters.lot));
+        if (filters.status) constraints.unshift(where('estado', '==', filters.status));
+        const q = query(collection(db, 'phones'), ...constraints);
+        const snapshot = await getDocs(q);
+        const phones = applyClientSearch(snapshot.docs.map(mapPhone), filters.searchQuery);
+        return { phones, lastDoc: null as DocumentSnapshot | null, hasMore: false };
+      }
+
+      // Normal: cursor pagination
       const constraints: QueryConstraint[] = [orderBy('fechaIngreso', 'desc'), limit(PAGE_SIZE)];
       if (filters.lot) constraints.unshift(where('lote', '==', filters.lot));
       if (filters.status) constraints.unshift(where('estado', '==', filters.status));
@@ -86,16 +103,8 @@ export function usePhonesPaginated(filters: PhoneFilters = {}) {
 
       const q = query(collection(db, 'phones'), ...constraints);
       const snapshot = await getDocs(q);
-
-      const allPhones = snapshot.docs.map(mapPhone);
-      const phones = applyClientSearch(allPhones, filters.searchQuery);
-
-      // hasMore is based on raw Firestore page size (not filtered count)
-      // because the cursor needs raw docs for pagination. When searching,
-      // some pages may return fewer results than PAGE_SIZE — this is a
-      // known limitation of client-side search with cursor pagination.
       return {
-        phones,
+        phones: snapshot.docs.map(mapPhone),
         lastDoc: snapshot.docs[snapshot.docs.length - 1] ?? null,
         hasMore: snapshot.docs.length === PAGE_SIZE,
       };
