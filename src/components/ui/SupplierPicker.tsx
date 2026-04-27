@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { addInternalCode, useInternalCodes } from '../../lib/internalCodes';
@@ -44,6 +45,35 @@ export default function SupplierPicker({
   const [adding, setAdding] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Posicion del dropdown en fixed (escapa overflow-hidden de modales/cards).
+  const [dropdownPos, setDropdownPos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    flipUp: boolean;
+  } | null>(null);
+  useEffect(() => {
+    if (!open || !inputRef.current) return;
+    const update = () => {
+      const r = inputRef.current?.getBoundingClientRect();
+      if (!r) return;
+      const spaceBelow = window.innerHeight - r.bottom;
+      const flipUp = spaceBelow < 240 && r.top > 240;
+      setDropdownPos({
+        top: flipUp ? r.top - 4 : r.bottom + 4,
+        left: r.left,
+        width: r.width,
+        flipUp,
+      });
+    };
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [open]);
 
   // Cierra el dropdown al click fuera.
   useEffect(() => {
@@ -156,37 +186,49 @@ export default function SupplierPicker({
         spellCheck={false}
       />
 
-      {open && (
-        <div className="absolute z-30 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg max-h-60 overflow-auto">
-          {filtered.length === 0 && !queryIsValidNew && (
-            <div className="px-3 py-2 text-sm text-gray-500">
-              {normalizedQuery ? 'Codigo invalido (solo letras/numeros, 1-12)' : 'No hay codigos'}
-            </div>
-          )}
+      {open &&
+        dropdownPos &&
+        createPortal(
+          <div
+            className="z-[60] rounded-xl border border-gray-200 bg-white shadow-lg max-h-60 overflow-auto"
+            style={{
+              position: 'fixed',
+              top: dropdownPos.flipUp ? undefined : dropdownPos.top,
+              bottom: dropdownPos.flipUp ? window.innerHeight - dropdownPos.top : undefined,
+              left: dropdownPos.left,
+              width: dropdownPos.width,
+            }}
+          >
+            {filtered.length === 0 && !queryIsValidNew && (
+              <div className="px-3 py-2 text-sm text-gray-500">
+                {normalizedQuery ? 'Codigo invalido (solo letras/numeros, 1-12)' : 'No hay codigos'}
+              </div>
+            )}
 
-          {filtered.map((code) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => handleSelect(code)}
-              className="w-full text-left px-3 py-2 text-sm font-mono tracking-wide hover:bg-amber-50 hover:text-amber-900 transition-colors"
-            >
-              {code}
-            </button>
-          ))}
+            {filtered.map((code) => (
+              <button
+                key={code}
+                type="button"
+                onClick={() => handleSelect(code)}
+                className="w-full text-left px-3 py-2 text-sm font-mono tracking-wide hover:bg-amber-50 hover:text-amber-900 transition-colors"
+              >
+                {code}
+              </button>
+            ))}
 
-          {queryIsValidNew && (
-            <button
-              type="button"
-              onClick={() => setConfirming(normalizedQuery)}
-              className="w-full text-left px-3 py-2 text-sm border-t border-gray-100 bg-gray-50 hover:bg-amber-50 transition-colors"
-            >
-              <span className="text-gray-700">Agregar nuevo codigo: </span>
-              <span className="font-mono font-semibold text-amber-700">{normalizedQuery}</span>
-            </button>
-          )}
-        </div>
-      )}
+            {queryIsValidNew && (
+              <button
+                type="button"
+                onClick={() => setConfirming(normalizedQuery)}
+                className="w-full text-left px-3 py-2 text-sm border-t border-gray-100 bg-gray-50 hover:bg-amber-50 transition-colors"
+              >
+                <span className="text-gray-700">Agregar nuevo codigo: </span>
+                <span className="font-mono font-semibold text-amber-700">{normalizedQuery}</span>
+              </button>
+            )}
+          </div>,
+          document.body
+        )}
 
       {/* Modal de confirmacion */}
       {confirming && (
