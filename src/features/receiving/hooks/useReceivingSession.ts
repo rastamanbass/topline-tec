@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   collection,
   getDocs,
@@ -8,6 +8,7 @@ import {
   addDoc,
   serverTimestamp,
   writeBatch,
+  onSnapshot,
 } from 'firebase/firestore';
 import { db, auth } from '../../../lib/firebase';
 import type { Phone } from '../../../types';
@@ -25,11 +26,33 @@ export interface ScannedResult {
   fullScannedImei?: string; // When partial IMEI matched, stores the real 15-digit IMEI
 }
 
-// Load lotes that currently have phones in transit
+// Load lotes that currently have phones in transit — REAL-TIME via onSnapshot.
+// Eduardo carga teléfono → en <2s aparece en /receiving para Marta sin refresh.
 export function useTransitLotes() {
-  const { data: phones = [], isLoading } = usePhones({
-    status: 'En Tránsito (a El Salvador)',
-  });
+  const [phones, setPhones] = useState<Phone[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(collection(db, 'phones'), where('estado', '==', 'En Tránsito (a El Salvador)'));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const list: Phone[] = [];
+        snapshot.forEach((d) => {
+          const data = d.data() as Phone;
+          if (!data.seized) list.push({ ...data, id: d.id });
+        });
+        setPhones(list);
+        setIsLoading(false);
+      },
+      (err) => {
+        console.error('useTransitLotes onSnapshot error:', err);
+        setIsLoading(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
   const lotesWithCount = useMemo(() => {
     const counts = new Map<string, number>();
     phones.forEach((p) => {
@@ -44,7 +67,7 @@ export function useTransitLotes() {
       }));
   }, [phones]);
   const lotes = useMemo(() => lotesWithCount.map((l) => l.name), [lotesWithCount]);
-  return { lotes, lotesWithCount, isLoading };
+  return { lotes, lotesWithCount, isLoading, totalPhones: phones.length };
 }
 
 export function useReceivingSession(selectedLote: string) {
