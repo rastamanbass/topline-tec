@@ -21,6 +21,7 @@ import PrintGateOverlay from './PrintGateOverlay';
 import { useAuth } from '../../../context';
 import { canViewCosts } from '../../../lib/permissions';
 import GlassCard from '../../../components/ui/GlassCard';
+import SupplierPicker from '../../../components/ui/SupplierPicker';
 import {
   splitMarcaAndSupplier,
   normalizeDisplayBrand,
@@ -54,6 +55,7 @@ interface ScannedItem {
   status: 'pending' | 'success' | 'unknown' | 'error';
   cost: number;
   price: number;
+  supplierCode?: string | null; // per-row override; null = use batch/split fallback
   saved?: boolean; // true once saved to Firestore
   firestoreId?: string; // Firestore doc ID once saved
   syncing?: boolean; // true while pushing an update to Firestore
@@ -92,6 +94,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
   const [batchLot, setBatchLot] = useState<string>(initialBatch || '');
   const [batchCost, setBatchCost] = useState<string>('');
   const [batchPrice, setBatchPrice] = useState<string>('');
+  const [batchSupplier, setBatchSupplier] = useState<string | null>(null);
 
   useEffect(() => {
     if (!showPrintGate) {
@@ -102,7 +105,10 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
   // Save a single phone to Firestore (no toast — silent auto-save)
   const savePhoneToFirestore = useCallback(
     async (item: ScannedItem): Promise<string> => {
-      const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(item.brand, item.model);
+      const splitResult = splitMarcaAndSupplier(item.brand, item.model);
+      const finalMarca = splitResult.marca;
+      const finalSupplierCode =
+        item.supplierCode || splitResult.supplierCode || batchSupplier || null;
       const cost = batchCost ? parseFloat(batchCost) : item.cost;
       const price = batchPrice ? parseFloat(batchPrice) : item.price;
       // Admins → En Tránsito (Marta ve realtime). Otros roles → En Stock directo.
@@ -144,7 +150,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
       const docRef = await addDoc(collection(db, 'phones'), {
         imei: item.imei,
         marca: finalMarca,
-        supplierCode: supplierCode,
+        supplierCode: finalSupplierCode,
         modelo: item.model,
         storage: item.storage,
         costo: cost,
@@ -171,7 +177,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
 
       return docRef.id;
     },
-    [batchCost, batchPrice, batchLot, userRole, queryClient]
+    [batchCost, batchPrice, batchLot, batchSupplier, userRole, queryClient]
   );
 
   // Track a saved phone in the current cycle and check gate
@@ -400,7 +406,11 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
     [queryClient]
   );
 
-  const handleUpdateItem = (id: string, field: keyof ScannedItem, value: string | number) => {
+  const handleUpdateItem = (
+    id: string,
+    field: keyof ScannedItem,
+    value: string | number | null
+  ) => {
     setScannedItems((prev) => {
       const next = prev.map((item) => (item.tempId === id ? { ...item, [field]: value } : item));
 
@@ -427,7 +437,9 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                   ? 'modelo'
                   : field === 'storage'
                     ? 'storage'
-                    : null;
+                    : field === 'supplierCode'
+                      ? 'supplierCode'
+                      : null;
 
         if (firestoreField) {
           pushUpdateToFirestore(updatedItem.firestoreId, id, {
@@ -449,16 +461,19 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
   }, []);
 
   const applyBatch = () => {
-    if (!batchCost && !batchPrice) return;
+    if (!batchCost && !batchPrice && !batchSupplier) return;
 
     const newCost = batchCost ? parseFloat(batchCost) : null;
     const newPrice = batchPrice ? parseFloat(batchPrice) : null;
+    const newSupplier = batchSupplier || null;
 
     setScannedItems((prev) => {
       const next = prev.map((item) => ({
         ...item,
         cost: newCost !== null ? newCost : item.cost,
         price: newPrice !== null ? newPrice : item.price,
+        // Solo aplicar supplier batch si el item NO tiene su propio override
+        supplierCode: newSupplier && !item.supplierCode ? newSupplier : item.supplierCode,
       }));
 
       // Push updates to Firestore for already-saved items
@@ -467,6 +482,10 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
           const updates: Record<string, unknown> = {};
           if (newCost !== null) updates.costo = newCost;
           if (newPrice !== null) updates.precioVenta = newPrice;
+          // Solo persiste si el item efectivamente recibio el supplier del batch
+          if (newSupplier && item.supplierCode === newSupplier) {
+            updates.supplierCode = newSupplier;
+          }
           if (Object.keys(updates).length > 0) {
             pushUpdateToFirestore(item.firestoreId, item.tempId, updates);
           }
@@ -476,7 +495,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
       return next;
     });
 
-    toast.success('Precios aplicados a todo el lote');
+    toast.success('Lote aplicado');
   };
 
   // Manual save for 'unknown' items after user fills brand+model
@@ -594,6 +613,23 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
           </div>
         </div>
 
+        <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-slate-200">
+          <Tag className="w-4 h-4 text-amber-400" />
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-slate-400 uppercase">
+              Proveedor (Todos)
+            </span>
+            <div className="min-w-[10rem]">
+              <SupplierPicker
+                value={batchSupplier}
+                onChange={setBatchSupplier}
+                size="sm"
+                placeholder="WNY, KRA..."
+              />
+            </div>
+          </div>
+        </div>
+
         <button
           onClick={applyBatch}
           className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-lg text-sm font-bold transition-colors"
@@ -665,9 +701,17 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                       </p>
                     </div>
 
-                    <div className="md:col-span-5">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
-                        MARCA / MODELO
+                    <div className="md:col-span-3">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
+                        <span>MARCA / MODELO</span>
+                        {(item.supplierCode || batchSupplier) && (
+                          <span
+                            className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide"
+                            title={`Proveedor: ${item.supplierCode || batchSupplier}`}
+                          >
+                            {item.supplierCode || batchSupplier}
+                          </span>
+                        )}
                       </p>
                       <div className="flex gap-3">
                         <input
@@ -687,6 +731,18 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                       </div>
                     </div>
 
+                    <div className="md:col-span-2 flex flex-col items-start">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
+                        Proveedor
+                      </p>
+                      <SupplierPicker
+                        value={item.supplierCode || null}
+                        onChange={(c) => handleUpdateItem(item.tempId, 'supplierCode', c)}
+                        size="sm"
+                        placeholder="—"
+                      />
+                    </div>
+
                     {/* Storage (GB) */}
                     <div className="md:col-span-1 flex flex-col items-center">
                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1 text-center w-full">
@@ -701,7 +757,7 @@ export default function ScannerView({ onSuccess, initialBatch }: ScannerViewProp
                     </div>
 
                     {showCosts && (
-                      <div className="md:col-span-2">
+                      <div className="md:col-span-1">
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
                           COSTO
                         </p>

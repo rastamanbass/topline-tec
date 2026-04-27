@@ -25,7 +25,13 @@ import { parseExcelFile } from '../utils/excelParser';
 import { detectColumnMappings, detectColumnType, getConfidence } from '../utils/columnDetector';
 import { normalizePhoneDescription } from '../utils/phoneNameNormalizer';
 import { validateIMEI, coerceIMEI } from '../utils/imeiValidator';
-import { normalizeDisplayBrand, normalizeStorage, normalizeIPhoneModel, splitMarcaAndSupplier } from '../../../lib/phoneUtils';
+import {
+  normalizeDisplayBrand,
+  normalizeStorage,
+  normalizeIPhoneModel,
+  splitMarcaAndSupplier,
+} from '../../../lib/phoneUtils';
+import SupplierPicker from '../../../components/ui/SupplierPicker';
 import { useSuppliers, useCreateSupplier } from '../hooks/useSuppliers';
 import { useImportSupplierInvoice } from '../hooks/useSupplierInvoices';
 import { useBatches } from '../../inventory/hooks/useBatches';
@@ -41,7 +47,7 @@ interface Props {
 type WizardStep = 1 | 2 | 3 | 'pricing' | 'success';
 
 interface PriceGroup {
-  key: string;           // "marca|modelo|storage"
+  key: string; // "marca|modelo|storage"
   marca: string;
   modelo: string;
   storage: string;
@@ -83,10 +89,7 @@ const FIELD_LABELS: Record<string, string> = {
   trackingNumber: 'Número de Rastreo',
 };
 
-const INITIAL_STATUS_OPTIONS: PhoneStatus[] = [
-  'En Bodega (USA)',
-  'En Tránsito (a El Salvador)',
-];
+const INITIAL_STATUS_OPTIONS: PhoneStatus[] = ['En Bodega (USA)', 'En Tránsito (a El Salvador)'];
 
 // ── Helper: build invoice items from parsed sheet ─────────────────────────────
 
@@ -123,7 +126,8 @@ function buildInvoiceItems(
 
     // Price / qty
     const rawPrice = getVal('unitPrice');
-    const unitPrice = rawPrice != null ? parseFloat(String(rawPrice).replace(/[$,]/g, '')) : undefined;
+    const unitPrice =
+      rawPrice != null ? parseFloat(String(rawPrice).replace(/[$,]/g, '')) : undefined;
     const rawQty = getVal('qty');
     const qty = rawQty != null ? Math.max(1, parseInt(String(rawQty), 10) || 1) : 1;
 
@@ -145,7 +149,7 @@ function buildInvoiceItems(
 
     const rawMarca = normalized?.marca || make;
     const rawModelo = normalized?.modelo || model || fullModel;
-    const { marca: resolvedMarca, supplierCode } = splitMarcaAndSupplier(rawMarca, rawModelo);
+    const split = splitMarcaAndSupplier(rawMarca, rawModelo);
 
     return {
       rowIndex: idx,
@@ -159,9 +163,10 @@ function buildInvoiceItems(
       unitPrice: !isNaN(unitPrice ?? NaN) ? unitPrice : undefined,
       qty,
       type,
-      resolvedMarca,
+      resolvedMarca: split.marca,
       resolvedModelo: rawModelo,
-      supplierCode,
+      supplierCode: split.supplierCode,
+      supplierAutoDetected: split.supplierCode !== null,
     };
   });
 }
@@ -195,6 +200,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
   const [costPerUnit, setCostPerUnit] = useState(0);
   const [initialStatus, setInitialStatus] = useState<PhoneStatus>('En Bodega (USA)');
   const [showAllRows, setShowAllRows] = useState(false);
+  const [bulkSupplier, setBulkSupplier] = useState<string | null>(null);
   const [successLote, setSuccessLote] = useState('');
   const [successCount, setSuccessCount] = useState(0);
 
@@ -240,7 +246,9 @@ export default function ImportInvoiceModal({ onClose }: Props) {
         const hasIMEIs = imeiCount > 0;
 
         // Check if all important columns are mapped
-        const hasFullModel = !!Object.values(mappings).find((f) => f === 'fullModel' || f === 'make');
+        const hasFullModel = !!Object.values(mappings).find(
+          (f) => f === 'fullModel' || f === 'make'
+        );
         const allMapped = hasIMEIs ? hasFullModel : hasFullModel;
 
         setDetection({
@@ -327,8 +335,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
           .filter((h) => h.trim() !== '')
           .map((header) => {
             const sampleValues = sampleRows.map((r) => r[parsedSheet.headers.indexOf(header)]);
-            const detectedField = (columnMappings[header] as StandardField) ||
-              detectColumnType(header, sampleValues);
+            const detectedField =
+              (columnMappings[header] as StandardField) || detectColumnType(header, sampleValues);
             const confidence = getConfidence(header, detectedField);
             const sample = sampleValues
               .filter((v) => v != null && v !== '')
@@ -432,14 +440,14 @@ export default function ImportInvoiceModal({ onClose }: Props) {
         const unitCost = item.unitPrice ?? costPerUnit;
         const existing = groupMap.get(key);
         if (existing) {
-          existing.units += item.imei ? 1 : (item.qty || 1);
+          existing.units += item.imei ? 1 : item.qty || 1;
         } else {
           groupMap.set(key, {
             key,
             marca: item.resolvedMarca || item.make || 'Desconocida',
             modelo: item.resolvedModelo || item.model || item.fullModel || 'Desconocido',
             storage: item.storage || '',
-            units: item.imei ? 1 : (item.qty || 1),
+            units: item.imei ? 1 : item.qty || 1,
             unitCost,
             suggestedPrice: 0,
             source: 'auto',
@@ -456,9 +464,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
         groups.map(async (g) => {
           const displayBrand = normalizeDisplayBrand(g.marca);
           const storageVal = normalizeStorage(g.storage);
-          const normalizedModel = displayBrand === 'Apple'
-            ? normalizeIPhoneModel(g.modelo || '')
-            : (g.modelo || 'Unknown');
+          const normalizedModel =
+            displayBrand === 'Apple' ? normalizeIPhoneModel(g.modelo || '') : g.modelo || 'Unknown';
           const safeId = `${displayBrand}-${normalizedModel}-${storageVal}`
             .replace(/\//g, '-')
             .replace(/\s+/g, '-')
@@ -498,12 +505,14 @@ export default function ImportInvoiceModal({ onClose }: Props) {
 
     try {
       const priceOverrides: Record<string, number> = {};
-      priceGroups.forEach((g) => { priceOverrides[g.key] = g.finalPrice; });
+      priceGroups.forEach((g) => {
+        priceOverrides[g.key] = g.finalPrice;
+      });
 
       const phoneItems = invoiceItems.filter((item) => item.type === 'phone');
       const totalAmount = phoneItems.reduce((sum, item) => {
         const price = item.unitPrice ?? costPerUnit;
-        return sum + price * (item.imei ? 1 : (item.qty || 1));
+        return sum + price * (item.imei ? 1 : item.qty || 1);
       }, 0);
 
       const invoiceId = await importInvoice.mutateAsync({
@@ -530,6 +539,36 @@ export default function ImportInvoiceModal({ onClose }: Props) {
       alert(msg);
     }
   };
+
+  // ── Row mutation helpers ──────────────────────────────────────────────────
+
+  const updateRow = useCallback(
+    <K extends keyof SupplierInvoiceItem>(idx: number, key: K, value: SupplierInvoiceItem[K]) => {
+      setInvoiceItems((prev) =>
+        prev.map((row, i) => {
+          if (i !== idx) return row;
+          const next: SupplierInvoiceItem = { ...row, [key]: value };
+          // If user manually changes supplierCode, mark as no longer auto-detected.
+          if (key === 'supplierCode') {
+            next.supplierAutoDetected = false;
+          }
+          return next;
+        })
+      );
+    },
+    []
+  );
+
+  const applyBulkSupplier = useCallback(() => {
+    if (!bulkSupplier) return;
+    setInvoiceItems((prev) =>
+      prev.map((row) => ({
+        ...row,
+        supplierCode: bulkSupplier,
+        supplierAutoDetected: false,
+      }))
+    );
+  }, [bulkSupplier]);
 
   // ── Derived counts ─────────────────────────────────────────────────────────
 
@@ -573,8 +612,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                         step === 1
                           ? ' — Subir archivo y seleccionar proveedor'
                           : step === 2
-                          ? ' — Mapear columnas'
-                          : ' — Previsualizar e importar'
+                            ? ' — Mapear columnas'
+                            : ' — Previsualizar e importar'
                       }`}
                 </p>
               )}
@@ -595,7 +634,10 @@ export default function ImportInvoiceModal({ onClose }: Props) {
             <div className="space-y-6">
               {/* Drop zone */}
               <div
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={onDrop}
                 onClick={() => fileInputRef.current?.click()}
@@ -603,8 +645,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                   dragOver
                     ? 'border-indigo-400 bg-indigo-50'
                     : file
-                    ? 'border-emerald-400 bg-emerald-50'
-                    : 'border-gray-200 hover:border-gray-300 bg-gray-50 hover:bg-gray-100'
+                      ? 'border-emerald-400 bg-emerald-50'
+                      : 'border-gray-200 hover:border-gray-300 bg-gray-50 hover:bg-gray-100'
                 }`}
               >
                 <input
@@ -648,12 +690,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                   <div className="flex flex-col items-center gap-3">
                     <Upload className="w-10 h-10 text-gray-400" />
                     <div>
-                      <p className="font-medium text-gray-700">
-                        Arrastra o haz clic para subir
-                      </p>
-                      <p className="text-sm text-gray-400 mt-1">
-                        .xlsx, .xls, .csv, .pdf
-                      </p>
+                      <p className="font-medium text-gray-700">Arrastra o haz clic para subir</p>
+                      <p className="text-sm text-gray-400 mt-1">.xlsx, .xls, .csv, .pdf</p>
                     </div>
                   </div>
                 )}
@@ -723,7 +761,9 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                               <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                             )}
                             {row.confidence === 'medium' && (
-                              <span className="text-xs bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded">~</span>
+                              <span className="text-xs bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded">
+                                ~
+                              </span>
                             )}
                             {row.confidence === 'none' && (
                               <AlertTriangle className="w-4 h-4 text-orange-400 flex-shrink-0" />
@@ -739,9 +779,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                             onChange={(e) => {
                               const newField = (e.target.value || null) as StandardField;
                               setMappingRows((prev) =>
-                                prev.map((r, i) =>
-                                  i === idx ? { ...r, userField: newField } : r
-                                )
+                                prev.map((r, i) => (i === idx ? { ...r, userField: newField } : r))
                               );
                             }}
                             className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 outline-none"
@@ -772,7 +810,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                   <span className="font-medium">
                     {isNewSupplier
                       ? newSupplierName || 'este proveedor'
-                      : suppliers.find((s) => s.id === selectedSupplierId)?.name || 'este proveedor'}
+                      : suppliers.find((s) => s.id === selectedSupplierId)?.name ||
+                        'este proveedor'}
                   </span>
                 </span>
               </label>
@@ -798,6 +837,48 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                 </div>
               </div>
 
+              {/* Bulk supplier + summary */}
+              {invoiceItems.length > 0 && (
+                <>
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                    <label className="text-xs font-bold text-amber-900 uppercase tracking-wide block mb-2">
+                      Proveedor para todas las filas
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 max-w-xs">
+                        <SupplierPicker
+                          value={bulkSupplier}
+                          onChange={setBulkSupplier}
+                          placeholder="Asignar a todas..."
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={applyBulkSupplier}
+                        disabled={!bulkSupplier || invoiceItems.length === 0}
+                        className="px-4 py-2 text-sm font-bold text-white bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm transition-all"
+                      >
+                        Aplicar a {invoiceItems.length} filas
+                      </button>
+                    </div>
+                    <p className="text-xs text-amber-700 mt-2">
+                      Sobreescribe el supplier de todas las filas. Filas con supplier auto-detectado
+                      de la marca se mantienen si no tipeás nada.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                    <span className="font-medium text-gray-900">{invoiceItems.length} filas</span>
+                    <span className="text-amber-700">
+                      {invoiceItems.filter((r) => r.supplierAutoDetected).length} auto-detectado
+                    </span>
+                    <span className="text-gray-400">
+                      {invoiceItems.filter((r) => !r.supplierCode).length} sin supplier
+                    </span>
+                  </div>
+                </>
+              )}
+
               {/* Preview table */}
               {invoiceItems.length > 0 && (
                 <div>
@@ -814,6 +895,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                           <th className="px-3 py-2 text-left">#</th>
                           <th className="px-3 py-2 text-left">IMEI</th>
                           <th className="px-3 py-2 text-left">Marca</th>
+                          <th className="px-3 py-2 text-left">Proveedor</th>
                           <th className="px-3 py-2 text-left">Modelo</th>
                           <th className="px-3 py-2 text-left">Storage</th>
                           <th className="px-3 py-2 text-left">Carrier</th>
@@ -839,7 +921,9 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                               <td className="px-3 py-2 text-gray-400">{item.rowIndex + 1}</td>
                               <td className="px-3 py-2 font-mono">
                                 {item.imei ? (
-                                  <span className={item.imeiValid ? 'text-gray-700' : 'text-red-500'}>
+                                  <span
+                                    className={item.imeiValid ? 'text-gray-700' : 'text-red-500'}
+                                  >
                                     {item.imei}
                                   </span>
                                 ) : (
@@ -848,6 +932,40 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                               </td>
                               <td className="px-3 py-2 text-gray-700">
                                 {item.resolvedMarca || item.make || '—'}
+                              </td>
+                              <td className="px-3 py-2">
+                                {item.supplierCode ? (
+                                  <span
+                                    className={`inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wide border ${
+                                      item.supplierAutoDetected
+                                        ? 'bg-amber-100 text-amber-800 border-amber-200'
+                                        : 'bg-blue-50 text-blue-700 border-blue-200'
+                                    }`}
+                                    title={
+                                      item.supplierAutoDetected
+                                        ? 'Auto-detectado de la marca'
+                                        : 'Asignado manualmente'
+                                    }
+                                  >
+                                    {item.supplierCode}
+                                    {item.supplierAutoDetected && (
+                                      <span className="ml-1 opacity-70">auto</span>
+                                    )}
+                                  </span>
+                                ) : (
+                                  <SupplierPicker
+                                    value={null}
+                                    onChange={(c) =>
+                                      updateRow(
+                                        invoiceItems.findIndex((r) => r.rowIndex === item.rowIndex),
+                                        'supplierCode',
+                                        c
+                                      )
+                                    }
+                                    size="sm"
+                                    placeholder="—"
+                                  />
+                                )}
                               </td>
                               <td className="px-3 py-2 text-gray-700 max-w-[120px] truncate">
                                 {item.resolvedModelo || item.model || item.fullModel || '—'}
@@ -863,17 +981,17 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                                     item.type === 'phone'
                                       ? 'bg-emerald-100 text-emerald-700'
                                       : item.type === 'accessory' || item.type === 'unknown'
-                                      ? 'bg-orange-100 text-orange-700'
-                                      : 'bg-blue-100 text-blue-700'
+                                        ? 'bg-orange-100 text-orange-700'
+                                        : 'bg-blue-100 text-blue-700'
                                   }`}
                                 >
                                   {item.type === 'phone'
                                     ? 'Teléfono'
                                     : item.type === 'accessory'
-                                    ? 'Accesorio'
-                                    : item.type === 'part'
-                                    ? 'Parte'
-                                    : 'Desc.'}
+                                      ? 'Accesorio'
+                                      : item.type === 'part'
+                                        ? 'Parte'
+                                        : 'Desc.'}
                                 </span>
                               </td>
                             </tr>
@@ -896,7 +1014,9 @@ export default function ImportInvoiceModal({ onClose }: Props) {
 
               {/* Configuration */}
               <div className="bg-gray-50 rounded-xl p-4 space-y-4">
-                <h3 className="text-sm font-semibold text-gray-800">Configuración de importación</h3>
+                <h3 className="text-sm font-semibold text-gray-800">
+                  Configuración de importación
+                </h3>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -929,7 +1049,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                       ))}
                     </datalist>
                     <p className="text-xs text-gray-400 mt-1">
-                      Para AGREGAR a un lote existente, seleccionalo de la lista. Cuidado con espacios y mayusculas.
+                      Para AGREGAR a un lote existente, seleccionalo de la lista. Cuidado con
+                      espacios y mayusculas.
                     </p>
                   </div>
 
@@ -971,7 +1092,8 @@ export default function ImportInvoiceModal({ onClose }: Props) {
 
                 {costPerUnit > 0 && (
                   <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-3 text-xs text-indigo-700">
-                    En el siguiente paso podrás revisar y escribir el precio de venta de cada modelo.
+                    En el siguiente paso podrás revisar y escribir el precio de venta de cada
+                    modelo.
                   </div>
                 )}
               </div>
@@ -982,13 +1104,15 @@ export default function ImportInvoiceModal({ onClose }: Props) {
           {step === 'pricing' && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold text-gray-900">Revisá los precios antes de importar</h3>
+                <h3 className="font-semibold text-gray-900">
+                  Revisá los precios antes de importar
+                </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  {priceGroups.reduce((s, g) => s + g.units, 0)} teléfonos ·{' '}
-                  {priceGroups.length} modelo{priceGroups.length !== 1 ? 's' : ''} distinto{priceGroups.length !== 1 ? 's' : ''}.
-                  Escribí el precio de venta de cada modelo.
+                  {priceGroups.reduce((s, g) => s + g.units, 0)} teléfonos · {priceGroups.length}{' '}
+                  modelo{priceGroups.length !== 1 ? 's' : ''} distinto
+                  {priceGroups.length !== 1 ? 's' : ''}. Escribí el precio de venta de cada modelo.
                 </p>
-                {priceGroups.some(g => g.finalPrice <= 0) && (
+                {priceGroups.some((g) => g.finalPrice <= 0) && (
                   <div className="mt-2 flex items-center gap-2 text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs font-medium">
                     <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                     Hay modelos sin precio. Completá todos antes de importar.
@@ -1020,11 +1144,14 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                             <p className="font-medium text-gray-900">{g.modelo}</p>
                             {(g.storage || g.marca) && (
                               <p className="text-xs text-gray-400">
-                                {g.marca}{g.storage ? ` · ${g.storage}` : ''}
+                                {g.marca}
+                                {g.storage ? ` · ${g.storage}` : ''}
                               </p>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-center font-bold text-gray-700">{g.units}</td>
+                          <td className="px-4 py-3 text-center font-bold text-gray-700">
+                            {g.units}
+                          </td>
                           <td className="px-4 py-3 text-right text-gray-500">
                             {g.unitCost > 0 ? `$${g.unitCost.toFixed(0)}` : '—'}
                           </td>
@@ -1066,7 +1193,10 @@ export default function ImportInvoiceModal({ onClose }: Props) {
                           Ingresos esperados
                         </td>
                         <td className="px-4 py-3 text-right font-bold text-indigo-700 text-sm">
-                          ${priceGroups.reduce((s, g) => s + g.finalPrice * g.units, 0).toLocaleString()}
+                          $
+                          {priceGroups
+                            .reduce((s, g) => s + g.finalPrice * g.units, 0)
+                            .toLocaleString()}
                         </td>
                         <td />
                       </tr>
@@ -1153,10 +1283,7 @@ export default function ImportInvoiceModal({ onClose }: Props) {
               <button
                 onClick={handleImport}
                 disabled={
-                  loadingPrices ||
-                  !invoiceNumber.trim() ||
-                  !loteName.trim() ||
-                  phoneCount === 0
+                  loadingPrices || !invoiceNumber.trim() || !loteName.trim() || phoneCount === 0
                 }
                 className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
@@ -1177,7 +1304,11 @@ export default function ImportInvoiceModal({ onClose }: Props) {
             {step === 'pricing' && (
               <button
                 onClick={handleConfirmPricing}
-                disabled={importInvoice.isPending || priceGroups.length === 0 || priceGroups.some(g => g.finalPrice <= 0)}
+                disabled={
+                  importInvoice.isPending ||
+                  priceGroups.length === 0 ||
+                  priceGroups.some((g) => g.finalPrice <= 0)
+                }
                 className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {importInvoice.isPending ? (

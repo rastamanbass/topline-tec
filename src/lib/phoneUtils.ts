@@ -1,34 +1,17 @@
 // Eduardo's procurement source codes — how he tracks where he bought phones.
 // These are NOT brand names (all represent iPhone sources) and should never
 // be displayed as brands to clients or staff.
-// Updated from live production data (2,422 phones audited Mar 2 2026).
-// NOTE: isInternalCode() compares .toUpperCase(), so lowercase variants (hec, trad, xt, etc.)
-// are already handled. Multi-word variants like "REC IPHONE A" are handled by
-// normalizeDisplayBrand() first-word matching logic.
-const INTERNAL_CODES = new Set([
-  'WNY',   // 485 phones — largest source
-  'REC',   // 434 phones (also appears as "REC IPHONE A", "REC Iphone", etc.)
-  'ZK',    // 345 phones (333 + 12 lowercase)
-  'HEC',   // 179 phones (45 + 134 lowercase)
-  'TRAD',  // 209 phones (83 + 125 lowercase + 1 "trad color rosado")
-  'XT',    // 108 phones (lowercase)
-  'B',     // 40 phones
-  'RUB',   // 26 phones (25 + 1 lowercase)
-  'ANG',   // 19 phones
-  'ANGE',  // 18 phones
-  'XTRA',  // 18 phones
-  'WS',    // 18 phones (16 + 2 lowercase)
-  'EB',    // 15 phones (14 + 1 lowercase)
-  'LZ',    // 11 phones
-  'TRADE', // 11 phones (variant of TRAD)
-  'ORCA',  // 8 phones
-  'INQ',   // 5 phones
-  'JES',   // 4 phones
-  'RB',    // 2 phones
-  'HE',    // 1 phone
-  'OH',    // 1 phone
-  'OFFE',  // 1 phone
-]);
+//
+// La lista canonica vive en `src/lib/internalCodes.ts` (HARDCODED_CODES) y se
+// extiende dinamicamente desde la coleccion Firestore `internal_codes`. Aqui
+// mantenemos un Set local sincronizado con esa fuente para compatibilidad con
+// llamadores que no son React (utilidades sincronas).
+import { HARDCODED_CODES } from './internalCodesData';
+
+// Set local sincronico — no requiere Firebase. Componentes React que necesiten
+// codigos agregados en runtime (Firestore) deben usar useInternalCodes() del
+// modulo internalCodes.ts. Para validacion básica server-side / tests, basta esto.
+const INTERNAL_CODES = new Set<string>(HARDCODED_CODES.map((c) => c.toUpperCase()));
 
 export function isInternalCode(marca: string | undefined): boolean {
   if (!marca) return false;
@@ -153,9 +136,7 @@ export function normalizeIPhoneModel(modelo: string | undefined): string {
 
   // Storage (e.g. "128GB", "128gb", "128 GB", "1TB")
   const storageMatch = s.match(/\b(\d+)\s*(GB|TB)\b/i);
-  const storage = storageMatch
-    ? `${storageMatch[1]}${storageMatch[2].toUpperCase()}`
-    : '';
+  const storage = storageMatch ? `${storageMatch[1]}${storageMatch[2].toUpperCase()}` : '';
 
   return [modelNum, variant, storage].filter(Boolean).join(' ');
 }
@@ -166,10 +147,7 @@ export function normalizeIPhoneModel(modelo: string | undefined): string {
  */
 export function normalizeStorage(storage: string | undefined | null): string {
   if (!storage) return 'Unknown';
-  return storage
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, ''); // "128 GB" → "128GB", "1 TB" → "1TB"
+  return storage.trim().toUpperCase().replace(/\s+/g, ''); // "128 GB" → "128GB", "1 TB" → "1TB"
 }
 
 export function normalizeDisplayBrand(marca: string | undefined): string {

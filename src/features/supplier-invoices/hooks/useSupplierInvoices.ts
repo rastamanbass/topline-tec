@@ -67,10 +67,7 @@ export function useSupplierInvoices() {
   return useQuery({
     queryKey: SUPPLIER_INVOICES_QUERY_KEY,
     queryFn: async (): Promise<SupplierInvoice[]> => {
-      const q = query(
-        collection(db, 'supplierInvoices'),
-        orderBy('createdAt', 'desc')
-      );
+      const q = query(collection(db, 'supplierInvoices'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
       return snapshot.docs.map(mapInvoice);
     },
@@ -161,12 +158,15 @@ export function useImportSupplierInvoice() {
 
         const rawMarca = item.resolvedMarca || item.make || 'Desconocida';
         const rawModelo = item.resolvedModelo || item.model || item.fullModel || 'Desconocido';
-        const { marca: finalMarca, supplierCode } = splitMarcaAndSupplier(rawMarca, rawModelo);
+        const split = splitMarcaAndSupplier(rawMarca, rawModelo);
+        const finalMarca = split.marca;
+        // Preserve explicit supplierCode from the row (manual or bulk override).
+        // Use `in` so an explicit `null` from the user clears the auto value.
+        const supplierCode =
+          'supplierCode' in item ? (item.supplierCode ?? null) : split.supplierCode;
 
         for (let j = 0; j < count; j++) {
-          const phoneImei = item.imei
-            ? imei
-            : `PENDING-${Date.now()}-${i}-${j}`;
+          const phoneImei = item.imei ? imei : `PENDING-${Date.now()}-${i}-${j}`;
 
           phonesToCreate.push({
             imei: phoneImei,

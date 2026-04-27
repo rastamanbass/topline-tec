@@ -37,6 +37,42 @@ service cloud.firestore {
         return currentStatus in validStatuses && newStatus in validStatuses;
     }
 
+    // ── Phone data validation helpers (added 2026-04-24) ──────────────────────
+    // Block "Desconocida/Desconocido" fallback from being introduced as marca/modelo
+    // Existing phones with these values can still be updated (legacy tolerance)
+    function isBadFallback(v) {
+      return v == 'Desconocida' || v == 'Desconocido' || v == 'desconocida' || v == 'desconocido';
+    }
+
+    // For CREATE: strict rules on new phones
+    function hasValidPhoneCreate(d) {
+      return d.marca is string && d.marca.size() > 0 && !isBadFallback(d.marca)
+          && d.modelo is string && d.modelo.size() > 0 && !isBadFallback(d.modelo)
+          && d.imei is string && d.imei.size() >= 4
+          && (!('precioVenta' in d) || d.precioVenta == null || d.precioVenta is number)
+          && (!('costo' in d) || d.costo == null || d.costo is number);
+    }
+
+    // For UPDATE: block "Desconocida" from being introduced as a CHANGE
+    // If marca wasn't changed, legacy "Desconocida" values are tolerated
+    function marcaChangeIsSafe() {
+      return !('marca' in request.resource.data.diff(resource.data).affectedKeys())
+          || !isBadFallback(request.resource.data.marca);
+    }
+
+    // Block precioVenta being set as string (keep it number or null)
+    function precioTypeIsSafe() {
+      return !('precioVenta' in request.resource.data.diff(resource.data).affectedKeys())
+          || request.resource.data.precioVenta == null
+          || request.resource.data.precioVenta is number;
+    }
+
+    // Block modelo being changed to "Desconocido"
+    function modeloChangeIsSafe() {
+      return !('modelo' in request.resource.data.diff(resource.data).affectedKeys())
+          || !isBadFallback(request.resource.data.modelo);
+    }
+
     // ── Users collection ──────────────────────────────────────────────────────
     match /users/{userId} {
       allow read: if isSignedIn();
@@ -52,11 +88,19 @@ service cloud.firestore {
 
       // Allow authenticated update only for reservation fields (SEC-1 fix)
       // Allow taller role to update workshop-specific fields (estado, statusHistory, reparaciones)
-      allow update: if (isAdmin() || isGerente()) ||
-                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt', 'estado']) && isValidReservationUpdate()) ||
-                    (isTaller() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'statusHistory', 'reparaciones', 'updatedAt']));
+      // 2026-04-24: Added soft validation — legacy "Desconocida" marca tolerated on existing docs,
+      // but BLOCKED from being introduced as a CHANGE. precioVenta must stay number type.
+      allow update: if ((isAdmin() || isGerente()) ||
+                        (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reservation', 'updatedAt', 'estado']) && isValidReservationUpdate()) ||
+                        (isTaller() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'statusHistory', 'reparaciones', 'updatedAt'])))
+                    && marcaChangeIsSafe()
+                    && modeloChangeIsSafe()
+                    && precioTypeIsSafe();
 
-      allow create: if isSignedIn() && getUserData().role in ['admin', 'gerente', 'taller'];
+      // 2026-04-24: Strict CREATE — reject new phones with "Desconocida" marca/modelo
+      allow create: if isSignedIn()
+                    && getUserData().role in ['admin', 'gerente', 'taller']
+                    && hasValidPhoneCreate(request.resource.data);
       allow delete: if isAdmin();
     }
 
@@ -202,6 +246,17 @@ service cloud.firestore {
     match /importShipments/{shipmentId} {
       allow read: if isAdminOrGerente();
       allow create, update: if isAdminOrGerente();
+      allow delete: if isAdmin();
+    }
+
+    // ── Internal Codes (codigos de proveedor) ─────────────────────────────────
+    // Lista compartida de supplier codes (WNY, KRA, RUB, etc). Doc ID = codigo.
+    // Cualquier usuario logueado puede leer; admin/gerente puede crear nuevos
+    // codigos desde el SupplierPicker. Update/delete solo admin.
+    match /internal_codes/{code} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && getUserData().role in ['admin', 'gerente'];
+      allow update: if isAdmin();
       allow delete: if isAdmin();
     }
 

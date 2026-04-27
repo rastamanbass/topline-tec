@@ -67,6 +67,7 @@ export const phoneSchema = z
     precioVenta: z.number().min(0, 'Precio de venta no puede ser negativo'),
     estado: z.enum(PHONE_STATUSES),
     condition: z.enum(['New', 'Open Box', 'Grade A', 'Grade B', 'Grade C']).optional(),
+    supplierCode: z.string().nullable().optional(),
   })
   .refine((data) => data.precioVenta === 0 || data.precioVenta >= data.costo, {
     message: 'El precio de venta debe ser mayor o igual al costo',
