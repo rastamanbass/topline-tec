@@ -6,14 +6,14 @@ import { phoneLabel } from '../../../lib/phoneUtils';
 
 const statusBorderColor: Record<string, string> = {
   'En Stock (Disponible para Venta)': 'border-l-emerald-500',
-  'Apartado': 'border-l-amber-500',
+  Apartado: 'border-l-amber-500',
   'En Taller (Recibido)': 'border-l-red-500',
   'Enviado a Taller (Externo)': 'border-l-red-300',
   'Enviado a Taller (Garantía)': 'border-l-red-300',
   'En Tránsito (a El Salvador)': 'border-l-yellow-500',
   'En Bodega (USA)': 'border-l-blue-500',
-  'Vendido': 'border-l-gray-300',
-  'Pagado': 'border-l-gray-300',
+  Vendido: 'border-l-gray-300',
+  Pagado: 'border-l-gray-300',
 };
 
 interface PhoneCardProps {
@@ -23,7 +23,13 @@ interface PhoneCardProps {
 }
 
 // Moved outside component to satisfy react-hooks/static-components rule
-function BrandIcon({ brand, hasSupplierCode }: { brand: string | undefined; hasSupplierCode?: boolean }) {
+function BrandIcon({
+  brand,
+  hasSupplierCode,
+}: {
+  brand: string | undefined;
+  hasSupplierCode?: boolean;
+}) {
   const b = (brand || '').toLowerCase();
   if (b.includes('apple') || b.includes('iphone'))
     return <span className="font-bold font-sans tracking-tight text-slate-900"> iPhone</span>;
@@ -75,7 +81,8 @@ export default function PhoneCard({
   const isAvailable = phone.estado === 'En Stock (Disponible para Venta)';
   const borderColor = statusBorderColor[phone.estado] || 'border-l-gray-200';
 
-  // POS stock lock badge
+  // POS stock lock badge — Date.now() snapshot is intentional (TTL check)
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
   const isPOSLocked =
     phone.reservation != null &&
@@ -130,9 +137,19 @@ export default function PhoneCard({
       )}
 
       <div className="p-4 pt-5">
-        {/* Brand Header */}
-        <div className="mb-1 opacity-80">
-          <BrandIcon brand={phone.marca} hasSupplierCode={!!phone.supplierCode} />
+        {/* Brand Header + Supplier Code */}
+        <div className="mb-1 flex items-center gap-2">
+          <span className="opacity-80">
+            <BrandIcon brand={phone.marca} hasSupplierCode={!!phone.supplierCode} />
+          </span>
+          {phone.supplierCode && (
+            <span
+              className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide"
+              title={`Proveedor: ${phone.supplierCode}`}
+            >
+              {phone.supplierCode}
+            </span>
+          )}
         </div>
 
         {/* Model Name */}
@@ -187,7 +204,9 @@ export default function PhoneCard({
         <div className="mt-3 grid grid-cols-2 gap-2 text-[10px] text-gray-500 bg-gray-50 rounded-lg p-2 border border-gray-100">
           <div className="flex justify-between">
             <span className="opacity-70">IMEI</span>
-            <span className="font-mono text-gray-700" title={`IMEI completo: ${phone.imei}`}>{phone.imei.slice(-4)}</span>
+            <span className="font-mono text-gray-700" title={`IMEI completo: ${phone.imei}`}>
+              {phone.imei.slice(-4)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="opacity-70">Lote</span>

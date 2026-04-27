@@ -36,6 +36,10 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
   const canEdit = ['admin', 'gerente'].includes(userRole || '');
   const canDelete = userRole === 'admin';
 
+  // Snapshot of "now" for reservation TTL checks
+  // eslint-disable-next-line react-hooks/purity
+  const nowMs = Date.now();
+
   const handleSell = (phone: Phone) => {
     addToCart({
       id: phone.id,
@@ -64,7 +68,7 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
         <table className="min-w-full divide-y divide-gray-200 animate-pulse">
           <thead className="bg-gray-50">
             <tr>
-              {['w-10','w-40','w-24','w-20','w-20','w-28','w-24'].map((w, i) => (
+              {['w-10', 'w-40', 'w-24', 'w-20', 'w-20', 'w-28', 'w-24'].map((w, i) => (
                 <th key={i} className={`px-6 py-4 ${i === 6 ? 'text-right' : 'text-left'}`}>
                   <div className={`h-3 bg-gray-200 rounded ${w}`} />
                 </th>
@@ -74,7 +78,9 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
           <tbody className="bg-white divide-y divide-gray-100">
             {[...Array(6)].map((_, i) => (
               <tr key={i}>
-                <td className="px-6 py-4"><div className="h-4 w-4 bg-gray-200 rounded" /></td>
+                <td className="px-6 py-4">
+                  <div className="h-4 w-4 bg-gray-200 rounded" />
+                </td>
                 <td className="px-6 py-4">
                   <div className="space-y-1.5">
                     <div className="h-3.5 bg-gray-200 rounded w-32" />
@@ -82,11 +88,21 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
                     <div className="h-2.5 bg-gray-100 rounded w-16" />
                   </div>
                 </td>
-                <td className="px-6 py-4"><div className="h-3.5 bg-gray-200 rounded w-16" /></td>
-                <td className="px-6 py-4"><div className="h-3.5 bg-gray-200 rounded w-14" /></td>
-                <td className="px-6 py-4"><div className="h-3.5 bg-gray-200 rounded w-14" /></td>
-                <td className="px-6 py-4"><div className="h-6 bg-gray-200 rounded-full w-24" /></td>
-                <td className="px-6 py-4 text-right"><div className="h-7 bg-gray-200 rounded-lg w-20 ml-auto" /></td>
+                <td className="px-6 py-4">
+                  <div className="h-3.5 bg-gray-200 rounded w-16" />
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-3.5 bg-gray-200 rounded w-14" />
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-3.5 bg-gray-200 rounded w-14" />
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-6 bg-gray-200 rounded-full w-24" />
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <div className="h-7 bg-gray-200 rounded-lg w-20 ml-auto" />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -182,7 +198,17 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-900">{phone.modelo}</span>
                   <span className="text-xs text-gray-500 font-mono">{phone.imei}</span>
-                  <span className="text-xs text-primary-600">{phone.marca}</span>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-xs text-primary-600">{phone.marca}</span>
+                    {phone.supplierCode && (
+                      <span
+                        className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide"
+                        title={`Proveedor: ${phone.supplierCode}`}
+                      >
+                        {phone.supplierCode}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
@@ -204,7 +230,7 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
                 <StatusBadgePro status={phone.estado} size="sm" />
                 {phone.reservation != null &&
                   phone.reservation.reservedBy === 'POS_SALE' &&
-                  phone.reservation.expiresAt > Date.now() && (
+                  (phone.reservation.expiresAt ?? 0) > nowMs && (
                     <p className="text-[10px] text-orange-500 font-medium mt-0.5">(reservado)</p>
                   )}
               </td>
@@ -216,7 +242,7 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
                     title={
                       phone.reservation != null &&
                       phone.reservation.reservedBy === 'POS_SALE' &&
-                      phone.reservation.expiresAt > Date.now()
+                      (phone.reservation.expiresAt ?? 0) > nowMs
                         ? 'Reservado en proceso de venta'
                         : 'Vender'
                     }
@@ -225,7 +251,7 @@ export default function PhoneTable({ phones, isLoading, error }: PhoneTableProps
                       phone.estado !== 'En Stock (Disponible para Venta)' ||
                       (phone.reservation != null &&
                         phone.reservation.reservedBy === 'POS_SALE' &&
-                        phone.reservation.expiresAt > Date.now())
+                        (phone.reservation.expiresAt ?? 0) > nowMs)
                     }
                   >
                     <ShoppingCart className="w-4 h-4" />
